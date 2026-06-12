@@ -1,0 +1,1 @@
+// Ejemplo para una ruta de cursos

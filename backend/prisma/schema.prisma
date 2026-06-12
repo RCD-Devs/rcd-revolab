@@ -1,0 +1,27 @@
+// Esquema de Prisma para RevoLab.
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelos de ejemplo.
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  nombre    String
+  createdAt DateTime @default(now())
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  titulo      String
+  descripcion String?
+  publicado   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}

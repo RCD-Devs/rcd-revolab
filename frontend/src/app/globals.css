@@ -47,6 +47,12 @@ img{
   height: auto;
 }
 
+.container{
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

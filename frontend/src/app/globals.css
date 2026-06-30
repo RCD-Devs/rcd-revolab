@@ -41,13 +41,13 @@ a {
   text-decoration: none;
 }
 
-img{
+img {
   display: block;
   max-width: 100%;
   height: auto;
 }
 
-.container{
+.container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;

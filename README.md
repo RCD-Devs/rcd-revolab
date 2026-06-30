@@ -132,8 +132,8 @@ Para verificar que está arriba, puedes consultar el endpoint de salud: `http://
 
 ```bash
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 > El frontend será **React + TypeScript** (queda por confirmar si se suma Astro como meta-framework). Las instrucciones se afinarán una vez cerrada esa decisión.

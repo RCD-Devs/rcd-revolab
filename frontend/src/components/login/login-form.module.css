@@ -1,0 +1,164 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--login-form-gap);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  margin-bottom: 4.5px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  color: var(--color-label);
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  height: var(--login-input-height);
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.3125px;
+  color: var(--color-black-2);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--login-radius-input);
+  outline: none;
+  transition: border-color 150ms ease, border-width 150ms ease;
+}
+
+.input::placeholder {
+  color: var(--color-placeholder);
+}
+
+.input:focus {
+  border: 2px solid var(--color-primary);
+  padding: 11px 15px;
+}
+
+.inputPassword {
+  background-color: var(--color-secondary);
+  color: var(--color-placeholder);
+  padding-right: 48px;
+}
+
+.inputPassword:not(:placeholder-shown),
+.inputPassword:focus {
+  color: var(--color-black-2);
+}
+
+.inputPassword:focus {
+  padding-right: 47px;
+}
+
+.inputError {
+  border-color: var(--color-error);
+}
+
+.togglePassword {
+  position: absolute;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.toggleIcon {
+  display: block;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.toggleIconHidden {
+  height: 8px;
+}
+
+.toggleIconVisible {
+  height: 10px;
+}
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 13px;
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--login-radius-input);
+}
+
+.alertIcon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+
+.alertText {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  color: var(--color-error);
+}
+
+.submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: var(--login-button-height);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.3125px;
+  color: var(--color-secondary);
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--login-radius-input);
+  cursor: pointer;
+  transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.submit:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-button-hover);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submitIcon {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 768px) {
+  .field .input {
+    width: 100%;
+  }
+}

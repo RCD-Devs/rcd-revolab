@@ -1,0 +1,44 @@
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.logoImage {
+  display: block;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  background: transparent;
+}
+
+.logoImageDesktop {
+  width: 239.846px;
+}
+
+.logoImageMobile {
+  display: none;
+  width: 139.266px;
+}
+
+@media (max-width: 768px) {
+  .logo {
+    height: 36px;
+  }
+
+  .logoImageDesktop {
+    display: none;
+  }
+
+  .logoImageMobile {
+    display: block;
+  }
+}

@@ -1,0 +1,169 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import styles from "./login-form.module.css";
+
+const ALLOWED_DOMAINS = [
+  "@rompecabeza.cl",
+  "@mind",
+  "@souldigital",
+];
+
+function isInstitutionalEmail(email) {
+  return ALLOWED_DOMAINS.some((domain) =>
+    email.toLowerCase().includes(domain.toLowerCase())
+  );
+}
+
+export default function LoginForm() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  function validateEmail(value) {
+    if (!value.trim()) {
+      return "";
+    }
+    if (!isInstitutionalEmail(value)) {
+      return "Solo se permite correo institucional (@rompecabeza.cl, @mind, @souldigital, etc.)";
+    }
+    return "";
+  }
+
+  function handleEmailBlur() {
+    setEmailError(validateEmail(email));
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const emailErr = !email.trim()
+      ? "Solo se permite correo institucional (@rompecabeza.cl, @mind, @souldigital, etc.)"
+      : validateEmail(email);
+    const passwordErr = !password.trim() ? "Ingresa tu contraseña." : "";
+
+    setEmailError(emailErr);
+    setPasswordError(passwordErr);
+
+    if (emailErr || passwordErr) return;
+
+    setIsLoading(true);
+
+    localStorage.setItem(
+      "revolab_user",
+      JSON.stringify({ email, nombre: email.split("@")[0] })
+    );
+    localStorage.setItem("revolab_token", "session-" + Date.now());
+    document.cookie = `revolab_token=session; path=/; max-age=86400; SameSite=Lax`;
+
+    router.push("/");
+  }
+
+  return (
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
+      <div className={styles.field}>
+        <label htmlFor="email" className={styles.label}>
+          Usa tu correo institucional
+        </label>
+        <div className={styles.inputWrapper}>
+          <input
+            id="email"
+            type="email"
+            className={`${styles.input} ${emailError ? styles.inputError : ""}`}
+            placeholder="nombre@rompecabeza.cl"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (emailError) setEmailError("");
+            }}
+            onBlur={handleEmailBlur}
+            autoComplete="email"
+            aria-invalid={emailError ? "true" : undefined}
+            aria-describedby={emailError ? "email-error" : undefined}
+          />
+        </div>
+        {emailError && (
+          <div id="email-error" className={styles.alert} role="alert">
+            <Image
+              src="/icons/error.svg"
+              alt=""
+              width={16}
+              height={16}
+              className={styles.alertIcon}
+            />
+            <span className={styles.alertText}>{emailError}</span>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.field}>
+        <label htmlFor="password" className={styles.label}>
+          Contraseña
+        </label>
+        <div className={styles.inputWrapper}>
+          <input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            className={`${styles.input} ${styles.inputPassword} ${passwordError ? styles.inputError : ""}`}
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (passwordError) setPasswordError("");
+            }}
+            autoComplete="current-password"
+            aria-invalid={passwordError ? "true" : undefined}
+            aria-describedby={passwordError ? "password-error" : undefined}
+          />
+          <button
+            type="button"
+            className={styles.togglePassword}
+            onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+          >
+            <img
+              src={
+                showPassword
+                  ? "/icons/eye-visible.svg"
+                  : "/icons/eye-hidden.svg"
+              }
+              alt=""
+              width={20}
+              height={showPassword ? 10 : 8}
+              className={`${styles.toggleIcon} ${showPassword ? styles.toggleIconVisible : styles.toggleIconHidden}`}
+            />
+          </button>
+        </div>
+        {passwordError && (
+          <div id="password-error" className={styles.alert} role="alert">
+            <Image
+              src="/icons/error.svg"
+              alt=""
+              width={16}
+              height={16}
+              className={styles.alertIcon}
+            />
+            <span className={styles.alertText}>{passwordError}</span>
+          </div>
+        )}
+      </div>
+
+      <button type="submit" className={styles.submit} disabled={isLoading}>
+        Iniciar sesión
+        <Image
+          src="/icons/arrow-right.svg"
+          alt=""
+          width={16}
+          height={16}
+          className={styles.submitIcon}
+        />
+      </button>
+    </form>
+  );
+}

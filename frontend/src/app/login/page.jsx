@@ -1,14 +1,30 @@
-export default function Login() {
+import LoginLogo from "@/components/login/login-logo";
+import LoginHeader from "@/components/login/login-header";
+import LoginForm from "@/components/login/login-form";
+import styles from "./login.module.css";
+
+export default function LoginPage() {
   return (
-    <section className="">
-      <div className="container">
-        <h1>Login</h1>
-        <form>
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Password" />
-          <button type="submit">Login</button>
-        </form>
+    <div className={styles.page}>
+      <div className={styles.decor} aria-hidden="true">
+        <div className={styles.circle1} />
+        <div className={styles.circle2} />
+        <div className={styles.circle3} />
+        <div className={styles.glow} />
       </div>
-    </section>
+
+      <div className={styles.content}>
+        <article className={styles.card}>
+          <LoginLogo />
+          <LoginHeader />
+          <LoginForm />
+        </article>
+      </div>
+
+      <footer className={styles.footer}>
+        <p className={styles.footerBrand}>R E V O</p>
+        <p className={styles.footerTagline}>BUSINESS EVOLUTION</p>
+      </footer>
+    </div>
   );
 }

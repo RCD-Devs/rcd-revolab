@@ -1,0 +1,44 @@
+:root {
+  /* Colores RevoLab — Figma */
+  --color-primary: #00e5c8;
+  --color-primary-hover: rgba(0, 229, 200, 0.87);
+  --color-secondary: #0d1b2a;
+  --color-white: #ffffff;
+  --color-black-2: #5c5c6f;
+
+  --color-card-bg: rgba(26, 43, 60, 0.8);
+  --color-card-border: #243447;
+  --color-input-border: #2d3f52;
+  --color-label: #d1d5dc;
+  --color-text-muted: #8899aa;
+  --color-placeholder: #4a5565;
+  --color-footer-brand: #6a7282;
+
+  --color-error: #ff4d6d;
+  --color-error-bg: rgba(255, 77, 109, 0.1);
+  --color-error-border: rgba(255, 77, 109, 0.2);
+
+  --color-decor-border-strong: rgba(0, 229, 200, 0.3);
+  --color-decor-border: rgba(0, 229, 200, 0.2);
+  --color-glow: rgba(0, 229, 200, 0.1);
+
+  /* Tipografía */
+  --font-family-base: var(--font-inter), "Inter", system-ui, sans-serif;
+
+  /* Espaciado login */
+  --login-card-gap: 32px;
+  --login-form-gap: 20px;
+  --login-field-gap: 28px;
+
+  /* Dimensiones */
+  --login-card-width-desktop: 448px;
+  --login-card-width-mobile: 320px;
+  --login-input-height: 50px;
+  --login-button-height: 48px;
+  --login-radius-card: 16px;
+  --login-radius-input: 12px;
+
+  /* Sombras */
+  --shadow-card: 0 0 40px rgba(0, 229, 200, 0.05);
+  --shadow-button-hover: 0 3px 25.4px rgba(0, 229, 200, 0.2);
+}

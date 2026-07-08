@@ -1,0 +1,336 @@
+.card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 672px;
+  padding: 48px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 16px;
+  background: var(--color-home-surface);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.cardCentered {
+  align-items: center;
+  text-align: center;
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  border-radius: 50%;
+}
+
+.iconWrapTeal {
+  background: rgba(0, 229, 200, 0.1);
+}
+
+.iconWrapSuccess {
+  background: rgba(0, 201, 80, 0.1);
+}
+
+.iconWrapFailure {
+  background: rgba(251, 44, 54, 0.1);
+}
+
+.title {
+  margin: 0 0 16px;
+  color: var(--color-white);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 36px;
+  letter-spacing: 0.3955px;
+}
+
+.description {
+  max-width: 448px;
+  margin: 0 0 32px;
+  color: var(--color-text-muted);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: -0.4395px;
+}
+
+.ctaPrimary,
+.ctaSuccess,
+.ctaOutline,
+.ctaFailure {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.3125px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.ctaPrimary {
+  min-width: 320px;
+  height: 56px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 16px;
+  background: var(--color-primary);
+  box-shadow: 0 0 10px rgba(0, 229, 200, 0.3);
+  color: var(--color-secondary);
+}
+
+.ctaPrimary:hover {
+  background: var(--color-primary-hover);
+}
+
+.ctaPrimaryCompact {
+  min-width: 180px;
+  height: 48px;
+  text-decoration: none;
+}
+
+.ctaSuccess {
+  gap: 8px;
+  min-width: 320px;
+  height: 56px;
+  padding: 0 24px;
+  border-radius: 16px;
+  background: #00c950;
+  box-shadow: 0 0 10px rgba(0, 201, 80, 0.3);
+  color: var(--color-white);
+  text-decoration: none;
+}
+
+.ctaSuccess:hover {
+  background: #00b347;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.ctaOutline,
+.ctaFailure {
+  flex: 1;
+  height: 56px;
+  padding: 0 24px;
+  border-radius: 16px;
+}
+
+.ctaOutline {
+  border: 1px solid var(--color-input-border);
+  background: transparent;
+  color: var(--color-white);
+  text-decoration: none;
+}
+
+.ctaOutline:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ctaFailure {
+  border: none;
+  background: #fb2c36;
+  box-shadow: 0 0 10px rgba(251, 44, 54, 0.3);
+  color: var(--color-white);
+}
+
+.ctaFailure:hover {
+  background: #e0252e;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  width: 100%;
+  max-width: 672px;
+  margin: 0 auto 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: -0.3125px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: var(--color-white);
+}
+
+.progressHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.progressLabel {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+}
+
+.progressBar {
+  display: flex;
+  gap: 8px;
+}
+
+.progressSegment {
+  flex: 1;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--color-input-border);
+}
+
+.progressSegmentActive {
+  background: var(--color-primary);
+}
+
+.question {
+  margin: 0 0 32px;
+  color: var(--color-white);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  letter-spacing: 0.0703px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 58px;
+  padding: 16px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 16px;
+  background: rgba(10, 17, 24, 0.5);
+  color: var(--color-white);
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: -0.3125px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.option:hover {
+  border-color: rgba(0, 229, 200, 0.5);
+}
+
+.optionSelected {
+  border: 2px solid var(--color-primary);
+  background: rgba(0, 229, 200, 0.05);
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 32px 24px;
+  }
+
+  .iconWrap {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+  }
+
+  .title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .description {
+    font-size: 16px;
+    line-height: 26px;
+    margin-bottom: 24px;
+  }
+
+  .ctaPrimary,
+  .ctaSuccess {
+    width: 100%;
+    min-width: 0;
+    height: 48px;
+  }
+
+  .ctaPrimary {
+    box-shadow: 0 0 7.5px rgba(0, 229, 200, 0.3);
+  }
+
+  .ctaSuccess {
+    box-shadow: 0 0 7.5px rgba(0, 201, 80, 0.3);
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ctaOutline,
+  .ctaFailure {
+    width: 100%;
+    height: 48px;
+  }
+
+  .ctaFailure {
+    box-shadow: 0 0 7.5px rgba(251, 44, 54, 0.3);
+  }
+
+  .backLink {
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .progressHeader {
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .question {
+    margin-bottom: 24px;
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .options {
+    gap: 12px;
+  }
+
+  .option {
+    min-height: 52px;
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 22px;
+  }
+}

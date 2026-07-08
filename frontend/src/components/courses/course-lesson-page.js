@@ -1,7 +1,9 @@
 import CourseLessonPlayer from "@/components/courses/course-lesson-player";
 import CourseLessonSidebar from "@/components/courses/course-lesson-sidebar";
 import CourseLessonBody from "@/components/courses/course-lesson-body";
+import CourseLessonQuizCta from "@/components/courses/course-lesson-quiz-cta";
 import CourseLessonNav from "@/components/courses/course-lesson-nav";
+import { getLessonQuiz } from "@/data/course-quiz-data";
 import styles from "./course-lesson-page.module.css";
 
 export default function CourseLessonPage({ lessonData }) {
@@ -15,6 +17,7 @@ export default function CourseLessonPage({ lessonData }) {
     transcript,
     lessonLabel,
   } = lessonData;
+  const quiz = getLessonQuiz(course.id);
 
   return (
     <div className={styles.page}>
@@ -32,6 +35,14 @@ export default function CourseLessonPage({ lessonData }) {
             </div>
 
             <CourseLessonBody transcript={transcript} />
+
+            {quiz && (
+              <CourseLessonQuizCta
+                courseId={course.id}
+                lessonId={lesson.id}
+                quiz={quiz}
+              />
+            )}
           </div>
         </div>
 

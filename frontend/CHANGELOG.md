@@ -1,3 +1,134 @@
+# [0.19.1] - 2026-07-08
+
+### Changed - Limpieza
+- **Archivos modificados**: `src/components/intro/intro-nav.js`, `src/components/site-logo.js`, `src/components/site-logo.module.css`, `src/components/footer.module.css`, `src/components/profile/profile-content.js`, `src/components/profile/profile-content.module.css`, `src/components/home/course-carousel.js`, `scripts/process-logo.mjs`
+- Se reutiliza `SiteLogo` en el nav de introducción para evitar duplicar el markup del logo
+- Se unifican estilos de grid en el perfil y se elimina CSS de placeholder sin uso
+- El script de procesamiento de logo genera un único `revolab-logo.webp`
+
+### Fixed - Limpieza
+- **Archivos modificados**: `public/images/revolab-logo-desktop.webp`, `public/images/revolab-logo-mobile.webp`, `public/icons/profile-courses.svg`
+- Se eliminan logos antiguos y el icono `profile-courses.svg`, que ya no se referenciaban en el código
+
+# [0.19.0] - 2026-07-08
+
+### Changed - Logo
+- **Archivos modificados**: `src/components/site-logo.js`, `src/components/site-logo.module.css`, `src/components/login/login-logo.js`, `src/components/login/login-logo.module.css`, `src/components/intro/intro-nav.js`, `src/components/intro/intro-nav.module.css`, `public/images/revolab-logo.webp`
+- Se reemplaza el logo del header, footer, login y nav de introducción por el nuevo logo con fondo transparente
+- Se corrige el tamaño del logo en el nav de la introducción, que se mostraba demasiado grande, dimensionándolo por altura para respetar su proporción
+
+### Fixed - Introducción
+- **Archivos modificados**: `src/components/intro/intro-page.module.css`
+- El nav de la página de introducción vuelve a quedar fijo (sticky) al hacer scroll; se corrige el `overflow` del contenedor que anulaba la fijación
+
+# [0.18.1] - 2026-07-08
+
+### Changed - Introducción
+- **Archivos modificados**: `src/components/intro/intro-page.js`, `public/icons/intro-ai.svg`, `public/icons/intro-career.svg`, `public/icons/intro-certifications.svg`
+- La página de introducción reutiliza el footer global del sitio en lugar de un footer propio
+- Los iconos de la sección de beneficios se exportan desde Figma como SVG para respetar el diseño original (cerebro IA, cohete Career IQ y libro de certificaciones)
+
+### Fixed - Introducción
+- **Archivos modificados**: `src/components/intro/intro-footer.js`, `src/components/intro/intro-footer.module.css`
+- Se elimina el footer duplicado de la introducción al unificarlo con el del resto del sitio
+
+# [0.18.0] - 2026-07-08
+
+### Added - Introducción
+- **Archivos modificados**: `src/app/page.jsx`, `src/app/login/page.jsx`, `src/components/intro/intro-page.js`, `src/components/intro/intro-page.module.css`, `src/components/intro/intro-nav.js`, `src/components/intro/intro-nav.module.css`, `src/components/intro/intro-hero.js`, `src/components/intro/intro-hero.module.css`, `src/components/intro/intro-features.js`, `src/components/intro/intro-features.module.css`, `src/components/intro/intro-featured-courses.js`, `src/components/intro/intro-featured-courses.module.css`, `src/components/intro/intro-footer.js`, `src/components/intro/intro-footer.module.css`, `src/data/intro-data.js`, `public/icons/intro-ai.svg`, `public/icons/intro-career.svg`, `public/icons/intro-certifications.svg`, `public/icons/arrow-right-dark.svg`
+- La URL raíz muestra la nueva página de introducción según el diseño Figma en desktop y mobile, con hero, beneficios, cursos destacados y footer propio
+- El botón "Iniciar Sesión" navega a `/login`, donde queda el formulario de acceso que antes estaba en la raíz
+
+### Changed - Login
+- **Archivos modificados**: `src/components/login/login-logo.js`
+- El logo del login vuelve a enlazar a la página de introducción en la raíz
+
+# [0.17.1] - 2026-07-08
+
+### Changed - Header
+- **Archivos modificados**: `src/components/header.module.css`
+- Se reduce un 30% adicional el alto del header al hacer scroll para compactarlo aún más en desktop y mobile
+
+# [0.17.0] - 2026-07-08
+
+### Changed - Header
+- **Archivos modificados**: `src/components/header.js`, `src/components/header.module.css`
+- El header sticky reduce su alto en un 40% al hacer scroll, con transición suave, para ganar espacio de contenido en desktop y mobile
+
+# [0.16.1] - 2026-07-08
+
+### Changed - Carrusel
+- **Archivos modificados**: `src/components/home/home-hero.module.css`
+- Las flechas del hero vuelven a su estilo original (fondo translúcido y flecha blanca) y se les incorpora hover inverso: al pasar el cursor el fondo pasa a blanco y la flecha a azul oscuro
+
+# [0.16.0] - 2026-07-08
+
+### Changed - Carrusel
+- **Archivos modificados**: `src/components/home/course-carousel.js`, `src/components/home/course-carousel.module.css`, `src/components/home/home-hero.js`, `src/components/home/home-hero.module.css`
+- Las flechas de los carruseles de cursos se unifican con fondo de marca (#00E5C8), borde blanco y flecha azul oscuro
+- Se añade hover inverso en las flechas de los carruseles: al pasar el cursor el fondo pasa a azul oscuro y la flecha a color de marca
+
+# [0.15.1] - 2026-07-08
+
+### Changed - Carrusel
+- **Archivos modificados**: `src/components/home/course-carousel.js`, `src/components/home/course-carousel.module.css`, `public/icons/chevron-left-dark.svg`, `public/icons/chevron-right-dark.svg`
+- Las flechas de los carruseles adoptan fondo de color de marca (#00E5C8) y borde blanco, con la flecha interior en azul oscuro para mejor contraste y legibilidad
+
+# [0.15.0] - 2026-07-08
+
+### Changed - Carrusel
+- **Archivos modificados**: `src/components/home/course-carousel.js`, `src/components/home/course-carousel.module.css`
+- Las flechas de los carruseles "Recomendado para ti" y "Nuevos cursos" se ubican fuera del contenedor de las tarjetas para mayor visibilidad
+- Los carruseles avanzan en bucle continuo, repitiendo las tarjetas de forma fluida en lugar de volver de golpe al inicio
+
+### Fixed - Header
+- **Archivos modificados**: `src/app/globals.css`
+- El header vuelve a quedar fijo (sticky) al desplazar la página; se corrige el `overflow-x` horizontal que anulaba la fijación
+
+# [0.14.0] - 2026-07-08
+
+### Added - Perfil
+- **Archivos modificados**: `src/components/profile/profile-certificate-card.js`, `src/components/profile/profile-certificate-card.module.css`, `src/components/profile/profile-content.js`, `src/components/profile/profile-content.module.css`, `src/components/profile/profile-page.js`, `src/data/profile-data.js`, `public/icons/profile-certificate-medal.svg`, `public/icons/profile-download.svg`
+- El sub-tab "Certificados" en Mis Cursos muestra cards con medalla, fecha de emisión y enlace "Descargar PDF" según el diseño Figma
+- En desktop los certificados se presentan en grid de dos columnas con el mismo espaciado que los cursos terminados
+
+# [0.13.0] - 2026-07-08
+
+### Added - Perfil
+- **Archivos modificados**: `src/components/profile/profile-course-card.js`, `src/components/profile/profile-course-card.module.css`, `src/components/profile/profile-content.js`, `src/components/profile/profile-content.module.css`, `src/components/profile/profile-page.js`, `src/data/profile-data.js`, `public/icons/profile-course-check.svg`, `public/images/profile/course-completed.webp`
+- El sub-tab "Terminados" en Mis Cursos muestra cards de cursos completados con icono de check, meta "Completado" y progreso al 100% según el diseño Figma
+- En desktop los cursos terminados se presentan en grid de dos columnas, diferenciándose del listado de cursos en proceso
+
+# [0.12.3] - 2026-07-08
+
+### Changed - Header
+- **Archivos modificados**: `src/components/header-profile-menu.js`
+- Se elimina la opción "Mis Cursos" del menú desplegable de perfil en el header, quedando solo "Mi Perfil" y "Cerrar sesión" hasta una etapa posterior
+
+# [0.12.2] - 2026-07-08
+
+### Changed - Perfil
+- **Archivos modificados**: `src/components/profile/profile-content.js`, `src/components/profile/profile-content.module.css`, `src/components/profile/profile-page.js`, `src/data/profile-data.js`
+- En mobile las tabs del perfil ahora son las mismas que en desktop (Mis Cursos y Mi Rango), eliminando la tab exclusiva "Mi Progreso" para que el contenido sea idéntico en ambas vistas
+- Se elimina la lógica de detección de viewport, mostrando el mismo contenido de tabs sin distinción de dispositivo
+
+### Fixed - Perfil
+- **Archivos modificados**: `src/components/profile/profile-radar-chart.js`, `src/components/profile/profile-radar-chart.module.css`, `src/components/profile/profile-ai-recommendation.js`, `src/components/profile/profile-ai-recommendation.module.css`, `public/icons/profile-ai.svg`, `public/images/profile/recommendation-ux.webp`
+- Se elimina el gráfico radar, la recomendación IA y sus datos e íconos asociados, que solo se usaban en la tab exclusiva de mobile ya retirada
+
+# [0.12.1] - 2026-07-08
+
+### Fixed - Perfil
+- **Archivos modificados**: `src/components/profile/profile-sidebar.module.css`
+- El título "Mi Perfil" se alinea en la parte superior de la cabecera de la tarjeta, dando más separación respecto a la foto de perfil que quedaba demasiado pegada
+
+# [0.12.0] - 2026-07-08
+
+### Added - Perfil
+- **Archivos modificados**: `src/components/profile/profile-rank-panel.js`, `src/components/profile/profile-rank-panel.module.css`, `src/components/profile/profile-content.js`, `src/components/profile/profile-page.js`, `src/data/profile-data.js`, `public/icons/rank-cadete.svg`, `public/icons/rank-current.svg`, `public/icons/rank-locked.svg`, `public/icons/rank-check.svg`
+- El tab "Mi Rango (Career IQ)" ahora muestra la línea de progresión de rangos, los requisitos para subir de nivel y los beneficios a desbloquear según el diseño Figma
+- Se separa el contenido de "Mi Progreso" del de "Mi Rango", evitando que compartan el radar y la recomendación IA
+
 # [0.11.2] - 2026-07-08
 
 ### Changed - Cursos

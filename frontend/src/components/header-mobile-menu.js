@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useDropdownTransition } from "@/hooks/use-dropdown-transition";
 import styles from "./header-mobile-menu.module.css";
 
@@ -90,7 +91,7 @@ export default function HeaderMobileMenu() {
                 </button>
               </div>
 
-              <button type="button" className={styles.profile}>
+              <Link href="/perfil" className={styles.profile} onClick={close}>
                 <span className={styles.avatar}>
                   <Image src="/icons/nav-user.svg" alt="" width={20} height={20} />
                 </span>
@@ -98,7 +99,7 @@ export default function HeaderMobileMenu() {
                   <span className={styles.profileName}>Nombre Apellido</span>
                   <span className={styles.profileRole}>Perfil</span>
                 </span>
-              </button>
+              </Link>
             </div>
 
             <nav className={styles.nav} aria-label="Navegación">

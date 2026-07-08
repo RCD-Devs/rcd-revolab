@@ -106,21 +106,52 @@
   transform: translateY(-50%);
   width: 40px;
   height: 40px;
-  border: none;
+  border: 1px solid var(--color-white);
   border-radius: 50%;
-  background: rgba(13, 27, 42, 0.7);
-  backdrop-filter: blur(4px);
+  background: var(--color-primary);
   cursor: pointer;
   padding: 10px;
   z-index: 2;
+  transition: background-color 0.2s ease;
+}
+
+.navButton:hover {
+  background: var(--color-secondary);
+}
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+  background-color: var(--color-secondary);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  transition: background-color 0.2s ease;
+}
+
+.navIconLeft {
+  -webkit-mask-image: url("/icons/chevron-left.svg");
+  mask-image: url("/icons/chevron-left.svg");
+}
+
+.navIconRight {
+  -webkit-mask-image: url("/icons/chevron-right.svg");
+  mask-image: url("/icons/chevron-right.svg");
+}
+
+.navButton:hover .navIcon {
+  background-color: var(--color-primary);
 }
 
 .navButtonLeft {
-  left: -20px;
+  left: -56px;
 }
 
 .navButtonRight {
-  right: -20px;
+  right: -56px;
 }
 
 .dots {

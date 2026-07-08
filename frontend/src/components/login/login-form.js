@@ -62,7 +62,7 @@ export default function LoginForm() {
     localStorage.setItem("revolab_token", "session-" + Date.now());
     document.cookie = `revolab_token=session; path=/; max-age=86400; SameSite=Lax`;
 
-    router.push("/");
+    router.push("/home");
   }
 
   return (

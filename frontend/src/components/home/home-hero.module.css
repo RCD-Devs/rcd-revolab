@@ -1,0 +1,402 @@
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 460px;
+  overflow: hidden;
+  background: #0a1118;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.backgroundImage {
+  object-fit: cover;
+  opacity: 0.28;
+}
+
+.backgroundOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 17, 24, 0.8) 0%,
+    rgba(10, 17, 24, 0.64) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.backgroundGlow {
+  position: absolute;
+  top: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: rgba(0, 229, 200, 0.05);
+  filter: blur(100px);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 1440px;
+  min-height: 460px;
+  margin: 0 auto;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  padding: 10px;
+  z-index: 2;
+}
+
+.arrowLeft {
+  left: 80px;
+}
+
+.arrowRight {
+  right: 80px;
+}
+
+.viewport {
+  position: relative;
+  min-height: 460px;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+}
+
+.enterNext {
+  animation: slideEnterNext 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.exitNext {
+  animation: slideExitNext 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.enterPrev {
+  animation: slideEnterPrev 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.exitPrev {
+  animation: slideExitPrev 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes slideEnterNext {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideExitNext {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideEnterPrev {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideExitPrev {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  max-width: 1280px;
+  height: 100%;
+  min-height: 460px;
+  margin: 0 auto;
+  padding: 0 96px;
+}
+
+.textBlock {
+  display: flex;
+  flex-direction: column;
+  max-width: 468px;
+}
+
+.title {
+  margin: 0 0 40px;
+  color: var(--color-white);
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 60px;
+  letter-spacing: 0.3516px;
+}
+
+.description {
+  margin: 0 0 56px;
+  color: var(--color-label);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  height: 48px;
+  padding: 0 24px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.3125px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 229, 200, 0.3);
+  box-sizing: border-box;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.ctaButton:hover {
+  background: var(--color-secondary);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.ctaIcon {
+  width: 16px;
+  height: 16px;
+  background-color: var(--color-secondary);
+  -webkit-mask: url("/icons/arrow-right.svg") no-repeat center / contain;
+  mask: url("/icons/arrow-right.svg") no-repeat center / contain;
+  transition: background-color 0.2s ease;
+}
+
+.ctaButton:hover .ctaIcon {
+  background-color: var(--color-primary);
+}
+
+.instructorBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.instructorGlow {
+  position: absolute;
+  top: 0;
+  width: 192px;
+  height: 192px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #00e5c8 0%, #00c6e9 100%);
+  opacity: 0.3;
+  filter: blur(12px);
+}
+
+.instructorRing {
+  position: relative;
+  padding: 4px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #00e5c8 0%, #00c6e9 100%);
+  box-shadow: 0 0 20px rgba(0, 229, 200, 0.2);
+}
+
+.instructorPhotoWrap {
+  width: 184px;
+  height: 184px;
+  padding: 4px;
+  border: 4px solid #0a1118;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #0a1118;
+}
+
+.instructorPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.instructorInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.instructorName {
+  margin: 0;
+  color: var(--color-white);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: -0.4492px;
+}
+
+.instructorRole {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+}
+
+.dots {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  padding: 0;
+}
+
+.dotActive {
+  width: 24px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 551px;
+  }
+
+  .content {
+    min-height: 551px;
+  }
+
+  .viewport {
+    min-height: 551px;
+  }
+
+  .arrow {
+    display: none;
+  }
+
+  .inner {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 32px;
+    min-height: 551px;
+    padding: 32px 16px 48px;
+  }
+
+  .textBlock {
+    max-width: none;
+  }
+
+  .title {
+    margin-bottom: 16px;
+  }
+
+  .title {
+    font-size: 30px;
+    line-height: 37.5px;
+    letter-spacing: 0.3955px;
+  }
+
+  .description {
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .ctaButton {
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .instructorBlock {
+    align-self: center;
+  }
+
+  .instructorGlow {
+    width: 160px;
+    height: 160px;
+  }
+
+  .instructorRing {
+    padding: 3.812px;
+  }
+
+  .instructorPhotoWrap {
+    width: 152px;
+    height: 152px;
+    padding: 3.812px;
+    border-width: 3.812px;
+  }
+
+  .instructorName {
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: -0.4395px;
+  }
+
+  .dots {
+    bottom: 24px;
+  }
+
+  .dotActive {
+    width: 80px;
+  }
+}

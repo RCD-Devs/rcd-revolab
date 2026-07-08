@@ -28,7 +28,6 @@
   /* Espaciado login */
   --login-card-gap: 32px;
   --login-form-gap: 20px;
-  --login-field-gap: 28px;
 
   /* Dimensiones */
   --login-card-width-desktop: 448px;
@@ -41,4 +40,7 @@
   /* Sombras */
   --shadow-card: 0 0 40px rgba(0, 229, 200, 0.05);
   --shadow-button-hover: 0 3px 25.4px rgba(0, 229, 200, 0.2);
+
+  /* Home */
+  --color-home-surface: #1a2b3c;
 }

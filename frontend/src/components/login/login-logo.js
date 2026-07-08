@@ -5,7 +5,7 @@ import styles from "./login-logo.module.css";
 export default function LoginLogo() {
   return (
     <div className={styles.logo}>
-      <Link href="/" className={styles.logoLink} aria-label="RevoLab">
+      <Link href="/home" className={styles.logoLink} aria-label="RevoLab">
         <Image
           src="/images/revolab-logo-desktop.webp"
           alt="RevoLab"

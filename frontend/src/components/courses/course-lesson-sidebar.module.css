@@ -1,0 +1,160 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  padding: 16px;
+  border-top: 1px solid var(--color-input-border);
+  background: var(--color-home-surface);
+}
+
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progressHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.progressLabel {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.progressValue {
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.progressBar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-input-border);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+.module {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.moduleTitle {
+  margin: 0;
+  color: var(--color-white);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+}
+
+.lessonList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lessonItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.lessonItem:hover {
+  background: rgba(36, 52, 71, 0.5);
+}
+
+.lessonItemActive {
+  background: rgba(0, 229, 200, 0.08);
+  border: 1px solid rgba(0, 229, 200, 0.2);
+}
+
+.lessonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lessonTitle {
+  color: var(--color-white);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+}
+
+.lessonItemActive .lessonTitle {
+  color: var(--color-primary);
+}
+
+.lessonDuration {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.exam {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #1a1a6b;
+  border-radius: 12px;
+  background: #0b0b43;
+}
+
+.examInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.examTitle {
+  color: var(--color-white);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+}
+
+.examLock {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+@media (min-width: 769px) {
+  .sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    padding: 24px;
+    border-top: none;
+    border-left: 1px solid var(--color-input-border);
+  }
+}

@@ -52,6 +52,7 @@
   cursor: pointer;
   padding: 0;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 .linkMobile {

@@ -4,7 +4,7 @@
   align-items: center;
   flex-shrink: 0;
   width: var(--course-card-width, 347px);
-  height: 404px;
+  height: var(--course-card-height, 404px);
   border: 2px solid var(--color-input-border);
   border-radius: 16px;
   background: #1a2b3c;
@@ -21,7 +21,7 @@
 .imageWrap {
   position: relative;
   width: 100%;
-  height: 193.867px;
+  height: var(--course-image-height, 193.867px);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -82,11 +82,15 @@
 
 .title {
   margin: 0;
+  width: 100%;
   color: var(--color-white);
   font-size: 18px;
   font-weight: 600;
   line-height: 28px;
   letter-spacing: -0.4395px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: color 0.2s ease;
 }
 
@@ -97,6 +101,12 @@
   font-weight: 400;
   line-height: 20px;
   letter-spacing: -0.1504px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .meta {
@@ -128,6 +138,7 @@
   width: 212px;
   height: 38px;
   margin-top: 8px;
+  margin-bottom: var(--course-button-margin-bottom, 0);
   border: 1px solid var(--color-primary);
   border-radius: 12px;
   background: transparent;
@@ -138,6 +149,7 @@
   line-height: 20px;
   letter-spacing: -0.1504px;
   cursor: pointer;
+  text-decoration: none;
   transition:
     background 0.2s ease,
     color 0.2s ease;
@@ -177,11 +189,11 @@
   .card,
   .compact {
     width: 280px;
-    height: 415.725px;
+    height: var(--course-card-height, 415.725px);
   }
 
   .imageWrap {
-    height: 192px;
+    height: var(--course-image-height, 192px);
   }
 
   .body {

@@ -1,7 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./course-card.module.css";
 
 export default function CourseCard({
+  id,
   category,
   title,
   description,
@@ -41,7 +43,7 @@ export default function CourseCard({
         </span>
       </div>
 
-      <button type="button" className={styles.button}>
+      <Link href={`/cursos/${id}`} className={styles.button}>
         <span>Realizar curso</span>
         <Image
           src="/icons/arrow-right-primary.svg"
@@ -57,7 +59,7 @@ export default function CourseCard({
           height={16}
           className={styles.buttonIconFilled}
         />
-      </button>
+      </Link>
     </article>
   );
 }

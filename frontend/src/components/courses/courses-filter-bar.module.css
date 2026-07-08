@@ -1,0 +1,57 @@
+.wrap {
+  display: block;
+  margin: 0 -16px;
+  padding: 0 16px;
+  overflow: hidden;
+}
+
+.track {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.pill {
+  flex-shrink: 0;
+  height: 38px;
+  padding: 10px 16px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.pill:hover {
+  color: var(--color-white);
+}
+
+.pillActive {
+  border-color: var(--color-primary);
+  background: rgba(0, 229, 200, 0.12);
+  color: var(--color-white);
+}
+
+@media (min-width: 769px) {
+  .wrap {
+    display: none;
+  }
+}

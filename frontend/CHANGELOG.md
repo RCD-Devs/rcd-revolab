@@ -1,3 +1,105 @@
+# [0.11.2] - 2026-07-08
+
+### Changed - Cursos
+- **Archivos modificados**: `src/components/courses/courses-mobile-carousel.js`, `src/components/courses/course-lesson-player.js`, `src/components/courses/course-lesson-player.module.css`, `src/components/courses/course-detail-panel.js`, `src/data/course-lesson-data.js`, `src/data/courses-data.js`, `src/data/course-detail-data.js`, `src/components/courses/courses-page-content.js`
+- Limpieza del flujo de Cursos: se eliminan imports sin uso, props y ramas de código muertas en el reproductor de lección, el alias `featuredMarketingCourses`, la función `getFirstLessonUrl` y datos duplicados en el catálogo
+- Se simplifican exportaciones internas (`growthHackingCourse`, `newCourses`, `popularCourses`) que solo se usaban dentro del módulo de datos
+
+# [0.11.1] - 2026-07-08
+
+### Changed - Cursos
+- **Archivos modificados**: `src/components/courses/course-lesson-body.js`, `src/components/courses/course-lesson-body.module.css`, `src/components/courses/course-lesson-page.js`, `src/components/courses/course-lesson-page.module.css`, `src/components/courses/course-lesson-sidebar.js`, `src/components/courses/course-lesson-sidebar.module.css`
+- En mobile, las tabs de la lección ahora son las mismas que en desktop (Transcripción, Recursos y Comentarios), eliminando la pestaña "Contenido" exclusiva de mobile
+- El sidebar con progreso y lecciones se muestra en mobile debajo del contenido principal, manteniendo la misma información que en desktop
+
+# [0.11.0] - 2026-07-08
+
+### Changed - Cursos
+- **Archivos modificados**: `src/components/courses/course-lesson-sidebar.js`, `src/components/courses/course-lesson-sidebar.module.css`, `public/icons/exam-medal.svg`
+- El botón de "Examen Final" en el sidebar de la lección adopta el estilo del diseño: fondo azul oscuro `#0b0b43`, borde `#1a1a6b`, icono de medalla en color primario y candado a la derecha
+
+### Changed - Scripts
+- **Archivos modificados**: `src/components/courses/course-lesson-nav.js`, `src/components/courses/course-lesson-nav.module.css`
+- Los botones de navegación de la lección (Anterior / Siguiente lección) ahora invierten sus colores al pasar el cursor, mostrando el estado inverso al normal
+- Los iconos de flecha se renderizan con máscara para que hereden el color del texto y se inviertan junto con el botón
+
+# [0.10.1] - 2026-07-08
+
+### Fixed - Cursos
+- **Archivos modificados**: `src/components/courses/course-lesson-page.module.css`, `src/components/courses/course-lesson-page.js`, `src/components/courses/course-lesson-body.module.css`
+- El fondo de la zona de contenido de la lección ahora usa el tono más oscuro `#0a1118` del diseño, en lugar del azul `#0d1b2a`
+- Se corrige el padding del contenido bajo el video: el reproductor ocupa todo el ancho y el texto (título, tabs y transcripción) usa el margen horizontal del diseño, con ajustes responsivos
+
+# [0.10.0] - 2026-07-08
+
+### Added - Header
+- **Archivos modificados**: `src/components/header-courses-menu.js`, `src/components/header-courses-menu.module.css`
+- El desplegable de "Cursos" ahora incluye "Ver todos los cursos" como primera opción, que lleva al catálogo completo en `/cursos`
+
+### Changed - Header
+- **Archivos modificados**: `src/components/header-courses-menu.js`, `src/components/courses/courses-page-content.js`, `src/app/(site)/cursos/page.jsx`
+- Al seleccionar una categoría en el desplegable de "Cursos" ahora se abre el catálogo filtrado mostrando solo los cursos de esa categoría, mediante el parámetro `categoria` en la URL
+
+# [0.9.0] - 2026-07-08
+
+### Added - Cursos
+- **Archivos modificados**: `src/app/(site)/cursos/[id]/leccion/[lessonId]/page.jsx`, `src/components/courses/course-lesson-page.js`, `src/components/courses/course-lesson-page.module.css`, `src/components/courses/course-lesson-player.js`, `src/components/courses/course-lesson-player.module.css`, `src/components/courses/course-lesson-sidebar.js`, `src/components/courses/course-lesson-sidebar.module.css`, `src/components/courses/course-lesson-body.js`, `src/components/courses/course-lesson-body.module.css`, `src/components/courses/course-lesson-nav.js`, `src/components/courses/course-lesson-nav.module.css`, `src/components/courses/course-detail-panel.js`, `src/components/courses/course-detail-panel.module.css`, `src/data/course-lesson-data.js`, `public/icons/lesson-active.svg`, `public/icons/lesson-pending.svg`
+- Nueva página de lección en `/cursos/[id]/leccion/[lessonId]` según diseño Figma desktop y mobile, con reproductor, transcripción, sidebar de progreso y navegación entre lecciones
+- Los botones de play y "Comenzar curso" en el detalle del curso ahora abren el paso 1 de la lección
+
+# [0.8.1] - 2026-07-08
+
+### Changed - Cursos
+- **Archivos modificados**: `src/components/courses/courses-section.js`, `src/components/courses/courses-page-content.js`
+- El enlace "Ver todo el catálogo" de cada sección ahora aplica el filtro de su categoría, mostrando solo las cards de esa categoría igual que los filtros del menú lateral
+
+# [0.8.0] - 2026-07-08
+
+### Added - Cursos
+- **Archivos modificados**: `src/app/(site)/cursos/[id]/page.jsx`, `src/components/courses/course-detail-hero.js`, `src/components/courses/course-detail-hero.module.css`, `src/components/courses/course-detail-panel.js`, `src/components/courses/course-detail-panel.module.css`, `src/components/courses/course-detail-content.js`, `src/components/courses/course-detail-content.module.css`, `src/components/courses/course-detail-page.js`, `src/components/courses/course-detail-page.module.css`, `src/data/course-detail-data.js`, `src/components/home/course-card.js`, `src/components/home/course-card.module.css`, `public/icons/course-play.svg`, `public/icons/course-level.svg`, `public/icons/course-transcript.svg`, `public/icons/course-certificate.svg`, `public/icons/course-lock.svg`, `public/icons/check-teal.svg`
+- Nueva página de detalle de curso en `/cursos/[id]` según diseño Figma desktop y mobile, con hero, panel de acción, tabs de descripción y cards enlazadas desde el catálogo
+
+# [0.7.5] - 2026-07-08
+
+### Changed - Cursos
+- **Archivos modificados**: `src/data/courses-data.js`
+- Cada categoría del menú lateral ahora despliega su propio conjunto de cards, y las opciones Cursos nuevos, Populares y Marketing muestran su selección correspondiente, de modo que al presionar una categoría solo se ven sus cursos
+
+# [0.7.4] - 2026-07-08
+
+### Fixed - Cursos
+- **Archivos modificados**: `src/components/home/course-card.module.css`, `src/components/courses/courses-section.module.css`
+- Se agrega padding inferior al botón de las cards del catálogo para que no quede pegado al borde, con la misma separación que los laterales
+
+# [0.7.3] - 2026-07-08
+
+### Changed - Cursos
+- **Archivos modificados**: `src/components/home/course-card.module.css`, `src/components/courses/courses-section.module.css`, `src/components/courses/courses-mobile-carousel.module.css`, `src/components/courses/courses-page-content.module.css`, `src/data/courses-data.js`
+- La imagen de las cards del catálogo se reduce un 30% de alto y la altura de la card se ajusta al contenido, solo en la vista de Cursos para no afectar el home
+- El título de la card se limita a una línea con puntos suspensivos, evitando que empuje la descripción y que los iconos se monten sobre el texto
+- Se reducen los márgenes laterales del contenido de Cursos para dar más ancho a las cards
+- Se añade la etiqueta "Nuevo" a algunas cards del catálogo
+
+# [0.7.2] - 2026-07-08
+
+### Fixed - Cursos
+- **Archivos modificados**: `src/components/courses/courses-section.module.css`, `src/components/home/course-card.module.css`
+- Las cards del catálogo ahora ocupan el ancho de su columna en el grid para evitar que se monten en resoluciones intermedias
+- La descripción de las cards se limita a dos líneas con puntos suspensivos cuando el texto es más largo
+
+# [0.7.1] - 2026-07-08
+
+### Fixed - Cursos
+- **Archivos modificados**: `src/components/courses/courses-sidebar.js`, `src/components/courses/courses-sidebar.module.css`, `src/components/courses/courses-page-content.module.css`
+- El menú lateral de Cursos ahora replica el diseño Figma: sin caja con borde, separador vertical, títulos en mayúsculas, links planos en la sección Cursos y pills con borde teal izquierdo en Categorías activas
+
+# [0.7.0] - 2026-07-08
+
+### Added - Cursos
+- **Archivos modificados**: `src/app/(site)/cursos/page.jsx`, `src/components/courses/courses-page-content.js`, `src/components/courses/courses-page-content.module.css`, `src/components/courses/courses-breadcrumb.js`, `src/components/courses/courses-breadcrumb.module.css`, `src/components/courses/courses-sidebar.js`, `src/components/courses/courses-sidebar.module.css`, `src/components/courses/courses-filter-bar.js`, `src/components/courses/courses-filter-bar.module.css`, `src/components/courses/courses-section.js`, `src/components/courses/courses-section.module.css`, `src/components/courses/courses-mobile-carousel.js`, `src/components/courses/courses-mobile-carousel.module.css`, `src/data/courses-data.js`, `src/components/home/course-carousel.js`, `src/components/home/course-carousel.module.css`, `src/components/header-courses-menu.js`, `src/components/header-mobile-menu.js`
+- Nueva página de catálogo en `/cursos` según diseño Figma desktop y mobile, con sidebar de filtros, pills horizontales en móvil, breadcrumb, secciones por categoría y cards reutilizando el componente del home
+- Enlaces de navegación del header y del home actualizados para apuntar al catálogo
+
 # [0.6.2] - 2026-07-08
 
 ### Changed - Styles

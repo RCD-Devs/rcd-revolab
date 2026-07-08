@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
 import { courseCategories } from "@/data/courses-menu-data";
@@ -43,11 +44,26 @@ export default function HeaderCoursesMenu() {
           onTransitionEnd={handleTransitionEnd}
         >
           <ul className={styles.list}>
+            <li>
+              <Link
+                href="/cursos"
+                className={`${styles.item} ${styles.itemAll}`}
+                role="menuitem"
+                onClick={() => setIsOpen(false)}
+              >
+                Ver todos los cursos
+              </Link>
+            </li>
             {courseCategories.map((category) => (
               <li key={category.id}>
-                <button type="button" className={styles.item} role="menuitem">
+                <Link
+                  href={`/cursos?categoria=${category.id}`}
+                  className={styles.item}
+                  role="menuitem"
+                  onClick={() => setIsOpen(false)}
+                >
                   {category.label}
-                </button>
+                </Link>
               </li>
             ))}
           </ul>

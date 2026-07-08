@@ -11,6 +11,7 @@ const navItems = [
     id: "explorar",
     label: "Explorar Cursos",
     icon: "/icons/nav-explore.svg",
+    href: "/cursos",
     active: true,
   },
   { id: "aprendizajes", label: "Mis Aprendizajes", icon: "/icons/nav-learning.svg" },

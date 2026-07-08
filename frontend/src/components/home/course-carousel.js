@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import CourseCard from "./course-card";
 import styles from "./course-carousel.module.css";
 
@@ -98,7 +99,7 @@ export default function CourseCarousel({
           <h2 className={styles.title}>{title}</h2>
         </div>
         {linkLabel && (
-          <button type="button" className={styles.linkButton}>
+          <Link href="/cursos" className={styles.linkButton}>
             <span className={styles.linkDesktop}>{linkLabel}</span>
             <span className={styles.linkMobile}>{linkLabelMobile || "Ver todo"}</span>
             <Image
@@ -108,7 +109,7 @@ export default function CourseCarousel({
               height={16}
               className={styles.linkIconDesktop}
             />
-          </button>
+          </Link>
         )}
       </div>
 

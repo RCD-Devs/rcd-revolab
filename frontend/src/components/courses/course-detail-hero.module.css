@@ -1,0 +1,131 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--color-input-border);
+  background: #0a1118;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+}
+
+.backgroundImage {
+  object-fit: cover;
+  opacity: 0.2;
+}
+
+.backgroundOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    var(--color-secondary) 0%,
+    rgba(10, 23, 36, 0.92) 12%,
+    rgba(8, 19, 31, 0.84) 24%,
+    rgba(6, 15, 25, 0.72) 36%,
+    rgba(4, 11, 20, 0.58) 48%,
+    rgba(2, 5, 10, 0.42) 60%,
+    rgba(0, 1, 3, 0.24) 72%,
+    transparent 100%
+  );
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 48px 96px 32px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.badgePrimary,
+.badgeSecondary {
+  display: inline-flex;
+  align-items: center;
+  height: 25px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.badgePrimary {
+  border: 1px solid rgba(0, 229, 200, 0.3);
+  background: rgba(0, 229, 200, 0.2);
+  color: var(--color-primary);
+}
+
+.badgeSecondary {
+  border: 1px solid rgba(255, 107, 43, 0.3);
+  background: rgba(255, 107, 43, 0.2);
+  color: #ff6b2b;
+}
+
+.title {
+  margin: 0;
+  max-width: 900px;
+  color: var(--color-white);
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0.3516px;
+}
+
+.instructor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.instructorPhoto {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.instructorInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.instructorName {
+  margin: 0;
+  color: var(--color-white);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+}
+
+.instructorRole {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 24px 16px 20px;
+  }
+
+  .title {
+    font-size: 25px;
+    line-height: 29px;
+  }
+}

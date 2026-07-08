@@ -1,0 +1,60 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.track {
+  --course-card-height: auto;
+  --course-image-height: 134.4px;
+  display: flex;
+  gap: 16px;
+  margin-right: -16px;
+  padding-right: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.track > * {
+  scroll-snap-align: start;
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition:
+    width 0.24s ease,
+    background-color 0.24s ease;
+}
+
+.dotActive {
+  width: 80px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+@media (min-width: 769px) {
+  .wrap {
+    display: none;
+  }
+}

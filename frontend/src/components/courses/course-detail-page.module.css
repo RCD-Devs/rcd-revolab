@@ -1,0 +1,46 @@
+.page {
+  background: var(--color-secondary);
+  color: var(--color-white);
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.main {
+  min-width: 0;
+}
+
+.mobilePanel {
+  display: block;
+}
+
+.desktopPanel {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 48px;
+    padding: 48px 96px 80px;
+  }
+
+  .main {
+    flex: 1;
+  }
+
+  .mobilePanel {
+    display: none;
+  }
+
+  .desktopPanel {
+    display: block;
+  }
+}

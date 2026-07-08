@@ -1,0 +1,111 @@
+.wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+}
+
+.profileName {
+  color: var(--color-white);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.trigger:hover .profileName {
+  color: var(--color-primary);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #00e5c8 0%, #00c6e9 100%);
+  flex-shrink: 0;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  z-index: 110;
+  width: 199px;
+  padding: 8px;
+  border: 0.582px solid var(--color-input-border);
+  border-radius: 10px;
+  background: #1a2b3c;
+  box-shadow:
+    0 10px 7.5px rgba(0, 0, 0, 0.1),
+    0 4px 3px rgba(0, 0, 0, 0.1);
+}
+
+.menu::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 12px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--color-white);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.18s ease;
+}
+
+.item:hover,
+.item:focus-visible {
+  background: rgba(0, 229, 200, 0.08);
+  outline: none;
+}
+
+.item:active {
+  background: rgba(0, 229, 200, 0.12);
+}
+
+.itemDanger {
+  color: var(--color-error);
+}
+
+.itemDanger:hover,
+.itemDanger:focus-visible {
+  background: rgba(255, 77, 109, 0.08);
+}
+
+.itemDanger:active {
+  background: rgba(255, 77, 109, 0.12);
+}
+
+.divider {
+  display: block;
+  height: 1px;
+  margin: 4px 0;
+  background: var(--color-input-border);
+}

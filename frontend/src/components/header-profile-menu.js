@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useDropdownBehavior } from "@/hooks/use-dropdown-behavior";
 import panelStyles from "./dropdown-panel.module.css";
 import styles from "./header-profile-menu.module.css";
 
 const menuItems = [
-  { id: "profile", label: "Mi Perfil", icon: "/icons/profile-user.svg", href: "#" },
-  { id: "courses", label: "Mis Cursos", icon: "/icons/profile-courses.svg", href: "#" },
+  { id: "profile", label: "Mi Perfil", icon: "/icons/profile-user.svg", href: "/perfil" },
 ];
 
 export default function HeaderProfileMenu() {
@@ -44,7 +44,7 @@ export default function HeaderProfileMenu() {
           onTransitionEnd={handleTransitionEnd}
         >
           {menuItems.map((item) => (
-            <a
+            <Link
               key={item.id}
               href={item.href}
               className={styles.item}
@@ -53,7 +53,7 @@ export default function HeaderProfileMenu() {
             >
               <Image src={item.icon} alt="" width={16} height={16} />
               <span>{item.label}</span>
-            </a>
+            </Link>
           ))}
 
           <span className={styles.divider} aria-hidden="true" />

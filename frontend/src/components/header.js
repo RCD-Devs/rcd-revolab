@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import SiteLogo from "@/components/site-logo";
 import HeaderSearch from "@/components/header-search";
 import HeaderCoursesMenu from "@/components/header-courses-menu";
@@ -7,8 +10,17 @@ import HeaderMobileMenu from "@/components/header-mobile-menu";
 import styles from "./header.module.css";
 
 export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.inner}>
         <SiteLogo />
 

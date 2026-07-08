@@ -15,18 +15,9 @@
 .logoImage {
   display: block;
   width: auto;
-  height: auto;
+  height: 44px;
   object-fit: contain;
   background: transparent;
-}
-
-.logoImageDesktop {
-  width: 239.846px;
-}
-
-.logoImageMobile {
-  display: none;
-  width: 139.266px;
 }
 
 @media (max-width: 768px) {
@@ -34,11 +25,7 @@
     height: 36px;
   }
 
-  .logoImageDesktop {
-    display: none;
-  }
-
-  .logoImageMobile {
-    display: block;
+  .logoImage {
+    height: 34px;
   }
 }

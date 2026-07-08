@@ -1,0 +1,46 @@
+.page {
+  position: relative;
+  overflow-x: clip;
+  background: #0a1118;
+  color: var(--color-white);
+}
+
+.glowTeal {
+  position: absolute;
+  top: 173px;
+  left: -144px;
+  width: 720px;
+  height: 746px;
+  border-radius: 50%;
+  background: rgba(0, 229, 200, 0.2);
+  filter: blur(150px);
+  pointer-events: none;
+}
+
+.glowBlue {
+  position: absolute;
+  top: 454px;
+  right: -161px;
+  width: 579px;
+  height: 907px;
+  border-radius: 50%;
+  background: rgba(43, 127, 255, 0.1);
+  filter: blur(150px);
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .glowTeal {
+    top: 100px;
+    left: -100px;
+    width: 400px;
+    height: 400px;
+  }
+
+  .glowBlue {
+    top: 300px;
+    right: -140px;
+    width: 300px;
+    height: 400px;
+  }
+}

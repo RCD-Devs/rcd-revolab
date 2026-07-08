@@ -15,6 +15,13 @@
   margin: 0 auto;
   padding: 24px 96px;
   min-height: 87px;
+  transition: padding 0.25s ease, min-height 0.25s ease;
+}
+
+.scrolled .inner {
+  padding-top: 10.08px;
+  padding-bottom: 10.08px;
+  min-height: 36.54px;
 }
 
 .end {
@@ -56,6 +63,12 @@
     padding: 16px;
     min-height: 68px;
     border-bottom: 0.762px solid #1f2937;
+  }
+
+  .scrolled .inner {
+    padding-top: 6.72px;
+    padding-bottom: 6.72px;
+    min-height: 28.56px;
   }
 
   .desktopActions {

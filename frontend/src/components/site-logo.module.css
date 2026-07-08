@@ -2,13 +2,13 @@
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
-  height: 36px;
+  height: 32px;
 }
 
 .logoImage {
   display: block;
-  width: 139.266px;
-  height: auto;
+  width: auto;
+  height: 32px;
   object-fit: contain;
   background: transparent;
 }

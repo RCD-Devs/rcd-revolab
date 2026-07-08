@@ -133,7 +133,7 @@ export default function HomeHero({ slides }) {
           aria-label="Slide anterior"
           onClick={goPrev}
         >
-          <Image src="/icons/chevron-left.svg" alt="" width={20} height={20} />
+          <span className={`${styles.arrowIcon} ${styles.arrowIconLeft}`} aria-hidden="true" />
         </button>
 
         <div
@@ -166,7 +166,7 @@ export default function HomeHero({ slides }) {
           aria-label="Slide siguiente"
           onClick={goNext}
         >
-          <Image src="/icons/chevron-right.svg" alt="" width={20} height={20} />
+          <span className={`${styles.arrowIcon} ${styles.arrowIconRight}`} aria-hidden="true" />
         </button>
       </div>
 

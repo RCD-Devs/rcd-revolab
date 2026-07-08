@@ -30,12 +30,4 @@ async function processLogo(input, output, targetWidth) {
   console.log(`${output}: ${meta.width}x${meta.height}, alpha=${meta.hasAlpha}`);
 }
 
-await processLogo(
-  "public/images/revolab-logo-source.png",
-  "public/images/revolab-logo-desktop.webp"
-);
-await processLogo(
-  "public/images/revolab-logo-source.png",
-  "public/images/revolab-logo-mobile.webp",
-  139
-);
+await processLogo("public/images/revolab-logo-source.png", "public/images/revolab-logo.webp");

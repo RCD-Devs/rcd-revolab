@@ -1,0 +1,86 @@
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-secondary);
+  border-bottom: 1px solid transparent;
+}
+
+.scrolled {
+  border-bottom-color: #1f2937;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 96px;
+  min-height: 92px;
+  transition: padding 0.25s ease, min-height 0.25s ease;
+}
+
+.scrolled .inner {
+  padding-top: 10.08px;
+  padding-bottom: 10.08px;
+  min-height: 36.54px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+
+.logoImage {
+  width: auto;
+  height: 32px;
+}
+
+.loginButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 24px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.3125px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.loginButton:hover {
+  background: var(--color-primary-hover);
+}
+
+@media (max-width: 768px) {
+  .inner {
+    padding: 16px;
+    min-height: 68px;
+  }
+
+  .scrolled .inner {
+    padding-top: 6.72px;
+    padding-bottom: 6.72px;
+    min-height: 28.56px;
+  }
+
+  .logoImage {
+    height: 26px;
+  }
+
+  .loginButton {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.4629px;
+  }
+}

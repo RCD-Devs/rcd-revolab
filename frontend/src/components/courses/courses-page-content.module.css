@@ -1,0 +1,43 @@
+.page {
+  background: var(--color-secondary);
+  color: var(--color-white);
+}
+
+.layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 48px 80px;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+  padding: 32px 0 0 40px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    gap: 0;
+    padding: 24px 16px 64px;
+  }
+
+  .main {
+    gap: 16px;
+  }
+
+  .content {
+    gap: 48px;
+  }
+}

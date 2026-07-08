@@ -1,0 +1,220 @@
+.root {
+  display: none;
+  flex-shrink: 0;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.overlayVisible {
+  opacity: 1;
+}
+
+.drawer {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  max-width: 85vw;
+  height: 100%;
+  border-right: 1px solid var(--color-home-surface);
+  background: #0b1521;
+  box-shadow: 0 25px 25px rgba(0, 0, 0, 0.25);
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow-y: auto;
+}
+
+.drawerVisible {
+  transform: translateX(0);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 20px 21px;
+  border-bottom: 1px solid var(--color-home-surface);
+  background: rgba(18, 30, 44, 0.5);
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.logoRevo,
+.logoLab {
+  color: var(--color-white);
+  font-family: var(--font-family-base);
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: -0.9492px;
+  white-space: nowrap;
+}
+
+.logoRevo {
+  font-weight: 700;
+}
+
+.logoLab {
+  font-weight: 500;
+}
+
+.logoFlask {
+  display: block;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #00e5c8 0%, #00c6e9 100%);
+}
+
+.profileText {
+  display: flex;
+  flex-direction: column;
+}
+
+.profileName {
+  color: var(--color-white);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+}
+
+.profileRole {
+  color: var(--color-text-muted);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+}
+
+.sectionTitle {
+  margin: 0;
+  padding: 0 12px;
+  color: #4a5b6c;
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+  padding: 12px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: var(--color-text-muted);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.sectionTitle + .item {
+  margin-top: 8px;
+}
+
+.item:hover {
+  background: rgba(0, 229, 200, 0.06);
+}
+
+.itemActive,
+.itemActive:hover {
+  background: rgba(0, 229, 200, 0.1);
+  border-color: rgba(0, 229, 200, 0.2);
+  color: var(--color-primary);
+}
+
+.itemDanger {
+  color: #ff6467;
+}
+
+.itemDanger:hover {
+  background: rgba(255, 100, 103, 0.08);
+}
+
+.divider {
+  display: block;
+  height: 1px;
+  margin: 16px 0;
+  background: var(--color-home-surface);
+}
+
+@media (max-width: 768px) {
+  .root {
+    display: block;
+  }
+}

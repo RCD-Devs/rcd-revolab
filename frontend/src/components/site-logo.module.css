@@ -1,0 +1,14 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 36px;
+}
+
+.logoImage {
+  display: block;
+  width: 139.266px;
+  height: auto;
+  object-fit: contain;
+  background: transparent;
+}

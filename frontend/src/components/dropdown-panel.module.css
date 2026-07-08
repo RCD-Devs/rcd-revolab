@@ -1,0 +1,48 @@
+.panel {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  transform-origin: top left;
+  transition:
+    opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.panelVisible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.panelAlignCenter {
+  transform-origin: top center;
+}
+
+.panelCenterX {
+  left: 50%;
+  transform-origin: top center;
+  transform: translateX(-50%) translateY(-8px) scale(0.98);
+}
+
+.panelCenterXVisible {
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transform: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .panelVisible {
+    transform: none;
+  }
+
+  .panelCenterX {
+    transform: translateX(-50%);
+  }
+
+  .panelCenterXVisible {
+    transform: translateX(-50%);
+  }
+}

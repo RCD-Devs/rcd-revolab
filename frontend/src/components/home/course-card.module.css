@@ -1,0 +1,216 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: var(--course-card-width, 347px);
+  height: var(--course-card-height, 404px);
+  border: 2px solid var(--color-input-border);
+  border-radius: 16px;
+  background: #1a2b3c;
+  overflow: hidden;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.compact {
+  width: var(--course-card-width, 293px);
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  height: var(--course-image-height, 193.867px);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.category {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(13, 27, 42, 0.8);
+  color: var(--color-white);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  white-space: nowrap;
+  transition: border-color 0.2s ease;
+}
+
+.newBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #00e5c8 0%, #00c6e9 100%);
+  color: var(--color-white);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  box-shadow:
+    0 10px 7.5px rgba(0, 0, 0, 0.1),
+    0 4px 3px rgba(0, 0, 0, 0.1);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  height: 103px;
+  padding: 11px 20px 0;
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  width: 100%;
+  color: var(--color-white);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.4395px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.description {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  height: 27px;
+  padding: 0 22px 25px;
+  border-bottom: 1px solid rgba(36, 52, 71, 0.6);
+  flex-shrink: 0;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 212px;
+  height: 38px;
+  margin-top: 8px;
+  margin-bottom: var(--course-button-margin-bottom, 0);
+  border: 1px solid var(--color-primary);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-primary);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.buttonIconFilled {
+  display: none;
+}
+
+.card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-button-hover);
+}
+
+.card:hover .category {
+  border-color: var(--color-primary);
+}
+
+.card:hover .title {
+  color: var(--color-primary);
+}
+
+.card:hover .button {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.card:hover .buttonIconOutline {
+  display: none;
+}
+
+.card:hover .buttonIconFilled {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .card,
+  .compact {
+    width: 280px;
+    height: var(--course-card-height, 415.725px);
+  }
+
+  .imageWrap {
+    height: var(--course-image-height, 192px);
+  }
+
+  .body {
+    height: auto;
+    min-height: 103px;
+    padding: 20px 20px 0;
+  }
+
+  .meta {
+    padding: 0 20px 16.762px;
+  }
+
+  .button {
+    width: calc(100% - 40px);
+    height: 41.501px;
+    border-radius: 14px;
+    margin-top: 16px;
+    margin-bottom: 20px;
+  }
+}

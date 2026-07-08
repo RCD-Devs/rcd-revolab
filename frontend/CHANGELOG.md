@@ -1,3 +1,28 @@
+# [0.21.1] - 2026-07-08
+
+### Changed - Quiz
+- **Archivos modificados**: `src/components/courses/course-quiz-page.js`, `src/components/courses/course-quiz-page.module.css`, `src/components/courses/course-quiz-panel.js`, `src/components/courses/course-quiz.module.css`, `src/components/courses/course-quiz-question.js`, `src/components/courses/course-lesson-quiz-cta.js`, `src/components/courses/course-lesson-quiz-cta.module.css`, `src/components/courses/course-lesson-page.js`, `src/data/course-quiz-data.js`
+- Se unifican estilos del quiz en un único módulo CSS compartido y se consolidan intro y resultados en `course-quiz-panel`
+- El CTA de lección reutiliza textos y estilos del quiz desde `getLessonQuiz`
+
+### Fixed - Quiz
+- **Archivos modificados**: `src/components/courses/course-quiz-intro.js`, `src/components/courses/course-quiz-intro.module.css`, `src/components/courses/course-quiz-result.js`, `src/components/courses/course-quiz-result.module.css`, `src/components/courses/course-quiz-question.module.css`, `public/icons/arrow-right-white-bold.svg`
+- Se eliminan componentes, CSS duplicados y el icono `arrow-right-white-bold.svg` que ya no se referenciaban
+
+# [0.21.0] - 2026-07-08
+
+### Added - Lección
+- **Archivos modificados**: `src/components/courses/course-lesson-page.js`, `src/components/courses/course-lesson-quiz-cta.js`, `src/components/courses/course-lesson-quiz-cta.module.css`, `src/data/course-quiz-data.js`
+- Se añade un bloque de acceso al quiz al final del contenido de la lección con enlace directo a "Comenzar Quiz"
+- El CTA solo se muestra en cursos que tienen quiz disponible
+
+# [0.20.0] - 2026-07-08
+
+### Added - Quiz
+- **Archivos modificados**: `src/app/(site)/cursos/[id]/leccion/[lessonId]/quiz/page.jsx`, `src/components/courses/course-quiz-page.js`, `src/components/courses/course-quiz-page.module.css`, `src/components/courses/course-quiz-intro.js`, `src/components/courses/course-quiz-intro.module.css`, `src/components/courses/course-quiz-question.js`, `src/components/courses/course-quiz-question.module.css`, `src/components/courses/course-quiz-result.js`, `src/components/courses/course-quiz-result.module.css`, `src/data/course-quiz-data.js`, `public/icons/quiz-brain.svg`, `public/icons/quiz-success.svg`, `public/icons/quiz-failure.svg`, `public/icons/arrow-right-white-bold.svg`
+- Se implementa el flujo completo del quiz de lección con pantallas de inicio, preguntas, éxito y rechazo según el diseño de Figma
+- Se añaden datos mock de tres preguntas para el curso Growth Hacking y la navegación inferior reutiliza el componente de lección
+
 # [0.19.1] - 2026-07-08
 
 ### Changed - Limpieza

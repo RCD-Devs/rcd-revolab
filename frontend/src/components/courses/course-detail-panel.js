@@ -11,6 +11,7 @@ const stats = [
 
 export default function CourseDetailPanel({ course }) {
   const lessonUrl = `/cursos/${course.id}/leccion/1`;
+  const examUrl = `/cursos/${course.id}/examen`;
 
   return (
     <aside className={styles.panel}>
@@ -27,6 +28,11 @@ export default function CourseDetailPanel({ course }) {
         <Link href={lessonUrl} className={styles.ctaButton}>
           Comenzar curso
           <Image src="/icons/course-play.svg" alt="" width={16} height={16} />
+        </Link>
+
+        <Link href={examUrl} className={styles.examCtaButton}>
+          <Image src="/icons/exam-medal.svg" alt="" width={20} height={20} />
+          Realizar examen
         </Link>
 
         <ul className={styles.stats}>
@@ -47,9 +53,6 @@ export default function CourseDetailPanel({ course }) {
               <p className={styles.certificateLabel}>Certificado</p>
               <p className={styles.certificateName}>{course.certificateName}</p>
             </div>
-          </div>
-          <div className={styles.certificateLock}>
-            <Image src="/icons/course-lock.svg" alt="" width={24} height={24} />
           </div>
         </div>
       </div>

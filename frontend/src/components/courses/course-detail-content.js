@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import CourseModuleCta from "@/components/courses/course-module-cta";
+import ctaStyles from "@/components/courses/course-module-cta.module.css";
 import { courseDetailTabs } from "@/data/course-detail-data";
+import { getCourseExam } from "@/data/course-exam-data";
 import styles from "./course-detail-content.module.css";
 
 export default function CourseDetailContent({ course }) {
   const [activeTab, setActiveTab] = useState(courseDetailTabs[0]);
+  const { exam } = getCourseExam(course.id);
 
   return (
     <div className={styles.content}>
@@ -68,7 +72,21 @@ export default function CourseDetailContent({ course }) {
         </div>
       )}
 
-      {activeTab !== "Descripción" && (
+      {activeTab === "Quiz" && (
+        <div className={styles.panel} role="tabpanel">
+          <CourseModuleCta
+            ariaLabel="Examen final del curso"
+            iconSrc="/icons/exam-medal.svg"
+            iconWrapClassName={ctaStyles.iconWrapExam}
+            title={exam.title}
+            description={exam.description}
+            href={`/cursos/${course.id}/examen`}
+            ctaLabel="Realizar examen"
+          />
+        </div>
+      )}
+
+      {activeTab !== "Descripción" && activeTab !== "Quiz" && (
         <div className={styles.placeholder} role="tabpanel">
           <p>Contenido de {activeTab} próximamente.</p>
         </div>

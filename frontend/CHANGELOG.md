@@ -1,3 +1,9 @@
+# [0.22.8] - 2026-07-08
+
+### Fixed - Header
+- **Archivos modificados**: `src/components/header.module.css`
+- Los desplegables del header vuelven a mostrarse sobre el contenido al quitar el recorte por `overflow: hidden` y elevar el `z-index` del contenedor sticky
+
 # [0.22.7] - 2026-07-08
 
 ### Changed - Examen

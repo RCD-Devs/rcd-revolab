@@ -1,3 +1,16 @@
+# [0.23.1] - 2026-07-09
+
+### Fixed - Instructor
+- **Archivos modificados**: `src/components/instructor/instructor-course-editor-content.js`, `src/data/instructor-data.js`
+- El sidebar navega correctamente a "Contenido del Curso" (con módulos iniciales y estado de dos pantallas al agregar otro) y a "Reglas y Publicación" como pasos independientes con su propio título de vista
+
+# [0.23.0] - 2026-07-09
+
+### Added - Instructor
+- **Archivos modificados**: `src/app/(site)/instructor/page.jsx`, `src/app/(site)/instructor/cursos/nuevo/page.jsx`, `src/app/(site)/instructor/cursos/[id]/editar/page.jsx`, `src/components/instructor/instructor-page.js`, `src/components/instructor/instructor-page-content.js`, `src/components/instructor/instructor-page.module.css`, `src/components/instructor/instructor-course-editor-page.js`, `src/components/instructor/instructor-course-editor-content.js`, `src/components/instructor/instructor-course-editor.module.css`, `src/data/instructor-data.js`, `public/icons/instructor-*.svg`
+- Se implementa el panel de instructor según Figma con listado de cursos, tarjeta de rutas de aprendizaje y acceso a crear o editar cursos
+- Se añade el flujo de carga de cursos con sidebar de pasos (Información Básica, Contenido y Módulos, Reglas y Publicación), formularios, módulos con lecciones y desplegable de requisitos de inscripción
+
 # [0.22.9] - 2026-07-09
 
 ### Fixed - Introducción

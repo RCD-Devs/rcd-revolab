@@ -123,8 +123,9 @@
 }
 
 .viewAll:hover {
-  border-color: var(--color-primary);
-  background: rgba(0, 229, 200, 0.08);
+  background: var(--btn-outline-hover-bg);
+  border-color: var(--btn-outline-hover-border);
+  color: var(--btn-outline-hover-color);
 }
 
 @media (max-width: 768px) {

@@ -20,7 +20,6 @@ export const instructorCourses = [
     actionLabel: "Editar",
     actionType: "edit",
     coverImage: "/images/home/course-growth-hacking.webp",
-    hasCover: true,
   },
   {
     id: "ia-generativa",
@@ -30,7 +29,6 @@ export const instructorCourses = [
     actionLabel: "Ver estado",
     actionType: "status",
     coverImage: null,
-    hasCover: false,
   },
 ];
 
@@ -115,7 +113,12 @@ export const defaultCourseDraft = {
   visibility: "public",
   enrollmentRequirement: "none",
   autoCertificate: false,
-  modules: [instructorDefaultModule],
+  modules: [
+    {
+      ...instructorDefaultModule,
+      lessons: instructorDefaultModule.lessons.map((lesson) => ({ ...lesson })),
+    },
+  ],
 };
 
 export const instructorCourseDrafts = {
@@ -128,7 +131,13 @@ export const instructorCourseDrafts = {
     visibility: "public",
     enrollmentRequirement: "none",
     autoCertificate: true,
-    modules: [instructorDefaultModule, { ...instructorEmptyModule }],
+    modules: [
+      {
+        ...instructorDefaultModule,
+        lessons: instructorDefaultModule.lessons.map((lesson) => ({ ...lesson })),
+      },
+      { ...instructorEmptyModule, lessons: [] },
+    ],
   },
   nuevo: {
     ...defaultCourseDraft,

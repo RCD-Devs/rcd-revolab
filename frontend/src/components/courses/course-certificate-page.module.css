@@ -272,12 +272,14 @@
 }
 
 .downloadButton:hover {
-  border-color: rgba(255, 255, 255, 0.4);
+  background: var(--btn-outline-hover-bg);
+  border-color: var(--btn-outline-hover-border);
+  color: var(--btn-outline-hover-color);
 }
 
 .linkedinButton {
-  border: none;
-  background: #0a66c2;
+  border: 1px solid var(--btn-linkedin);
+  background: var(--btn-linkedin);
   box-shadow:
     0 10px 7.5px rgba(0, 0, 0, 0.1),
     0 4px 3px rgba(0, 0, 0, 0.1);
@@ -285,7 +287,9 @@
 }
 
 .linkedinButton:hover {
-  background: #0958a8;
+  background: var(--btn-linkedin-hover-bg);
+  border-color: var(--btn-linkedin-hover-border);
+  color: var(--btn-linkedin-hover-color);
 }
 
 @media (max-width: 768px) {

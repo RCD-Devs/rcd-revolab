@@ -8,11 +8,27 @@ import {
   instructorAreas,
   instructorCourseSteps,
   instructorDefaultModule,
+  instructorEmptyModule,
   instructorEnrollmentOptions,
   instructorLessonTypes,
   instructorVisibilityOptions,
 } from "@/data/instructor-data";
 import styles from "./instructor-course-editor.module.css";
+
+function cloneDefaultModule() {
+  return {
+    ...instructorDefaultModule,
+    lessons: instructorDefaultModule.lessons.map((lesson) => ({ ...lesson })),
+  };
+}
+
+function createEmptyModule() {
+  return {
+    ...instructorEmptyModule,
+    id: `module-${Date.now()}`,
+    lessons: [],
+  };
+}
 
 function StepBasic({ draft, onChange }) {
   return (
@@ -310,7 +326,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
 
         return {
           ...current,
-          modules: [{ ...instructorDefaultModule }],
+          modules: [cloneDefaultModule()],
         };
       });
     }
@@ -319,14 +335,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
   const handleAddModule = () => {
     setDraft((current) => ({
       ...current,
-      modules: [
-        ...current.modules,
-        {
-          id: `module-${Date.now()}`,
-          title: "Nuevo Módulo",
-          lessons: [],
-        },
-      ],
+      modules: [...current.modules, createEmptyModule()],
     }));
     setIsDirty(true);
   };

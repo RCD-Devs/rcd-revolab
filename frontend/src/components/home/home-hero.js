@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./home-hero.module.css";
 
 const SWIPE_THRESHOLD = 40;
@@ -82,10 +83,10 @@ export default function HomeHero({ slides }) {
           <div className={styles.textBlock}>
             <h1 className={styles.title}>{slide.title}</h1>
             <p className={styles.description}>{slide.description}</p>
-            <button type="button" className={styles.ctaButton}>
+            <Link href={`/cursos/${slide.courseId}`} className={styles.ctaButton}>
               Realizar curso
               <span className={styles.ctaIcon} aria-hidden="true" />
-            </button>
+            </Link>
           </div>
 
           <div className={styles.instructorBlock}>

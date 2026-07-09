@@ -1,9 +1,10 @@
 import CourseLessonPlayer from "@/components/courses/course-lesson-player";
 import CourseLessonSidebar from "@/components/courses/course-lesson-sidebar";
 import CourseLessonBody from "@/components/courses/course-lesson-body";
-import CourseLessonQuizCta from "@/components/courses/course-lesson-quiz-cta";
+import CourseModuleCta from "@/components/courses/course-module-cta";
+import ctaStyles from "@/components/courses/course-module-cta.module.css";
 import CourseLessonNav from "@/components/courses/course-lesson-nav";
-import { getLessonQuiz } from "@/data/course-quiz-data";
+import { getLessonQuiz, getQuizPath } from "@/data/course-quiz-data";
 import styles from "./course-lesson-page.module.css";
 
 export default function CourseLessonPage({ lessonData }) {
@@ -37,10 +38,15 @@ export default function CourseLessonPage({ lessonData }) {
             <CourseLessonBody transcript={transcript} />
 
             {quiz && (
-              <CourseLessonQuizCta
-                courseId={course.id}
-                lessonId={lesson.id}
-                quiz={quiz}
+              <CourseModuleCta
+                ariaLabel="Quiz de lección"
+                iconSrc="/icons/quiz-brain.svg"
+                iconWrapClassName={ctaStyles.iconWrapQuiz}
+                title={quiz.title}
+                description={quiz.description}
+                href={getQuizPath(course.id, lesson.id)}
+                ctaLabel="Comenzar Quiz"
+                inline
               />
             )}
           </div>

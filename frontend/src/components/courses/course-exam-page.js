@@ -7,7 +7,7 @@ import CourseExamPanel from "./course-exam-panel";
 import CourseExamQuestion from "./course-exam-question";
 import CourseExamNav from "./course-exam-nav";
 import { calculateExamScore } from "@/data/course-exam-data";
-import pageStyles from "./course-exam-page.module.css";
+import pageStyles from "./course-assessment-page.module.css";
 import styles from "./course-exam.module.css";
 
 export default function CourseExamPage({ examData }) {

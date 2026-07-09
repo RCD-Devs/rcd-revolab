@@ -136,14 +136,20 @@
   letter-spacing: -0.3125px;
   color: var(--color-secondary);
   background-color: var(--color-primary);
-  border: none;
+  border: 1px solid transparent;
   border-radius: var(--login-radius-input);
   cursor: pointer;
-  transition: background-color 150ms ease, box-shadow 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
 }
 
 .submit:hover:not(:disabled) {
-  background-color: var(--color-primary-hover);
+  background-color: var(--btn-primary-hover-bg);
+  border-color: var(--btn-primary-hover-border);
+  color: var(--btn-primary-hover-color);
   box-shadow: var(--shadow-button-hover);
 }
 

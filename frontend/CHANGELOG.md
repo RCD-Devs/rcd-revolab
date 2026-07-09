@@ -1,3 +1,9 @@
+# [0.22.9] - 2026-07-09
+
+### Fixed - Introducción
+- **Archivos modificados**: `src/components/intro/intro-hero.module.css`
+- Se añade espacio inferior al hero entre el botón "Explorar Cursos" y la sección de beneficios, alineándolo con el diseño de referencia
+
 # [0.22.8] - 2026-07-08
 
 ### Fixed - Header

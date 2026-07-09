@@ -1,4 +1,4 @@
-import InstructorCourseEditorPage from "@/components/instructor/instructor-course-editor-page";
+import InstructorCourseEditorContent from "@/components/instructor/instructor-course-editor-content";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -12,5 +12,5 @@ export async function generateMetadata({ params }) {
 export default async function EditInstructorCourseRoute({ params }) {
   const { id } = await params;
 
-  return <InstructorCourseEditorPage courseId={id} />;
+  return <InstructorCourseEditorContent courseId={id} />;
 }

@@ -11,20 +11,39 @@ import {
 } from "@/data/instructor-data";
 import styles from "./instructor-page.module.css";
 
+function CourseAction({ course }) {
+  if (course.actionType === "edit") {
+    return (
+      <Link
+        href={`/instructor/cursos/${course.id}/editar`}
+        className={styles.courseAction}
+      >
+        <Image src="/icons/instructor-edit.svg" alt="" width={12} height={12} />
+        {course.actionLabel}
+      </Link>
+    );
+  }
+
+  return (
+    <button type="button" className={styles.courseAction}>
+      {course.actionLabel}
+    </button>
+  );
+}
+
 function CourseCard({ course }) {
   const status = getStatusConfig(course.status);
+  const hasCover = Boolean(course.coverImage);
 
   return (
     <article className={styles.courseCard}>
-      <div
-        className={`${styles.courseCover} ${course.hasCover ? "" : styles.courseCoverEmpty}`}
-      >
-        {course.hasCover ? (
+      <div className={`${styles.courseCover} ${hasCover ? "" : styles.courseCoverEmpty}`}>
+        {hasCover ? (
           <Image
             src={course.coverImage}
             alt=""
-            width={128}
-            height={80}
+            fill
+            sizes="(min-width: 769px) 128px, 100vw"
             className={styles.courseCoverImage}
           />
         ) : (
@@ -42,68 +61,7 @@ function CourseCard({ course }) {
         </div>
 
         <p className={styles.courseStats}>{course.stats}</p>
-
-        {course.actionType === "edit" ? (
-          <Link
-            href={`/instructor/cursos/${course.id}/editar`}
-            className={styles.courseAction}
-          >
-            <Image src="/icons/instructor-edit.svg" alt="" width={12} height={12} />
-            {course.actionLabel}
-          </Link>
-        ) : (
-          <button type="button" className={styles.courseAction}>
-            {course.actionLabel}
-          </button>
-        )}
-      </div>
-    </article>
-  );
-}
-
-function MobileCourseCard({ course }) {
-  const status = getStatusConfig(course.status);
-
-  return (
-    <article className={styles.mobileCourseCard}>
-      <div
-        className={`${styles.mobileCourseCover} ${course.hasCover ? "" : styles.courseCoverEmpty}`}
-      >
-        {course.hasCover ? (
-          <Image
-            src={course.coverImage}
-            alt=""
-            fill
-            className={styles.mobileCourseCoverImage}
-          />
-        ) : (
-          <span className={styles.courseCoverPlaceholder}>Sin portada</span>
-        )}
-      </div>
-
-      <div className={styles.mobileCourseBody}>
-        <h3 className={styles.mobileCourseTitle}>{course.title}</h3>
-
-        <span className={`${styles.mobileStatusBadge} ${styles[status.className]}`}>
-          <Image src={status.icon} alt="" width={12} height={12} />
-          {status.label}
-        </span>
-
-        <p className={styles.mobileCourseStats}>{course.stats}</p>
-
-        {course.actionType === "edit" ? (
-          <Link
-            href={`/instructor/cursos/${course.id}/editar`}
-            className={styles.mobileCourseAction}
-          >
-            <Image src="/icons/instructor-edit.svg" alt="" width={16} height={16} />
-            {course.actionLabel}
-          </Link>
-        ) : (
-          <button type="button" className={styles.mobileCourseAction}>
-            {course.actionLabel}
-          </button>
-        )}
+        <CourseAction course={course} />
       </div>
     </article>
   );
@@ -170,18 +128,9 @@ export default function InstructorPageContent() {
               {instructorPageMeta.coursesSectionTitle}
             </h2>
 
-            <div className={styles.desktopCourseList}>
+            <div className={styles.courseList}>
               {filteredCourses.map((course) => (
                 <CourseCard key={course.id} course={course} />
-              ))}
-              {filteredCourses.length === 0 && (
-                <p className={styles.emptyState}>No se encontraron cursos.</p>
-              )}
-            </div>
-
-            <div className={styles.mobileCourseList}>
-              {filteredCourses.map((course) => (
-                <MobileCourseCard key={course.id} course={course} />
               ))}
               {filteredCourses.length === 0 && (
                 <p className={styles.emptyState}>No se encontraron cursos.</p>

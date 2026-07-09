@@ -1,4 +1,9 @@
 import sharp from "sharp";
+import { access } from "fs/promises";
+import { constants } from "fs";
+
+const LOGO_SOURCE = "public/images/revolab-logo-source.png";
+const LOGO_OUTPUT = "public/images/revolab-logo.webp";
 
 async function processLogo(input, output, targetWidth) {
   const { data, info } = await sharp(input)
@@ -30,4 +35,11 @@ async function processLogo(input, output, targetWidth) {
   console.log(`${output}: ${meta.width}x${meta.height}, alpha=${meta.hasAlpha}`);
 }
 
-await processLogo("public/images/revolab-logo-source.png", "public/images/revolab-logo.webp");
+try {
+  await access(LOGO_SOURCE, constants.R_OK);
+} catch {
+  console.log(`omitido: ${LOGO_SOURCE} no encontrado, se conserva ${LOGO_OUTPUT}`);
+  process.exit(0);
+}
+
+await processLogo(LOGO_SOURCE, LOGO_OUTPUT);

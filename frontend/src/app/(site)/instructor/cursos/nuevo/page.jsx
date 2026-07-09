@@ -1,4 +1,4 @@
-import InstructorCourseEditorPage from "@/components/instructor/instructor-course-editor-page";
+import InstructorCourseEditorContent from "@/components/instructor/instructor-course-editor-content";
 
 export const metadata = {
   title: "Crear Curso",
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function NewInstructorCourseRoute() {
-  return <InstructorCourseEditorPage isNew />;
+  return <InstructorCourseEditorContent isNew />;
 }

@@ -1,4 +1,4 @@
-import InstructorPage from "@/components/instructor/instructor-page";
+import InstructorPageContent from "@/components/instructor/instructor-page-content";
 
 export const metadata = {
   title: "Panel de Instructor",
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function InstructorRoute() {
-  return <InstructorPage />;
+  return <InstructorPageContent />;
 }

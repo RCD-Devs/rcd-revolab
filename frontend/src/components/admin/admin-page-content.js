@@ -71,7 +71,7 @@ export default function AdminPageContent() {
           {adminStats.map((stat) => (
             <article
               key={stat.id}
-              className={`${styles.statCard} ${styles[`statCard_${stat.tone}`]}`}
+              className={styles.statCard}
             >
               <div className={`${styles.statIcon} ${styles[`statIcon_${stat.tone}`]}`}>
                 <Image src={stat.icon} alt="" width={24} height={24} />

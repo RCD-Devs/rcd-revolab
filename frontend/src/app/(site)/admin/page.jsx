@@ -1,4 +1,4 @@
-import AdminPage from "@/components/admin/admin-page";
+import AdminPageContent from "@/components/admin/admin-page-content";
 
 export const metadata = {
   title: "Panel de Administración",
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function AdminRoute() {
-  return <AdminPage />;
+  return <AdminPageContent />;
 }

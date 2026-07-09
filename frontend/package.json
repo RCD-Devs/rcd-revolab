@@ -10,12 +10,17 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "next dev",
+    "prebuild": "pnpm run optimize:assets",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "optimize:logo": "node scripts/process-logo.mjs",
+    "optimize:images": "node scripts/optimize-images.mjs",
+    "optimize:images:dry": "node scripts/optimize-images.mjs --dry-run",
+    "optimize:assets": "pnpm run optimize:logo && pnpm run optimize:images"
   },
   "dependencies": {
     "next": "16.2.9",

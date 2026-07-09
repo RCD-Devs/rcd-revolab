@@ -6,6 +6,30 @@
   --color-white: #ffffff;
   --color-black-2: #5c5c6f;
 
+  /* Botones — hover inverso del estado base */
+  --btn-primary-hover-bg: var(--color-secondary);
+  --btn-primary-hover-color: var(--color-primary);
+  --btn-primary-hover-border: var(--color-primary);
+  --btn-outline-hover-bg: var(--color-primary);
+  --btn-outline-hover-color: var(--color-secondary);
+  --btn-outline-hover-border: var(--color-primary);
+  --btn-light-hover-bg: var(--color-white);
+  --btn-light-hover-color: var(--color-secondary);
+  --btn-light-hover-border: var(--color-white);
+  --btn-dark-hover-bg: var(--color-primary);
+  --btn-dark-hover-color: var(--color-secondary);
+  --btn-dark-hover-border: var(--color-primary);
+  --btn-success-hover-bg: transparent;
+  --btn-success-hover-color: #00c950;
+  --btn-success-hover-border: #00c950;
+  --btn-danger-hover-bg: transparent;
+  --btn-danger-hover-color: #fb2c36;
+  --btn-danger-hover-border: #fb2c36;
+  --btn-linkedin: #0a66c2;
+  --btn-linkedin-hover-bg: var(--color-white);
+  --btn-linkedin-hover-color: #0a66c2;
+  --btn-linkedin-hover-border: #0a66c2;
+
   --color-card-bg: rgba(26, 43, 60, 0.8);
   --color-card-border: #243447;
   --color-input-border: #2d3f52;

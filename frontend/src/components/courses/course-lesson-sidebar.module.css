@@ -158,8 +158,12 @@
 }
 
 .exam[href]:hover {
-  border-color: var(--color-primary);
-  background: rgba(11, 11, 67, 0.9);
+  background: var(--btn-dark-hover-bg);
+  border-color: var(--btn-dark-hover-border);
+}
+
+.exam[href]:hover .examTitle {
+  color: var(--btn-dark-hover-color);
 }
 
 @media (min-width: 769px) {

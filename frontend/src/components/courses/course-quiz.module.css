@@ -73,14 +73,15 @@
   cursor: pointer;
   transition:
     background-color 0.2s ease,
-    border-color 0.2s ease;
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .ctaPrimary {
   min-width: 320px;
   height: 56px;
   padding: 0 24px;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 16px;
   background: var(--color-primary);
   box-shadow: 0 0 10px rgba(0, 229, 200, 0.3);
@@ -88,7 +89,9 @@
 }
 
 .ctaPrimary:hover {
-  background: var(--color-primary-hover);
+  background: var(--btn-primary-hover-bg);
+  border-color: var(--btn-primary-hover-border);
+  color: var(--btn-primary-hover-color);
 }
 
 .ctaPrimaryCompact {
@@ -102,6 +105,7 @@
   min-width: 320px;
   height: 56px;
   padding: 0 24px;
+  border: 1px solid #00c950;
   border-radius: 16px;
   background: #00c950;
   box-shadow: 0 0 10px rgba(0, 201, 80, 0.3);
@@ -110,7 +114,9 @@
 }
 
 .ctaSuccess:hover {
-  background: #00b347;
+  background: var(--btn-success-hover-bg);
+  border-color: var(--btn-success-hover-border);
+  color: var(--btn-success-hover-color);
 }
 
 .actions {
@@ -136,18 +142,22 @@
 }
 
 .ctaOutline:hover {
-  border-color: rgba(255, 255, 255, 0.4);
+  background: var(--btn-outline-hover-bg);
+  border-color: var(--btn-outline-hover-border);
+  color: var(--btn-outline-hover-color);
 }
 
 .ctaFailure {
-  border: none;
+  border: 1px solid #fb2c36;
   background: #fb2c36;
   box-shadow: 0 0 10px rgba(251, 44, 54, 0.3);
   color: var(--color-white);
 }
 
 .ctaFailure:hover {
-  background: #e0252e;
+  background: var(--btn-danger-hover-bg);
+  border-color: var(--btn-danger-hover-border);
+  color: var(--btn-danger-hover-color);
 }
 
 .backLink {

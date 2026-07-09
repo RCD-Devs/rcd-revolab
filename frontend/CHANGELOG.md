@@ -1,3 +1,69 @@
+# [0.24.4] - 2026-07-09
+
+### Changed - Home
+- **Archivos modificados**: `src/components/home/home-hero.js`, `src/components/home/home-hero.module.css`, `src/data/home-data.js`
+- Los botones "Realizar curso" del hero enlazan al detalle del curso correspondiente en cada banner
+
+# [0.24.3] - 2026-07-09
+
+### Changed - Refactor
+- **Archivos modificados**: `src/data/course-assessment-questions.js`, `src/data/course-exam-data.js`, `src/data/course-quiz-data.js`, `src/components/courses/course-exam-page.js`, `src/components/courses/course-quiz-page.js`, `src/components/courses/course-assessment-page.module.css`, `src/components/courses/course-detail-content.js`, `src/components/courses/course-lesson-page.js`
+- **Archivos eliminados**: `src/components/courses/course-lesson-quiz-cta.js`, `src/components/courses/course-exam-page.module.css`, `src/components/courses/course-quiz-page.module.css`
+- Se centralizan las preguntas compartidas de examen y quiz, el layout de páginas de evaluación y la ruta del quiz para reducir duplicación sin cambiar la UI
+
+# [0.24.2] - 2026-07-09
+
+### Changed - Home
+- **Archivos modificados**: `src/components/home/course-card.js`, `src/components/home/course-card.module.css`, `src/data/home-data.js`
+- Las cards de recomendados y nuevos cursos enlazan al detalle del curso correspondiente en el catálogo
+- Los datos del home reutilizan IDs reales del catálogo para evitar rutas inválidas
+
+# [0.24.1] - 2026-07-09
+
+### Changed - Estilos
+- **Archivos modificados**: `src/styles/tokens.css`, `src/components/courses/course-quiz.module.css`, `src/components/courses/course-exam.module.css`, `src/components/courses/course-detail-panel.module.css`, `src/components/courses/course-lesson-nav.module.css`, `src/components/courses/course-lesson-sidebar.module.css`, `src/components/courses/course-exam-nav.module.css`, `src/components/courses/course-certificate-page.module.css`, `src/components/courses/course-certificate-linkedin-modal.module.css`, `src/components/login/login-form.module.css`, `src/components/intro/intro-nav.module.css`, `src/components/intro/intro-featured-courses.module.css`, `src/components/instructor/instructor-page.module.css`, `src/components/instructor/instructor-course-editor.module.css`, `src/components/admin/admin-page.module.css`, `src/components/profile/profile-certificate-card.module.css`
+- Los hovers de botones usan el estado inverso (fondo/texto/borde) en toda la app, excepto carruseles y hero que se mantienen igual
+
+# [0.24.0] - 2026-07-09
+
+### Changed - Cursos
+- **Archivos modificados**: `src/data/course-quiz-data.js`, `src/components/courses/course-detail-content.js`
+- Todos los cursos del catálogo incluyen quiz de lección con preguntas por defecto y CTA hacia el módulo de quiz
+- Growth Hacking mantiene preguntas específicas del curso
+
+# [0.23.5] - 2026-07-09
+
+### Fixed - Cursos
+- **Archivos modificados**: `src/components/courses/course-detail-content.js`
+- La pestaña Quiz del detalle del curso muestra el CTA de quiz y enlaza al módulo de quiz en lugar del examen final
+
+# [0.23.4] - 2026-07-09
+
+### Changed - Scripts
+- **Archivos modificados**: `package.json`, `scripts/process-logo.mjs`
+- `prebuild` ejecuta `optimize:assets` automáticamente antes de `pnpm run build`
+- El procesado del logo se omite de forma segura si no existe el PNG fuente
+
+# [0.23.3] - 2026-07-09
+
+### Added - Scripts
+- **Archivos modificados**: `scripts/optimize-images.mjs`, `package.json`
+- Se añade script de optimización de imágenes raster en `public/images` con Sharp (redimensionado por tipo y recompresión WebP/PNG/JPEG)
+- Nuevos comandos: `optimize:images`, `optimize:images:dry` y `optimize:assets` (logo + imágenes)
+
+### Changed - Assets
+- **Archivos modificados**: `public/images/home/*.webp`, `public/images/profile/*.webp`
+- Se optimizan las imágenes raster existentes con el nuevo script, reduciendo ~2.18 MB de peso total
+
+# [0.23.2] - 2026-07-09
+
+### Changed - Admin / Instructor
+- **Archivos modificados**: `src/app/(site)/admin/page.jsx`, `src/app/(site)/instructor/page.jsx`, `src/app/(site)/instructor/cursos/nuevo/page.jsx`, `src/app/(site)/instructor/cursos/[id]/editar/page.jsx`, `src/components/admin/admin-page-content.js`, `src/components/admin/admin-page.module.css`, `src/components/instructor/instructor-page-content.js`, `src/components/instructor/instructor-page.module.css`, `src/components/instructor/instructor-course-editor-content.js`, `src/data/instructor-data.js`
+- **Archivos eliminados**: `src/components/admin/admin-page.js`, `src/components/instructor/instructor-page.js`, `src/components/instructor/instructor-course-editor-page.js`
+- Se eliminan wrappers redundantes y se importan los componentes de contenido directamente desde las rutas
+- Se unifica la tarjeta de curso del instructor en un solo componente responsive y se retira CSS/JS duplicado
+- Se corrigen clases CSS inexistentes y datos redundantes (`hasCover`, `statCard_*`) en admin e instructor
+
 # [0.23.1] - 2026-07-09
 
 ### Fixed - Instructor

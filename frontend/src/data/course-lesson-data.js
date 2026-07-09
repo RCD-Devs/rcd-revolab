@@ -25,7 +25,7 @@ function buildModules(course) {
         { id: "2", title: "El mindset del Growth Hacker", duration: "10:30" },
         { id: "3", title: "Métricas pirata (AARRR)", duration: "10:30" },
       ],
-      exam: { id: "exam", title: "Examen Final", locked: true },
+      exam: { id: "exam", title: "Examen Final", locked: false },
     },
   ];
 }

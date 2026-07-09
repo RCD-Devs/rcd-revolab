@@ -71,6 +71,34 @@
   text-decoration: none;
 }
 
+.examCtaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 56px;
+  border: 1px solid #1a1a6b;
+  border-radius: 16px;
+  background: #0b0b43;
+  color: var(--color-white);
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.3125px;
+  text-decoration: none;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.examCtaButton:hover {
+  border-color: var(--color-primary);
+  background: rgba(11, 11, 67, 0.9);
+  color: var(--color-white);
+}
+
 .stats {
   display: flex;
   flex-direction: column;
@@ -93,8 +121,6 @@
 }
 
 .certificate {
-  position: relative;
-  overflow: hidden;
   border: 1px solid var(--color-input-border);
   border-radius: 16px;
   background: var(--color-secondary);
@@ -105,7 +131,6 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  opacity: 0.5;
 }
 
 .certificateIcon {
@@ -140,15 +165,6 @@
   font-size: 12px;
   font-weight: 400;
   line-height: 16px;
-}
-
-.certificateLock {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
 }
 
 @media (max-width: 768px) {

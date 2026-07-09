@@ -56,19 +56,35 @@ export default function CourseLessonSidebar({
         </ul>
 
         {module.exam && (
-          <div className={styles.exam}>
-            <span className={styles.examInfo}>
-              <Image src="/icons/exam-medal.svg" alt="" width={20} height={20} />
-              <span className={styles.examTitle}>{module.exam.title}</span>
-            </span>
-            <Image
-              src="/icons/course-lock.svg"
-              alt="Bloqueado"
-              width={16}
-              height={16}
-              className={styles.examLock}
-            />
-          </div>
+          module.exam.locked ? (
+            <div className={styles.exam}>
+              <span className={styles.examInfo}>
+                <Image src="/icons/exam-medal.svg" alt="" width={20} height={20} />
+                <span className={styles.examTitle}>{module.exam.title}</span>
+              </span>
+              <Image
+                src="/icons/course-lock.svg"
+                alt="Bloqueado"
+                width={16}
+                height={16}
+                className={styles.examLock}
+              />
+            </div>
+          ) : (
+            <Link href={`/cursos/${courseId}/examen`} className={styles.exam}>
+              <span className={styles.examInfo}>
+                <Image src="/icons/exam-medal.svg" alt="" width={20} height={20} />
+                <span className={styles.examTitle}>{module.exam.title}</span>
+              </span>
+              <Image
+                src="/icons/chevron-right.svg"
+                alt=""
+                width={16}
+                height={16}
+                className={styles.examChevron}
+              />
+            </Link>
+          )
         )}
       </div>
     </aside>

@@ -2,8 +2,13 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  display: flex;
+  align-items: center;
+  height: 87px;
+  overflow: hidden;
   background: var(--color-secondary);
   border-bottom: 1px solid var(--color-black-2);
+  transition: height 0.25s ease;
 }
 
 .inner {
@@ -11,17 +16,20 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+  width: 100%;
   max-width: 1440px;
   margin: 0 auto;
   padding: 24px 96px;
-  min-height: 87px;
-  transition: padding 0.25s ease, min-height 0.25s ease;
+  transition: padding 0.25s ease;
+}
+
+.scrolled {
+  height: 60px;
 }
 
 .scrolled .inner {
-  padding-top: 10.08px;
-  padding-bottom: 10.08px;
-  min-height: 36.54px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .end {
@@ -59,16 +67,22 @@
 }
 
 @media (max-width: 768px) {
+  .header {
+    height: 68px;
+  }
+
+  .scrolled {
+    height: 48px;
+  }
+
   .inner {
     padding: 16px;
-    min-height: 68px;
     border-bottom: 0.762px solid #1f2937;
   }
 
   .scrolled .inner {
-    padding-top: 6.72px;
-    padding-bottom: 6.72px;
-    min-height: 28.56px;
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
 
   .desktopActions {

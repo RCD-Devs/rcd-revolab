@@ -1,6 +1,9 @@
+import { getAllCatalogCourses } from "./course-detail-data";
+
 export const featuredSlides = [
   {
     id: "redes-sociales",
+    courseId: "growth-hacking",
     title: "El Segundo Curso: REDES SOCIALES",
     description: "Lorem ipsum dolor ipsum dolor ipsum dolor ipsum dolor",
     instructorName: "Ariel Jeria",
@@ -9,6 +12,7 @@ export const featuredSlides = [
   },
   {
     id: "marketing-digital",
+    courseId: "marketing-digital",
     title: "Marketing Digital Estratégico",
     description: "Domina las tácticas de marketing que generan resultados medibles.",
     instructorName: "Ariel Jeria",
@@ -17,125 +21,48 @@ export const featuredSlides = [
   },
 ];
 
-export const recommendedCourses = [
-  {
-    id: "growth-hacking",
-    category: "Analytics & SEO",
-    title: "Growth Hacking Avanzado",
-    description:
-      "Aprende las estrategias que usan las startups para crecer exponencialmente.",
-    students: 30,
-    duration: "12h",
-    image: "/images/home/course-growth-hacking.webp",
-  },
-  {
-    id: "data-analytics",
-    category: "Analytics & SEO",
-    title: "Data Analytics con Python",
-    description: "Toma decisiones basadas en datos. Toma decisiones basadas en datos.",
-    students: 12,
-    duration: "24h",
-    image: "/images/home/course-data-analytics.webp",
-  },
-  {
-    id: "marketing-ecommerce",
-    category: "Analytics & SEO",
-    title: "Marketing Digital para E-commerce",
-    description: "Domina las técnicas para aumentar ventas en tiendas online.",
-    students: 25,
-    duration: "16h",
-    image: "/images/home/course-marketing-ecommerce.webp",
-  },
-  {
-    id: "ux-ui",
-    category: "Analytics & SEO",
-    title: "Diseño UX/UI desde cero",
-    description: "Crea experiencias digitales que enamoran a los usuarios.",
-    students: 18,
-    duration: "20h",
-    image: "/images/home/course-growth-hacking.webp",
-  },
-  {
-    id: "fundamentos-seo",
-    category: "Analytics & SEO",
-    title: "Fundamentos de SEO",
-    description: "Posiciona tu contenido en los primeros lugares de Google.",
-    students: 30,
-    duration: "12h",
-    image: "/images/home/course-seo.webp",
-  },
-  {
-    id: "marketing-digital",
-    category: "Marketing",
-    title: "Marketing Digital Estratégico",
-    description: "Domina las tácticas de marketing que generan resultados medibles.",
-    students: 18,
-    duration: "8h",
-    image: "/images/home/course-marketing-ecommerce.webp",
-  },
-  {
-    id: "analitica-web",
-    category: "Analytics & SEO",
-    title: "Analítica Web Avanzada",
-    description: "Comprende el comportamiento de tus usuarios y optimiza conversiones.",
-    students: 22,
-    duration: "10h",
-    image: "/images/home/course-data-analytics.webp",
-  },
-  {
-    id: "content-marketing",
-    category: "Marketing",
-    title: "Content Marketing Estratégico",
-    description: "Crea contenido que atrae, convierte y fideliza a tu audiencia.",
-    students: 27,
-    duration: "14h",
-    image: "/images/home/course-growth-hacking.webp",
-  },
+function toHomeCard(course, { isNew = false } = {}) {
+  return {
+    id: course.id,
+    category: course.category,
+    title: course.title,
+    description: course.description,
+    students: course.students,
+    duration: course.duration,
+    image: course.image,
+    ...(isNew ? { isNew: true } : {}),
+  };
+}
+
+function pickHomeCourses(ids, options = {}) {
+  const catalog = getAllCatalogCourses();
+
+  return ids
+    .map((id) => catalog.find((course) => course.id === id))
+    .filter(Boolean)
+    .map((course) => toHomeCard(course, options));
+}
+
+const recommendedCourseIds = [
+  "growth-hacking",
+  "data-science-0",
+  "marketing-integral",
+  "diseno-0",
+  "analytics-seo-0",
+  "marketing-digital",
+  "analytics-seo-1",
+  "content-marketing",
 ];
 
-export const newCourses = [
-  {
-    id: "growth-hacking-new",
-    category: "Analytics & SEO",
-    title: "Growth Hacking Avanzado",
-    description:
-      "Aprende las estrategias que usan las startups para crecer exponencialmente.",
-    students: 30,
-    duration: "12h",
-    image: "/images/home/course-growth-hacking.webp",
-    isNew: true,
-  },
-  {
-    id: "fundamentos-seo",
-    category: "Analytics & SEO",
-    title: "Fundamentos de SEO",
-    description: "Posiciona tu contenido en los primeros lugares de Google.",
-    students: 30,
-    duration: "12h",
-    image: "/images/home/course-seo.webp",
-    isNew: true,
-  },
-  {
-    id: "marketing-digital",
-    category: "Marketing",
-    title: "Marketing Digital Estratégico",
-    description: "Domina las tácticas de marketing que generan resultados medibles.",
-    students: 18,
-    duration: "8h",
-    image: "/images/home/course-marketing-ecommerce.webp",
-    isNew: true,
-  },
-  {
-    id: "analitica-web",
-    category: "Analytics & SEO",
-    title: "Analítica Web Avanzada",
-    description: "Comprende el comportamiento de tus usuarios y optimiza conversiones.",
-    students: 22,
-    duration: "10h",
-    image: "/images/home/course-data-analytics.webp",
-    isNew: true,
-  },
+const newCourseIds = [
+  "growth-hacking",
+  "analytics-seo-0",
+  "marketing-digital",
+  "analytics-seo-1",
 ];
+
+export const recommendedCourses = pickHomeCourses(recommendedCourseIds);
+export const newCourses = pickHomeCourses(newCourseIds, { isNew: true });
 
 export const continueCourses = [
   {

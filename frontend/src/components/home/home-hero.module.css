@@ -225,6 +225,7 @@
   cursor: pointer;
   box-shadow: 0 0 10px rgba(0, 229, 200, 0.3);
   box-sizing: border-box;
+  text-decoration: none;
   transition:
     background-color 0.2s ease,
     color 0.2s ease,

@@ -71,8 +71,9 @@
 
 .exportButton:hover,
 .heroExportButton:hover {
-  border-color: rgba(0, 229, 200, 0.35);
-  background: #213244;
+  background: var(--btn-outline-hover-bg);
+  border-color: var(--btn-outline-hover-border);
+  color: var(--btn-outline-hover-color);
 }
 
 .container {
@@ -106,7 +107,7 @@
   font-size: 14px;
   line-height: 20px;
   letter-spacing: -0.1504px;
-  color: #7a8a99;
+  color: var(--color-text-muted);
 }
 
 .heroExportButton {
@@ -169,7 +170,7 @@
   margin: 0;
   font-size: 12px;
   line-height: 16px;
-  color: #7a8a99;
+  color: var(--color-text-muted);
 }
 
 .statValue {
@@ -261,7 +262,7 @@
   line-height: 16px;
   letter-spacing: 0.6px;
   text-transform: uppercase;
-  color: #7a8a99;
+  color: var(--color-text-muted);
 }
 
 .mobileList {

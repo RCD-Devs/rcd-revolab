@@ -5,12 +5,16 @@ import Image from "next/image";
 import CourseModuleCta from "@/components/courses/course-module-cta";
 import ctaStyles from "@/components/courses/course-module-cta.module.css";
 import { courseDetailTabs } from "@/data/course-detail-data";
-import { getCourseExam } from "@/data/course-exam-data";
+import {
+  DEFAULT_QUIZ_LESSON_ID,
+  getLessonQuiz,
+  getQuizPath,
+} from "@/data/course-quiz-data";
 import styles from "./course-detail-content.module.css";
 
 export default function CourseDetailContent({ course }) {
   const [activeTab, setActiveTab] = useState(courseDetailTabs[0]);
-  const { exam } = getCourseExam(course.id);
+  const quiz = getLessonQuiz(course.id);
 
   return (
     <div className={styles.content}>
@@ -72,16 +76,16 @@ export default function CourseDetailContent({ course }) {
         </div>
       )}
 
-      {activeTab === "Quiz" && (
+      {activeTab === "Quiz" && quiz && (
         <div className={styles.panel} role="tabpanel">
           <CourseModuleCta
-            ariaLabel="Examen final del curso"
-            iconSrc="/icons/exam-medal.svg"
-            iconWrapClassName={ctaStyles.iconWrapExam}
-            title={exam.title}
-            description={exam.description}
-            href={`/cursos/${course.id}/examen`}
-            ctaLabel="Realizar examen"
+            ariaLabel="Quiz del curso"
+            iconSrc="/icons/quiz-brain.svg"
+            iconWrapClassName={ctaStyles.iconWrapQuiz}
+            title={quiz.title}
+            description={quiz.description}
+            href={getQuizPath(course.id, DEFAULT_QUIZ_LESSON_ID)}
+            ctaLabel="Realizar quiz"
           />
         </div>
       )}

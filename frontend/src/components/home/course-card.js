@@ -14,7 +14,10 @@ export default function CourseCard({
   compact = false,
 }) {
   return (
-    <article className={`${styles.card} ${compact ? styles.compact : ""}`}>
+    <Link
+      href={`/cursos/${id}`}
+      className={`${styles.card} ${compact ? styles.compact : ""}`}
+    >
       <div className={styles.imageWrap}>
         <Image
           src={image}
@@ -43,7 +46,7 @@ export default function CourseCard({
         </span>
       </div>
 
-      <Link href={`/cursos/${id}`} className={styles.button}>
+      <span className={styles.button}>
         <span>Realizar curso</span>
         <Image
           src="/icons/arrow-right-primary.svg"
@@ -59,7 +62,7 @@ export default function CourseCard({
           height={16}
           className={styles.buttonIconFilled}
         />
-      </Link>
-    </article>
+      </span>
+    </Link>
   );
 }

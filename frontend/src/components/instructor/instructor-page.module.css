@@ -53,7 +53,7 @@
   gap: 8px;
   min-height: 40px;
   padding: 0 24px;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 12px;
   background: var(--color-primary);
   box-shadow: 0 0 15px rgba(0, 229, 200, 0.3);
@@ -65,12 +65,17 @@
   letter-spacing: -0.3125px;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .createButton:hover,
 .heroCreateButton:hover {
-  background: var(--color-primary-hover);
+  background: var(--btn-primary-hover-bg);
+  border-color: var(--btn-primary-hover-border);
+  color: var(--btn-primary-hover-color);
 }
 
 .container {
@@ -172,13 +177,7 @@
   letter-spacing: -0.4395px;
 }
 
-.desktopCourseList {
-  display: none;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.mobileCourseList {
+.courseList {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -186,10 +185,9 @@
 
 .courseCard {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 16px;
-  min-height: 119px;
-  padding: 17px;
+  padding: 16px;
   border: 1px solid var(--color-input-border);
   border-radius: 16px;
   background: #1a2b3c;
@@ -198,10 +196,9 @@
 .courseCover {
   position: relative;
   flex-shrink: 0;
-  width: 128px;
   height: 80px;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 14px;
   background: #1a2b3c;
 }
 
@@ -214,8 +211,6 @@
 }
 
 .courseCoverImage {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
   opacity: 0.8;
 }
@@ -227,32 +222,30 @@
 }
 
 .courseBody {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   min-width: 0;
 }
 
 .courseHeader {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 4px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .courseTitle {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  line-height: 27px;
-  letter-spacing: -0.4395px;
+  line-height: 24px;
 }
 
-.statusBadge,
-.mobileStatusBadge {
+.statusBadge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  flex-shrink: 0;
   min-height: 24px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -273,82 +266,13 @@
 }
 
 .courseStats {
-  margin: 0 0 8px;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: -0.1504px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
   color: var(--color-text-muted);
 }
 
 .courseAction {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  min-height: 26px;
-  padding: 5px 12px;
-  border: 1px solid var(--color-input-border);
-  border-radius: 4px;
-  background: var(--color-secondary);
-  color: var(--color-white);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 16px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-}
-
-.courseAction:hover {
-  border-color: rgba(0, 229, 200, 0.35);
-}
-
-.mobileCourseCard {
-  padding: 16px;
-  border: 1px solid var(--color-input-border);
-  border-radius: 16px;
-  background: #1a2b3c;
-}
-
-.mobileCourseCover {
-  position: relative;
-  height: 80px;
-  margin-bottom: 16px;
-  overflow: hidden;
-  border-radius: 14px;
-  background: #1a2b3c;
-}
-
-.mobileCourseCoverImage {
-  object-fit: cover;
-  opacity: 0.8;
-}
-
-.mobileCourseBody {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mobileCourseTitle {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 24px;
-}
-
-.mobileStatusBadge {
-  align-self: flex-start;
-}
-
-.mobileCourseStats {
-  margin: 0;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--color-text-muted);
-}
-
-.mobileCourseAction {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -365,6 +289,16 @@
   line-height: 16px;
   text-decoration: none;
   cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.courseAction:hover {
+  background: var(--btn-outline-hover-bg);
+  border-color: var(--btn-outline-hover-border);
+  color: var(--btn-outline-hover-color);
 }
 
 .learningPathsCard {
@@ -420,8 +354,9 @@
 }
 
 .learningPathsButton:hover {
-  border-color: rgba(0, 229, 200, 0.5);
-  background: #132031;
+  background: var(--btn-outline-hover-bg);
+  border-color: var(--btn-outline-hover-border);
+  color: var(--btn-outline-hover-color);
 }
 
 .emptyState {
@@ -463,22 +398,56 @@
     line-height: 28px;
   }
 
-  .desktopCourseList {
-    display: flex;
+  .courseCard {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    min-height: 119px;
+    padding: 17px;
   }
 
-  .mobileCourseList {
-    display: none;
+  .courseCover {
+    width: 128px;
+    border-radius: 12px;
+  }
+
+  .courseBody {
+    flex: 1;
+    gap: 4px;
+  }
+
+  .courseHeader {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .courseTitle {
+    font-size: 18px;
+    line-height: 27px;
+    letter-spacing: -0.4395px;
+  }
+
+  .statusBadge {
+    flex-shrink: 0;
+  }
+
+  .courseStats {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.1504px;
+  }
+
+  .courseAction {
+    gap: 4px;
+    min-height: 26px;
+    padding: 5px 12px;
   }
 
   .learningPathsCard {
     flex-shrink: 0;
     width: 387px;
-  }
-
-  .learningPathsButton {
-    border-radius: 12px;
-    font-size: 16px;
   }
 }
 

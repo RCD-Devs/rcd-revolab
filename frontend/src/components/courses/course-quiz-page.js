@@ -6,7 +6,7 @@ import Image from "next/image";
 import CourseLessonNav from "@/components/courses/course-lesson-nav";
 import CourseQuizPanel from "./course-quiz-panel";
 import CourseQuizQuestion from "./course-quiz-question";
-import pageStyles from "./course-quiz-page.module.css";
+import pageStyles from "./course-assessment-page.module.css";
 import styles from "./course-quiz.module.css";
 
 export default function CourseQuizPage({ quizData }) {

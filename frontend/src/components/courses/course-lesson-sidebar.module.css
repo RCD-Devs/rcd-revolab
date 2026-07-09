@@ -144,9 +144,22 @@
   letter-spacing: -0.1504px;
 }
 
-.examLock {
+.examLock,
+.examChevron {
   flex-shrink: 0;
   opacity: 0.7;
+}
+
+.exam[href] {
+  text-decoration: none;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.exam[href]:hover {
+  border-color: var(--color-primary);
+  background: rgba(11, 11, 67, 0.9);
 }
 
 @media (min-width: 769px) {

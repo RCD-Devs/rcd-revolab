@@ -1,0 +1,337 @@
+.card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 672px;
+  padding: 48px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 16px;
+  background: var(--color-home-surface);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.cardCentered {
+  align-items: center;
+  text-align: center;
+}
+
+.cardFailure {
+  background: rgba(255, 77, 109, 0.05);
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  border-radius: 50%;
+}
+
+.iconWrapExam {
+  background: rgba(0, 229, 200, 0.2);
+}
+
+.iconWrapSuccess {
+  width: 96px;
+  height: 96px;
+  border: 3px solid var(--color-primary);
+  background: rgba(0, 229, 200, 0.2);
+}
+
+.iconWrapFailure {
+  background: rgba(255, 77, 109, 0.2);
+}
+
+.title {
+  margin: 0 0 16px;
+  color: var(--color-white);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 36px;
+  letter-spacing: 0.3955px;
+}
+
+.scoreSuccess {
+  margin: 0 0 16px;
+  color: var(--color-primary);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: -0.4492px;
+}
+
+.scoreFailure {
+  margin: 0 0 16px;
+  color: #ff4d6d;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: -0.4492px;
+}
+
+.description {
+  max-width: 448px;
+  margin: 0 0 32px;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: -0.3125px;
+}
+
+.ctaPrimary,
+.ctaFailureMain,
+.ctaPdf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.3125px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.ctaPrimary {
+  min-width: 320px;
+  height: 56px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 16px;
+  background: var(--color-primary);
+  box-shadow: 0 0 10px rgba(0, 229, 200, 0.3);
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+
+.ctaPrimary:hover {
+  background: var(--color-primary-hover);
+  color: var(--color-secondary);
+}
+
+.failureActions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.ctaPdf {
+  width: 100%;
+  height: 49px;
+  padding: 0 24px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 16px;
+  background: var(--color-home-surface);
+  color: var(--color-white);
+  text-decoration: none;
+}
+
+.ctaPdf:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ctaFailureMain {
+  width: 100%;
+  height: 48px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 16px;
+  background: #ff4d6d;
+  color: var(--color-white);
+}
+
+.ctaFailureMain:hover {
+  background: #e64563;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  width: 100%;
+  max-width: 672px;
+  margin: 0 auto 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: -0.3125px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: var(--color-white);
+}
+
+.progressHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.progressLabel {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 1.2496px;
+  text-transform: uppercase;
+}
+
+.progressBar {
+  display: flex;
+  gap: 8px;
+}
+
+.progressSegment {
+  width: 48px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--color-secondary);
+}
+
+.progressSegmentActive {
+  background: var(--color-primary);
+}
+
+.question {
+  margin: 0 0 32px;
+  color: var(--color-white);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 39px;
+  letter-spacing: 0.0703px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 69px;
+  padding: 21px 20px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 16px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-family-base);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: -0.4395px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.option:hover {
+  border-color: rgba(0, 229, 200, 0.5);
+}
+
+.optionSelected {
+  border: 2px solid var(--color-primary);
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 32px 24px;
+  }
+
+  .iconWrap {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+  }
+
+  .iconWrapSuccess {
+    width: 80px;
+    height: 80px;
+  }
+
+  .title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .description {
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 24px;
+  }
+
+  .ctaPrimary {
+    width: 100%;
+    min-width: 0;
+    height: 48px;
+    box-shadow: 0 0 7.5px rgba(0, 229, 200, 0.3);
+  }
+
+  .backLink {
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .progressHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .progressBar {
+    width: 100%;
+  }
+
+  .progressSegment {
+    flex: 1;
+    width: auto;
+  }
+
+  .question {
+    margin-bottom: 24px;
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .options {
+    gap: 12px;
+  }
+
+  .option {
+    min-height: 58px;
+    padding: 16px;
+    font-size: 16px;
+    line-height: 24px;
+  }
+}

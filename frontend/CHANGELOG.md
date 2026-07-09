@@ -1,3 +1,65 @@
+# [0.22.7] - 2026-07-08
+
+### Changed - Examen
+- **Archivos modificados**: `src/components/courses/course-module-cta.js`, `src/components/courses/course-module-cta.module.css`, `src/components/courses/course-lesson-quiz-cta.js`, `src/components/courses/course-detail-content.js`, `src/components/courses/course-detail-panel.js`, `src/components/courses/course-detail-panel.module.css`, `src/components/courses/course-exam-panel.js`, `src/data/course-exam-data.js`
+- Se unifica el CTA de acceso al examen y al quiz en `course-module-cta`, eliminando componentes y CSS duplicados del módulo
+- Se simplifican los datos mock del examen y se retira la lógica de certificado bloqueado que ya no aplicaba
+
+### Changed - Quiz
+- **Archivos modificados**: `src/components/courses/course-lesson-quiz-cta.js`
+- El CTA de quiz en lección reutiliza el componente compartido `course-module-cta`
+
+# [0.22.6] - 2026-07-08
+
+### Fixed - Header
+- **Archivos modificados**: `src/components/header.module.css`
+- Se aumenta la altura del header compacto al hacer scroll (60px desktop / 48px mobile) para que el avatar y el logo no se corten
+
+# [0.22.5] - 2026-07-08
+
+### Fixed - Header
+- **Archivos modificados**: `src/components/header.js`, `src/components/header.module.css`
+- Se restaura la reducción de altura del header al hacer scroll con transición suave, manteniendo histéresis y altura animada en el contenedor para evitar parpadeo
+
+# [0.22.4] - 2026-07-08
+
+### Fixed - Header
+- **Archivos modificados**: `src/components/header.js`, `src/components/header.module.css`
+- Se elimina el parpadeo del header sticky fijando su altura al hacer scroll y aplicando histéresis en el listener para evitar cambios rápidos cerca del umbral
+
+# [0.22.3] - 2026-07-08
+
+### Fixed - Examen
+- **Archivos modificados**: `src/data/course-exam-data.js`
+- El examen final queda disponible para todos los cursos del catálogo (incluido `marketing-digital`), usando preguntas mock genéricas y conservando las preguntas específicas de Growth Hacking
+
+# [0.22.2] - 2026-07-08
+
+### Fixed - Detalle de curso
+- **Archivos modificados**: `src/components/courses/course-detail-panel.js`, `src/components/courses/course-detail-panel.module.css`
+- El botón "Realizar examen" queda visible debajo de "Comenzar curso" en el panel del detalle, en lugar de ocultarse dentro del bloque de certificado
+
+### Fixed - Examen
+- **Archivos modificados**: `src/components/courses/course-exam-page.js`, `src/components/courses/course-exam-page.module.css`
+- Se corrige el contenedor de la página de examen para que el fondo y la tarjeta central se rendericen correctamente
+
+# [0.22.1] - 2026-07-08
+
+### Changed - Detalle de curso
+- **Archivos modificados**: `src/components/courses/course-detail-panel.js`, `src/components/courses/course-detail-panel.module.css`, `src/components/courses/course-detail-content.js`, `src/components/courses/course-detail-exam-cta.js`, `src/components/courses/course-detail-exam-cta.module.css`
+- El bloque de certificado y la pestaña Quiz muestran el botón "Realizar examen" cuando el curso tiene examen final disponible, enlazando a `/cursos/{id}/examen`
+
+# [0.22.0] - 2026-07-08
+
+### Added - Examen
+- **Archivos modificados**: `src/app/(site)/cursos/[id]/examen/page.jsx`, `src/app/(site)/cursos/[id]/examen/certificado/page.jsx`, `src/components/courses/course-exam-page.js`, `src/components/courses/course-exam-page.module.css`, `src/components/courses/course-exam-panel.js`, `src/components/courses/course-exam-question.js`, `src/components/courses/course-exam-nav.js`, `src/components/courses/course-exam-nav.module.css`, `src/components/courses/course-exam.module.css`, `src/components/courses/course-certificate-page.js`, `src/components/courses/course-certificate-page.module.css`, `src/components/courses/course-certificate-linkedin-modal.js`, `src/components/courses/course-certificate-linkedin-modal.module.css`, `src/data/course-exam-data.js`, `public/icons/exam-failure.svg`, `public/icons/download-white.svg`, `public/icons/linkedin.svg`
+- Flujo completo del examen final con pantallas de inicio, preguntas, éxito y rechazo según Figma, incluyendo cálculo de puntuación con umbral del 80%
+- Página de certificado con vista previa, descarga PDF, bloque Career IQ y modal para compartir en LinkedIn
+
+### Changed - Lección
+- **Archivos modificados**: `src/components/courses/course-lesson-sidebar.js`, `src/components/courses/course-lesson-sidebar.module.css`, `src/data/course-lesson-data.js`
+- El examen final desbloqueado en el sidebar enlaza a `/cursos/{id}/examen` en lugar de mostrar solo el candado
+
 # [0.21.1] - 2026-07-08
 
 ### Changed - Quiz

@@ -3,8 +3,13 @@
 // completo (módulos, lecciones, quiz y examen) migrado desde los mocks
 // de frontend/src/data para tener un caso end-to-end real desde el día uno.
 import { PrismaClient } from '@prisma/client';
+import { hashPassword } from '../src/auth/password.js';
 
 const prisma = new PrismaClient();
+
+// Contraseña de desarrollo para los usuarios sembrados. Cambiar antes de
+// que personas reales usen estas cuentas.
+const SEED_PASSWORD = 'RevoLab2026!';
 
 const categories = [
   { slug: 'analytics-seo', label: 'Analytics & SEO' },
@@ -111,11 +116,14 @@ async function main() {
   }
   const tripulanteRank = await prisma.rank.findUniqueOrThrow({ where: { key: 'tripulante' } });
 
+  const seedPasswordHash = await hashPassword(SEED_PASSWORD);
+
   const admin = await prisma.user.upsert({
     where: { email: 'admin@rompecabeza.cl' },
-    update: {},
+    update: { passwordHash: seedPasswordHash },
     create: {
       email: 'admin@rompecabeza.cl',
+      passwordHash: seedPasswordHash,
       nombre: 'Administrador RevoLab',
       role: 'ADMIN',
       departmentId: departmentRecords['tecnologia'].id,
@@ -124,9 +132,10 @@ async function main() {
 
   const instructor = await prisma.user.upsert({
     where: { email: 'ariel.jeria@rompecabeza.cl' },
-    update: {},
+    update: { passwordHash: seedPasswordHash },
     create: {
       email: 'ariel.jeria@rompecabeza.cl',
+      passwordHash: seedPasswordHash,
       nombre: 'Ariel Jeria',
       role: 'INSTRUCTOR',
       avatarUrl: '/images/home/instructor-ariel.webp',
@@ -251,6 +260,7 @@ async function main() {
     categorias: categories.length,
     departamentos: departments.length,
     rangos: ranks.length,
+    passwordDev: SEED_PASSWORD,
   });
 }
 

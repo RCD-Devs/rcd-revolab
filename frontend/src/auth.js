@@ -1,7 +1,11 @@
+// Config completa de Auth.js (runtime Node.js: la usan la ruta
+// /api/auth/[...nextauth] y Server Components/Actions). Middleware usa
+// auth.config.js en su lugar porque este archivo importa Prisma.
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "@revolab/backend/config/db";
 import { verifyPassword } from "@revolab/backend/auth/password";
+import { authConfig } from "./auth.config";
 
 // Dominios institucionales habilitados para iniciar sesión.
 // TODO: agregar el resto de dominios reales (ej. mind/souldigital) cuando se confirmen.
@@ -13,8 +17,7 @@ function isAllowedDomain(email) {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  session: { strategy: "jwt" },
-  pages: { signIn: "/login" },
+  ...authConfig,
   providers: [
     Credentials({
       credentials: {
@@ -45,20 +48,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-      }
-      return token;
-    },
-    session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-      }
-      return session;
-    },
-  },
 });

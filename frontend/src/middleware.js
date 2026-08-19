@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "@/auth.config";
+
+// Instancia liviana (sin Prisma) solo para leer/verificar la sesion JWT
+// en Edge runtime. La instancia completa vive en auth.js.
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
@@ -9,10 +14,11 @@ export default auth((req) => {
   const isAdminRoute = pathname.startsWith("/admin");
   const isInstructorRoute = pathname.startsWith("/instructor");
   const isPerfilRoute = pathname.startsWith("/perfil");
+  const isHomeRoute = pathname.startsWith("/home");
   const isCourseProgressRoute = /^\/cursos\/[^/]+\/(leccion|examen)(\/|$)/.test(pathname);
 
   const requiresSession =
-    isAdminRoute || isInstructorRoute || isPerfilRoute || isCourseProgressRoute;
+    isAdminRoute || isInstructorRoute || isPerfilRoute || isHomeRoute || isCourseProgressRoute;
 
   if (!session && requiresSession) {
     const loginUrl = new URL("/login", req.nextUrl);
@@ -36,6 +42,7 @@ export const config = {
     "/admin/:path*",
     "/instructor/:path*",
     "/perfil/:path*",
+    "/home/:path*",
     "/cursos/:id/leccion/:path*",
     "/cursos/:id/examen/:path*",
   ],

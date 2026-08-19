@@ -1,46 +1,64 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  filterInstructorCourses,
-  getStatusConfig,
-  instructorCourses,
-  instructorPageMeta,
-} from "@/data/instructor-data";
 import styles from "./instructor-page.module.css";
 
-function CourseAction({ course }) {
-  if (course.actionType === "edit") {
-    return (
-      <Link
-        href={`/instructor/cursos/${course.id}/editar`}
-        className={styles.courseAction}
-      >
-        <Image src="/icons/instructor-edit.svg" alt="" width={12} height={12} />
-        {course.actionLabel}
-      </Link>
-    );
-  }
+const instructorPageMeta = {
+  title: "Panel de Instructor",
+  subtitle: "Crea y administra tus cursos.",
+  createCourseLabel: "Crear Curso",
+  coursesSectionTitle: "Mis Cursos",
+  searchPlaceholder: "Buscar cursos...",
+  backHref: "/home",
+  learningPathsTitle: "Rutas de Aprendizaje",
+  learningPathsDescription:
+    "Construye secuencias de cursos arrastrando y soltando para crear especialidades.",
+  learningPathsButton: "Constructor de Rutas",
+};
 
+function getStatusConfig(status) {
+  if (status === "PUBLISHED") {
+    return {
+      label: "PUBLICADO",
+      icon: "/icons/instructor-status-published.svg",
+      className: "published",
+    };
+  }
+  if (status === "DRAFT") {
+    return {
+      label: "BORRADOR",
+      icon: "/icons/instructor-status-review.svg",
+      className: "review",
+    };
+  }
+  return {
+    label: "EN REVISIÓN",
+    icon: "/icons/instructor-status-review.svg",
+    className: "review",
+  };
+}
+
+function CourseAction({ course }) {
   return (
-    <button type="button" className={styles.courseAction}>
-      {course.actionLabel}
-    </button>
+    <Link href={`/instructor/cursos/${course.id}/editar`} className={styles.courseAction}>
+      <Image src="/icons/instructor-edit.svg" alt="" width={12} height={12} />
+      Editar
+    </Link>
   );
 }
 
 function CourseCard({ course }) {
   const status = getStatusConfig(course.status);
-  const hasCover = Boolean(course.coverImage);
+  const hasCover = Boolean(course.coverImageUrl);
 
   return (
     <article className={styles.courseCard}>
       <div className={`${styles.courseCover} ${hasCover ? "" : styles.courseCoverEmpty}`}>
         {hasCover ? (
           <Image
-            src={course.coverImage}
+            src={course.coverImageUrl}
             alt=""
             fill
             sizes="(min-width: 769px) 128px, 100vw"
@@ -60,7 +78,7 @@ function CourseCard({ course }) {
           </span>
         </div>
 
-        <p className={styles.courseStats}>{course.stats}</p>
+        <p className={styles.courseStats}>{course.students} estudiantes inscritos</p>
         <CourseAction course={course} />
       </div>
     </article>
@@ -69,11 +87,22 @@ function CourseCard({ course }) {
 
 export default function InstructorPageContent() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [courses, setCourses] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const filteredCourses = useMemo(
-    () => filterInstructorCourses(instructorCourses, searchQuery),
-    [searchQuery],
-  );
+  useEffect(() => {
+    fetch("/api/instructor/courses")
+      .then((res) => res.json())
+      .then((data) => setCourses(data.courses ?? []))
+      .catch(() => setCourses([]))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const filteredCourses = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return courses;
+    return courses.filter((course) => course.title.toLowerCase().includes(query));
+  }, [courses, searchQuery]);
 
   return (
     <div className={styles.page}>
@@ -132,7 +161,7 @@ export default function InstructorPageContent() {
               {filteredCourses.map((course) => (
                 <CourseCard key={course.id} course={course} />
               ))}
-              {filteredCourses.length === 0 && (
+              {!isLoading && filteredCourses.length === 0 && (
                 <p className={styles.emptyState}>No se encontraron cursos.</p>
               )}
             </div>

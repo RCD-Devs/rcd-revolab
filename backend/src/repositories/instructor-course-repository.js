@@ -12,6 +12,19 @@ export function findCourseBySlugForInstructor(slug, instructorId) {
   return prisma.course.findFirst({ where: { slug, instructorId } });
 }
 
+export function findCourseDetailForInstructor(slug, instructorId) {
+  return prisma.course.findFirst({
+    where: { slug, instructorId },
+    include: {
+      department: { select: { label: true } },
+      modules: {
+        orderBy: { order: 'asc' },
+        include: { lessons: { orderBy: { order: 'asc' } } },
+      },
+    },
+  });
+}
+
 export function findCourseBySlug(slug) {
   return prisma.course.findUnique({ where: { slug }, select: { id: true } });
 }

@@ -50,6 +50,8 @@ export async function getCourseDetail(slug) {
   const course = await courseRepository.findCourseDetailBySlug(slug);
   if (!course) return null;
 
+  const firstLessonId = await courseRepository.findFirstLessonId(course.id);
+
   return {
     id: course.slug,
     title: course.title,
@@ -69,6 +71,7 @@ export async function getCourseDetail(slug) {
     instructorImage: course.instructor.avatarUrl,
     enrollmentRequirement: course.enrollmentRequirement,
     autoCertificate: course.autoCertificate,
+    firstLessonId,
   };
 }
 

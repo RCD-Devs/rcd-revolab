@@ -17,23 +17,25 @@ export default function CourseDetailHero({ course }) {
 
       <div className={styles.content}>
         <div className={styles.badges}>
-          <span className={styles.badgePrimary}>{course.categoryTag}</span>
-          <span className={styles.badgeSecondary}>{course.specialtyLabel}</span>
+          <span className={styles.badgePrimary}>{course.category}</span>
+          <span className={styles.badgeSecondary}>Especialidad</span>
         </div>
 
         <h1 className={styles.title}>{course.title}</h1>
 
         <div className={styles.instructor}>
-          <Image
-            src={course.instructorImage}
-            alt=""
-            width={40}
-            height={40}
-            className={styles.instructorPhoto}
-          />
+          {course.instructorImage && (
+            <Image
+              src={course.instructorImage}
+              alt=""
+              width={40}
+              height={40}
+              className={styles.instructorPhoto}
+            />
+          )}
           <div className={styles.instructorInfo}>
             <p className={styles.instructorName}>{course.instructorName}</p>
-            <p className={styles.instructorRole}>{course.instructorRole}</p>
+            <p className={styles.instructorRole}>{course.department ?? "Instructor"}</p>
           </div>
         </div>
       </div>

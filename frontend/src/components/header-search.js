@@ -1,19 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import {
-  recentSearches,
-  recommendedSearchCourses,
-} from "@/data/search-data";
+import Link from "next/link";
 import { useDropdownBehavior } from "@/hooks/use-dropdown-behavior";
 import panelStyles from "./dropdown-panel.module.css";
 import styles from "./header-search.module.css";
 
 export default function HeaderSearch() {
   const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
   const { wrapProps, isRendered, isVisible, handleTransitionEnd } =
     useDropdownBehavior(isOpen, setIsOpen);
+
+  useEffect(() => {
+    if (!query.trim()) {
+      setResults([]);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      fetch(`/api/search?q=${encodeURIComponent(query)}`)
+        .then((res) => res.json())
+        .then((data) => setResults(data.courses ?? []))
+        .catch(() => setResults([]));
+    }, 250);
+
+    return () => clearTimeout(timeout);
+  }, [query]);
 
   return (
     <div className={styles.wrap} {...wrapProps}>
@@ -36,6 +51,8 @@ export default function HeaderSearch() {
           aria-label="Buscar cursos"
           aria-expanded={isOpen}
           aria-controls="search-dropdown"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
           onFocus={() => setIsOpen(true)}
         />
       </form>
@@ -49,37 +66,16 @@ export default function HeaderSearch() {
           onTransitionEnd={handleTransitionEnd}
         >
           <section className={styles.section}>
-            <h4 className={styles.sectionTitle}>Búsquedas recientes</h4>
-            <ul className={styles.recentList}>
-              {recentSearches.map((item) => (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    className={styles.recentItem}
-                    role="option"
-                  >
-                    <Image
-                      src="/icons/history.svg"
-                      alt=""
-                      width={16}
-                      height={16}
-                    />
-                    <span>{item.label}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className={styles.section}>
-            <h4 className={styles.sectionTitle}>Cursos recomendados</h4>
+            <h4 className={styles.sectionTitle}>
+              {query.trim() ? "Resultados" : "Escribe para buscar cursos"}
+            </h4>
             <ul className={styles.courseList}>
-              {recommendedSearchCourses.map((course) => (
+              {results.map((course) => (
                 <li key={course.id}>
-                  <button
-                    type="button"
+                  <Link
+                    href={`/cursos/${course.id}`}
                     className={styles.courseItem}
-                    role="option"
+                    onClick={() => setIsOpen(false)}
                   >
                     <span className={styles.courseThumb}>
                       <Image
@@ -94,22 +90,16 @@ export default function HeaderSearch() {
                     <span className={styles.courseInfo}>
                       <span className={styles.courseTitle}>{course.title}</span>
                       <span className={styles.courseMeta}>
-                        <Image
-                          src="/icons/users.svg"
-                          alt=""
-                          width={16}
-                          height={16}
-                        />
+                        <Image src="/icons/users.svg" alt="" width={16} height={16} />
                         <span>{course.students}</span>
-                        <span className={styles.courseDot} aria-hidden="true">
-                          •
-                        </span>
-                        <span>{course.instructor}</span>
                       </span>
                     </span>
-                  </button>
+                  </Link>
                 </li>
               ))}
+              {query.trim() && results.length === 0 && (
+                <li className={styles.courseItem}>Sin resultados.</li>
+              )}
             </ul>
           </section>
         </div>

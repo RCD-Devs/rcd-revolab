@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import CourseDetailPage from "@/components/courses/course-detail-page";
-import { getCourseDetail } from "@/data/course-detail-data";
+import { getCourseDetail } from "@revolab/backend/services/courses";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const course = getCourseDetail(id);
+  const course = await getCourseDetail(id);
 
   if (!course) {
     return { title: "Curso no encontrado" };
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }) {
 
 export default async function CourseDetailRoute({ params }) {
   const { id } = await params;
-  const course = getCourseDetail(id);
+  const course = await getCourseDetail(id);
 
   if (!course) {
     notFound();

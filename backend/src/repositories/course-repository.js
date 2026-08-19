@@ -64,6 +64,17 @@ export function findCourseDetailBySlug(slug) {
   });
 }
 
+export async function findFirstLessonId(courseId) {
+  const firstModule = await prisma.module.findFirst({
+    where: { courseId },
+    orderBy: { order: 'asc' },
+    select: {
+      lessons: { orderBy: { order: 'asc' }, take: 1, select: { id: true } },
+    },
+  });
+  return firstModule?.lessons[0]?.id ?? null;
+}
+
 export function findCourseForExamBySlug(slug) {
   return prisma.course.findFirst({
     where: { slug, ...PUBLISHED_PUBLIC },

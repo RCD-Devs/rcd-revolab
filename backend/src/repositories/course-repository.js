@@ -64,6 +64,19 @@ export function findCourseDetailBySlug(slug) {
   });
 }
 
+export function findCourseForExamBySlug(slug) {
+  return prisma.course.findFirst({
+    where: { slug, ...PUBLISHED_PUBLIC },
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      autoCertificate: true,
+      instructor: { select: { nombre: true } },
+    },
+  });
+}
+
 export function findCourseModulesBySlug(slug) {
   return prisma.course.findFirst({
     where: { slug, ...PUBLISHED_PUBLIC },

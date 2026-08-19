@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "@/auth.config";
+
+// Instancia liviana (sin Prisma) solo para leer/verificar la sesion JWT
+// en Edge runtime. La instancia completa vive en auth.js.
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;

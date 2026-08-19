@@ -31,3 +31,8 @@ Thumbs.db
 .vscode/
 .cursor/
 .idea/
+
+# ─── Documentación interna de planificación (repo público, no se sube) ───
+revolab-checklist-backend.md
+revolab-estructura-decisiones.md
+revolab-roadmap-backend.md

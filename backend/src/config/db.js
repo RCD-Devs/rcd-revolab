@@ -1,7 +1,7 @@
 // Instancia única de PrismaClient para toda la app.
-// Se importa donde se necesite acceder a la base de datos.
-const { PrismaClient } = require('@prisma/client');
+// Se importa donde se necesita acceder a la base de datos.
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-module.exports = prisma;
+export default prisma;

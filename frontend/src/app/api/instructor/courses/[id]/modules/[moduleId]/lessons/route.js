@@ -9,10 +9,14 @@ export async function POST(request, { params }) {
   const { id, moduleId } = await params;
   const body = await request.json().catch(() => ({}));
 
-  const lesson = await addLesson(id, moduleId, session.user.id, {
-    title: body.title,
-    type: body.type,
-  });
+  const isAdmin = session.user.role === "ADMIN";
+  const lesson = await addLesson(
+    id,
+    moduleId,
+    session.user.id,
+    { title: body.title, type: body.type },
+    isAdmin,
+  );
 
   if (!lesson) {
     return NextResponse.json({ error: "Curso o módulo no encontrado" }, { status: 404 });

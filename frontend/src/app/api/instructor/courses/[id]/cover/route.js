@@ -15,7 +15,8 @@ export async function POST(request, { params }) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const result = await uploadCourseCover(id, session.user.id, buffer, file.type);
+  const isAdmin = session.user.role === "ADMIN";
+  const result = await uploadCourseCover(id, session.user.id, buffer, file.type, isAdmin);
 
   if (!result) {
     return NextResponse.json({ error: "Curso no encontrado" }, { status: 404 });

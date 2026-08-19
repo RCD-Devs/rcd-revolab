@@ -38,3 +38,11 @@ export function findCertificatesByUser(userId) {
 export function findAllRanksOrdered() {
   return prisma.rank.findMany({ orderBy: { order: 'asc' } });
 }
+
+export function updateUserProfile(userId, data) {
+  return prisma.user.update({ where: { id: userId }, data });
+}
+
+export function findUserPasswordHash(userId) {
+  return prisma.user.findUnique({ where: { id: userId }, select: { passwordHash: true } });
+}

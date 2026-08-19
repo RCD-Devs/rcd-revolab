@@ -1,4 +1,6 @@
 import * as profileRepository from '../repositories/profile-repository.js';
+import { getStorageProvider } from '../integrations/storage/storage-provider.js';
+import { hashPassword, verifyPassword } from '../auth/password.js';
 
 export async function getProfile(userId) {
   const user = await profileRepository.findUserProfile(userId);
@@ -53,4 +55,38 @@ export async function getProfileRank(userId) {
     careerIqNote: user.careerIqNote,
     allRanks: ranks.map((rank) => ({ key: rank.key, title: rank.title, category: rank.category })),
   };
+}
+
+export async function updateProfileBasics(userId, { name }) {
+  const data = {};
+  if (typeof name === 'string' && name.trim()) data.nombre = name.trim();
+
+  const updated = await profileRepository.updateUserProfile(userId, data);
+  return { name: updated.nombre };
+}
+
+export async function updateProfileAvatar(userId, buffer, contentType) {
+  const storage = getStorageProvider();
+  const key = `avatars/${userId}-${Date.now()}`;
+  await storage.upload(key, buffer, contentType);
+  const url = await storage.getSignedUrl(key);
+
+  const updated = await profileRepository.updateUserProfile(userId, { avatarUrl: url });
+  return { avatar: updated.avatarUrl };
+}
+
+export async function changePassword(userId, currentPassword, newPassword) {
+  const user = await profileRepository.findUserPasswordHash(userId);
+  if (!user) return { ok: false, error: 'Usuario no encontrado' };
+
+  const isValid = await verifyPassword(currentPassword, user.passwordHash);
+  if (!isValid) return { ok: false, error: 'La contraseña actual no es correcta' };
+
+  if (!newPassword || newPassword.length < 8) {
+    return { ok: false, error: 'La nueva contraseña debe tener al menos 8 caracteres' };
+  }
+
+  const passwordHash = await hashPassword(newPassword);
+  await profileRepository.updateUserProfile(userId, { passwordHash });
+  return { ok: true };
 }

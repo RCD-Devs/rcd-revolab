@@ -15,7 +15,8 @@ export async function POST(request, { params }) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const result = await uploadLessonVideo(id, session.user.id, buffer, file.type);
+  const isAdmin = session.user.role === "ADMIN";
+  const result = await uploadLessonVideo(id, session.user.id, buffer, file.type, isAdmin);
 
   if (!result) {
     return NextResponse.json({ error: "Lección no encontrada" }, { status: 404 });

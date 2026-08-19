@@ -12,16 +12,31 @@ function mapCourseSummary(course) {
   };
 }
 
+// Un ADMIN puede operar sobre el curso de cualquier instructor; un
+// INSTRUCTOR solo sobre los propios. Centraliza esa resolucion aqui
+// para que cada operacion de este servicio respete el mismo control.
+function resolveCourse(slug, actorId, isAdmin) {
+  if (isAdmin) return instructorCourseRepository.findCourseBySlugAny(slug);
+  return instructorCourseRepository.findCourseBySlugForInstructor(slug, actorId);
+}
+
+function resolveCourseDetail(slug, actorId, isAdmin) {
+  if (isAdmin) return instructorCourseRepository.findCourseDetailAny(slug);
+  return instructorCourseRepository.findCourseDetailForInstructor(slug, actorId);
+}
+
+function resolveLesson(lessonId, actorId, isAdmin) {
+  if (isAdmin) return instructorCourseRepository.findLessonAny(lessonId);
+  return instructorCourseRepository.findLessonForInstructor(lessonId, actorId);
+}
+
 export async function listInstructorCourses(instructorId) {
   const courses = await instructorCourseRepository.findCoursesByInstructor(instructorId);
   return courses.map(mapCourseSummary);
 }
 
-export async function getCourseForEdit(slug, instructorId) {
-  const course = await instructorCourseRepository.findCourseDetailForInstructor(
-    slug,
-    instructorId,
-  );
+export async function getCourseForEdit(slug, actorId, isAdmin = false) {
+  const course = await resolveCourseDetail(slug, actorId, isAdmin);
   if (!course) return null;
 
   return {
@@ -89,11 +104,8 @@ const EDITABLE_FIELDS = [
   'departmentId',
 ];
 
-export async function updateCourseBasics(slug, instructorId, payload) {
-  const course = await instructorCourseRepository.findCourseBySlugForInstructor(
-    slug,
-    instructorId,
-  );
+export async function updateCourseBasics(slug, actorId, payload, isAdmin = false) {
+  const course = await resolveCourse(slug, actorId, isAdmin);
   if (!course) return null;
 
   const data = {};
@@ -105,22 +117,47 @@ export async function updateCourseBasics(slug, instructorId, payload) {
   return { id: updated.slug, status: updated.status };
 }
 
-export async function publishCourse(slug, instructorId) {
-  const course = await instructorCourseRepository.findCourseBySlugForInstructor(
-    slug,
-    instructorId,
-  );
+export async function publishCourse(slug, actorId, isAdmin = false) {
+  const course = await resolveCourse(slug, actorId, isAdmin);
   if (!course) return null;
 
   const updated = await instructorCourseRepository.publishCourse(course.id);
   return { id: updated.slug, status: updated.status, publishedAt: updated.publishedAt };
 }
 
-export async function uploadCourseCover(slug, instructorId, buffer, contentType) {
-  const course = await instructorCourseRepository.findCourseBySlugForInstructor(
-    slug,
-    instructorId,
-  );
+export async function unpublishCourse(slug, actorId, isAdmin = false) {
+  const course = await resolveCourse(slug, actorId, isAdmin);
+  if (!course) return null;
+
+  const updated = await instructorCourseRepository.updateCourse(course.id, {
+    status: 'DRAFT',
+    publishedAt: null,
+  });
+  return { id: updated.slug, status: updated.status };
+}
+
+export async function deleteCourse(slug, actorId, isAdmin = false) {
+  const course = await resolveCourse(slug, actorId, isAdmin);
+  if (!course) return null;
+
+  try {
+    await instructorCourseRepository.deleteCourse(course.id);
+    return { id: slug, deleted: true };
+  } catch (error) {
+    if (error.code === 'P2003' || error.code === 'P2014') {
+      return {
+        id: slug,
+        deleted: false,
+        error:
+          'No se puede eliminar: hay estudiantes inscritos o certificados emitidos. Despublícalo en su lugar.',
+      };
+    }
+    throw error;
+  }
+}
+
+export async function uploadCourseCover(slug, actorId, buffer, contentType, isAdmin = false) {
+  const course = await resolveCourse(slug, actorId, isAdmin);
   if (!course) return null;
 
   const storage = getStorageProvider();
@@ -135,11 +172,8 @@ export async function uploadCourseCover(slug, instructorId, buffer, contentType)
   return { id: updated.slug, coverImageUrl: updated.coverImageUrl };
 }
 
-export async function addModule(slug, instructorId, { title }) {
-  const course = await instructorCourseRepository.findCourseBySlugForInstructor(
-    slug,
-    instructorId,
-  );
+export async function addModule(slug, actorId, { title }, isAdmin = false) {
+  const course = await resolveCourse(slug, actorId, isAdmin);
   if (!course) return null;
 
   const order = await instructorCourseRepository.countModules(course.id);
@@ -151,11 +185,8 @@ export async function addModule(slug, instructorId, { title }) {
   return { id: module_.id, title: module_.title, order: module_.order };
 }
 
-export async function addLesson(slug, moduleId, instructorId, { title, type }) {
-  const course = await instructorCourseRepository.findCourseBySlugForInstructor(
-    slug,
-    instructorId,
-  );
+export async function addLesson(slug, moduleId, actorId, { title, type }, isAdmin = false) {
+  const course = await resolveCourse(slug, actorId, isAdmin);
   if (!course) return null;
 
   const moduleRecord = await instructorCourseRepository.findModuleForCourse(
@@ -174,11 +205,8 @@ export async function addLesson(slug, moduleId, instructorId, { title, type }) {
   return { id: lesson.id, title: lesson.title, type: lesson.type, order: lesson.order };
 }
 
-export async function uploadLessonVideo(lessonId, instructorId, buffer, contentType) {
-  const lesson = await instructorCourseRepository.findLessonForInstructor(
-    lessonId,
-    instructorId,
-  );
+export async function uploadLessonVideo(lessonId, actorId, buffer, contentType, isAdmin = false) {
+  const lesson = await resolveLesson(lessonId, actorId, isAdmin);
   if (!lesson) return null;
 
   const storage = getStorageProvider();

@@ -1,36 +1,30 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  getCourseDraft,
-  instructorAreas,
-  instructorCourseSteps,
-  instructorDefaultModule,
-  instructorEmptyModule,
-  instructorEnrollmentOptions,
-  instructorLessonTypes,
-  instructorVisibilityOptions,
-} from "@/data/instructor-data";
 import styles from "./instructor-course-editor.module.css";
 
-function cloneDefaultModule() {
-  return {
-    ...instructorDefaultModule,
-    lessons: instructorDefaultModule.lessons.map((lesson) => ({ ...lesson })),
-  };
-}
+const instructorCourseSteps = [
+  { id: "basic", label: "Información Básica", viewTitle: "Información Básica", icon: "/icons/instructor-step-info.svg" },
+  { id: "content", label: "Contenido y Módulos", viewTitle: "Contenido del Curso", icon: "/icons/instructor-step-content.svg" },
+  { id: "rules", label: "Reglas y Publicación", viewTitle: "Reglas y Publicación", icon: "/icons/instructor-step-rules.svg" },
+];
 
-function createEmptyModule() {
-  return {
-    ...instructorEmptyModule,
-    id: `module-${Date.now()}`,
-    lessons: [],
-  };
-}
+const instructorEnrollmentOptions = [
+  { id: "NONE", label: "Sin requisitos" },
+  { id: "RANK_SPECIALIST", label: "Exclusivo: Rango Especialista o superior" },
+];
 
-function StepBasic({ draft, onChange }) {
+const instructorVisibilityOptions = [
+  { id: "PUBLIC", label: "Público (Catálogo General)" },
+  { id: "HIDDEN", label: "Oculto (Solo con enlace)" },
+];
+
+const LESSON_TYPE_LABELS = { VIDEO: "Video", DOCUMENT: "Documento", QUIZ: "Quiz", TOOLS: "Herramientas" };
+
+function StepBasic({ draft, onChange, departments, onCoverUpload, isUploadingCover }) {
   return (
     <div className={styles.stepForm}>
       <div className={styles.field}>
@@ -68,32 +62,47 @@ function StepBasic({ draft, onChange }) {
         <div className={styles.selectWrap}>
           <select
             id="course-area"
-            value={draft.area}
-            onChange={(event) => onChange({ area: event.target.value })}
+            value={draft.departmentId ?? ""}
+            onChange={(event) => onChange({ departmentId: event.target.value })}
             className={styles.select}
           >
-            {instructorAreas.map((area) => (
-              <option key={area} value={area}>
-                {area}
+            <option value="">Selecciona un área</option>
+            {departments.map((department) => (
+              <option key={department.id} value={department.id}>
+                {department.label}
               </option>
             ))}
           </select>
-          <Image
-            src="/icons/chevron-down.svg"
-            alt=""
-            width={10}
-            height={10}
-            className={styles.selectIcon}
-          />
+          <Image src="/icons/chevron-down.svg" alt="" width={10} height={10} className={styles.selectIcon} />
         </div>
       </div>
 
       <div className={styles.field}>
         <span className={styles.label}>Portada del Curso</span>
+        {draft.coverImageUrl && (
+          <Image
+            src={draft.coverImageUrl}
+            alt=""
+            width={200}
+            height={112}
+            className={styles.uploadPreview}
+          />
+        )}
         <label className={styles.uploadZone}>
-          <input type="file" accept="image/*" className={styles.uploadInput} />
+          <input
+            type="file"
+            accept="image/*"
+            className={styles.uploadInput}
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) onCoverUpload(file);
+            }}
+            disabled={isUploadingCover}
+          />
           <Image src="/icons/instructor-upload.svg" alt="" width={40} height={40} />
-          <span className={styles.uploadTitle}>Sube una imagen o arrástrala aquí</span>
+          <span className={styles.uploadTitle}>
+            {isUploadingCover ? "Subiendo..." : "Sube una imagen o arrástrala aquí"}
+          </span>
           <span className={styles.uploadHint}>1920x1080px (Recomendado)</span>
         </label>
       </div>
@@ -102,67 +111,58 @@ function StepBasic({ draft, onChange }) {
 }
 
 function LessonRow({ lesson }) {
-  const typeConfig = instructorLessonTypes.find((item) => item.id === lesson.type);
-
   return (
     <div className={styles.lessonRow}>
       <Image src="/icons/instructor-drag.svg" alt="" width={16} height={16} />
-      {typeConfig && (
-        <Image src={typeConfig.icon} alt="" width={16} height={16} />
-      )}
       <span className={styles.lessonTitle}>{lesson.title}</span>
+      <span className={styles.lessonType}>{LESSON_TYPE_LABELS[lesson.type] ?? lesson.type}</span>
     </div>
   );
 }
 
-function ModuleCard({ module, onDelete }) {
+function ModuleCard({ module, onAddLesson }) {
+  const [newLessonTitle, setNewLessonTitle] = useState("");
+
   return (
     <article className={styles.moduleCard}>
       <header className={styles.moduleHeader}>
         <Image src="/icons/instructor-drag.svg" alt="" width={20} height={20} />
-        <input
-          type="text"
-          defaultValue={module.title}
-          className={styles.moduleTitleInput}
-          aria-label="Título del módulo"
-        />
-        <button
-          type="button"
-          className={styles.moduleDelete}
-          onClick={onDelete}
-          aria-label="Eliminar módulo"
-        >
-          <Image src="/icons/instructor-trash.svg" alt="" width={16} height={16} />
-        </button>
+        <span className={styles.moduleTitleInput}>{module.title}</span>
       </header>
 
       <div className={styles.moduleBody}>
         {module.lessons.length > 0 ? (
-          module.lessons.map((lesson) => (
-            <LessonRow key={lesson.id} lesson={lesson} />
-          ))
+          module.lessons.map((lesson) => <LessonRow key={lesson.id} lesson={lesson} />)
         ) : (
           <div className={styles.moduleEmpty}>Módulo vacío. Agrega lecciones.</div>
         )}
 
         <div className={styles.lessonActions}>
-          {instructorLessonTypes.map((type) => (
-            <button
-              key={type.id}
-              type="button"
-              className={`${styles.lessonAction} ${styles[`lessonAction_${type.tone}`]}`}
-            >
-              <Image src={type.icon} alt="" width={12} height={12} />
-              {type.label}
-            </button>
-          ))}
+          <input
+            type="text"
+            value={newLessonTitle}
+            onChange={(event) => setNewLessonTitle(event.target.value)}
+            placeholder="Título de la nueva lección"
+            className={styles.input}
+          />
+          <button
+            type="button"
+            className={styles.lessonAction}
+            onClick={() => {
+              if (!newLessonTitle.trim()) return;
+              onAddLesson(module.id, newLessonTitle.trim());
+              setNewLessonTitle("");
+            }}
+          >
+            + Agregar lección
+          </button>
         </div>
       </div>
     </article>
   );
 }
 
-function StepContent({ viewTitle, modules, onAddModule, onDeleteModule }) {
+function StepContent({ viewTitle, modules, onAddModule, onAddLesson }) {
   return (
     <div className={styles.stepContent}>
       <div className={styles.contentHeader}>
@@ -175,74 +175,12 @@ function StepContent({ viewTitle, modules, onAddModule, onDeleteModule }) {
 
       <div className={styles.moduleList}>
         {modules.map((module) => (
-          <ModuleCard
-            key={module.id}
-            module={module}
-            onDelete={() => onDeleteModule(module.id)}
-          />
+          <ModuleCard key={module.id} module={module} onAddLesson={onAddLesson} />
         ))}
+        {modules.length === 0 && (
+          <p className={styles.moduleEmpty}>Aún no hay módulos. Agrega el primero.</p>
+        )}
       </div>
-    </div>
-  );
-}
-
-function EnrollmentDropdown({ value, onChange }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const wrapRef = useRef(null);
-  const selected = instructorEnrollmentOptions.find((option) => option.id === value);
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (wrapRef.current && !wrapRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  return (
-    <div className={styles.dropdownWrap} ref={wrapRef}>
-      <button
-        type="button"
-        className={`${styles.dropdownTrigger} ${isOpen ? styles.dropdownTriggerOpen : ""}`}
-        onClick={() => setIsOpen((open) => !open)}
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-      >
-        <span>{selected?.label}</span>
-        <Image
-          src="/icons/chevron-down.svg"
-          alt=""
-          width={12}
-          height={12}
-          className={styles.dropdownChevron}
-        />
-      </button>
-
-      {isOpen && (
-        <ul className={styles.dropdownMenu} role="listbox">
-          {instructorEnrollmentOptions.map((option) => (
-            <li key={option.id}>
-              <button
-                type="button"
-                role="option"
-                aria-selected={option.id === value}
-                className={`${styles.dropdownOption} ${
-                  option.id === value ? styles.dropdownOptionActive : ""
-                }`}
-                onClick={() => {
-                  onChange(option.id);
-                  setIsOpen(false);
-                }}
-              >
-                {option.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
@@ -272,14 +210,19 @@ function StepRules({ draft, onChange }) {
 
       <section className={styles.rulesSection}>
         <h3 className={styles.rulesHeading}>Requisitos de Inscripción</h3>
-        <p className={styles.rulesHint}>
-          Selecciona si este curso requiere completar otro curso primero o si es exclusivo
-          para un rango en específico.
-        </p>
-        <EnrollmentDropdown
-          value={draft.enrollmentRequirement}
-          onChange={(enrollmentRequirement) => onChange({ enrollmentRequirement })}
-        />
+        <div className={styles.selectWrap}>
+          <select
+            value={draft.enrollmentRequirement}
+            onChange={(event) => onChange({ enrollmentRequirement: event.target.value })}
+            className={styles.select}
+          >
+            {instructorEnrollmentOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </section>
 
       <section className={styles.rulesSection}>
@@ -294,9 +237,7 @@ function StepRules({ draft, onChange }) {
           <span className={styles.checkboxControl} aria-hidden="true" />
           <span className={styles.checkboxCopy}>
             <span className={styles.checkboxTitle}>Otorgar Certificado Automático</span>
-            <span className={styles.checkboxHint}>
-              Al aprobar el quiz final con más del 80%
-            </span>
+            <span className={styles.checkboxHint}>Al aprobar el examen final con más del 80%</span>
           </span>
         </label>
       </section>
@@ -304,49 +245,142 @@ function StepRules({ draft, onChange }) {
   );
 }
 
+const EMPTY_DRAFT = {
+  title: "",
+  description: "",
+  departmentId: "",
+  coverImageUrl: null,
+  visibility: "PUBLIC",
+  enrollmentRequirement: "NONE",
+  autoCertificate: false,
+  modules: [],
+};
+
 export default function InstructorCourseEditorContent({ courseId, isNew = false }) {
-  const initialDraft = getCourseDraft(isNew ? "nuevo" : courseId);
+  const router = useRouter();
   const [activeStep, setActiveStep] = useState("basic");
-  const [draft, setDraft] = useState(initialDraft);
-  const [isDirty, setIsDirty] = useState(isNew);
+  const [draft, setDraft] = useState(EMPTY_DRAFT);
+  const [id, setId] = useState(isNew ? null : courseId);
+  const [departments, setDepartments] = useState([]);
+  const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/departments")
+      .then((res) => res.json())
+      .then((data) => setDepartments(data.departments ?? []))
+      .catch(() => setDepartments([]));
+  }, []);
+
+  useEffect(() => {
+    if (isNew || !id) return;
+    fetch(`/api/instructor/courses/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.course) setDraft({ ...EMPTY_DRAFT, ...data.course });
+      });
+  }, [id, isNew]);
 
   const updateDraft = (changes) => {
     setDraft((current) => ({ ...current, ...changes }));
     setIsDirty(true);
   };
 
-  const handleStepChange = (stepId) => {
-    setActiveStep(stepId);
+  async function ensureCourseExists() {
+    if (id) return id;
+    const response = await fetch("/api/instructor/courses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: draft.title || "Nuevo curso", description: draft.description }),
+    });
+    const data = await response.json();
+    const newId = data.course.id;
+    setId(newId);
+    router.replace(`/instructor/cursos/${newId}/editar`);
+    return newId;
+  }
 
-    if (stepId === "content") {
-      setDraft((current) => {
-        if (current.modules.length > 0) {
-          return current;
-        }
-
-        return {
-          ...current,
-          modules: [cloneDefaultModule()],
-        };
+  async function handleSave() {
+    setIsSaving(true);
+    try {
+      const currentId = await ensureCourseExists();
+      await fetch(`/api/instructor/courses/${currentId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: draft.title,
+          description: draft.description,
+          departmentId: draft.departmentId || undefined,
+          visibility: draft.visibility,
+          enrollmentRequirement: draft.enrollmentRequirement,
+          autoCertificate: draft.autoCertificate,
+        }),
       });
+      setIsDirty(false);
+    } finally {
+      setIsSaving(false);
     }
-  };
+  }
 
-  const handleAddModule = () => {
+  async function handlePublish() {
+    await handleSave();
+    const currentId = await ensureCourseExists();
+    await fetch(`/api/instructor/courses/${currentId}/publish`, { method: "POST" });
+    router.push("/instructor");
+  }
+
+  async function handleCoverUpload(file) {
+    setIsUploadingCover(true);
+    try {
+      const currentId = await ensureCourseExists();
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch(`/api/instructor/courses/${currentId}/cover`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      if (data.coverImageUrl) updateDraft({ coverImageUrl: data.coverImageUrl });
+    } finally {
+      setIsUploadingCover(false);
+    }
+  }
+
+  async function handleAddModule() {
+    const currentId = await ensureCourseExists();
+    const response = await fetch(`/api/instructor/courses/${currentId}/modules`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    });
+    const data = await response.json();
     setDraft((current) => ({
       ...current,
-      modules: [...current.modules, createEmptyModule()],
+      modules: [...current.modules, { ...data.module, lessons: [] }],
     }));
-    setIsDirty(true);
-  };
+  }
 
-  const handleDeleteModule = (moduleId) => {
+  async function handleAddLesson(moduleId, title) {
+    const currentId = await ensureCourseExists();
+    const response = await fetch(
+      `/api/instructor/courses/${currentId}/modules/${moduleId}/lessons`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, type: "VIDEO" }),
+      },
+    );
+    const data = await response.json();
     setDraft((current) => ({
       ...current,
-      modules: current.modules.filter((module) => module.id !== moduleId),
+      modules: current.modules.map((moduleItem) =>
+        moduleItem.id === moduleId
+          ? { ...moduleItem, lessons: [...moduleItem.lessons, data.lesson] }
+          : moduleItem,
+      ),
     }));
-    setIsDirty(true);
-  };
+  }
 
   const activeStepMeta = instructorCourseSteps.find((step) => step.id === activeStep);
   const displayTitle = draft.title || "Nuevo Curso";
@@ -359,17 +393,17 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
           <div className={styles.subheaderCopy}>
             <h1 className={styles.subheaderTitle}>{displayTitle}</h1>
             <p className={styles.subheaderSubtitle}>
-              {isDirty ? "Borrador no guardado" : "Borrador guardado"}
+              {isDirty ? "Cambios sin guardar" : "Guardado"}
             </p>
           </div>
         </Link>
 
         <div className={styles.subheaderActions}>
-          <button type="button" className={styles.saveButton}>
+          <button type="button" className={styles.saveButton} onClick={handleSave} disabled={isSaving}>
             <Image src="/icons/instructor-save.svg" alt="" width={16} height={16} />
             Guardar
           </button>
-          <button type="button" className={styles.publishButton}>
+          <button type="button" className={styles.publishButton} onClick={handlePublish} disabled={isSaving}>
             <Image src="/icons/instructor-publish.svg" alt="" width={16} height={16} />
             Publicar
           </button>
@@ -387,15 +421,9 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
                   activeStep === step.id ? styles.stepNavItemActive : ""
                 }`}
                 aria-current={activeStep === step.id ? "step" : undefined}
-                onClick={() => handleStepChange(step.id)}
+                onClick={() => setActiveStep(step.id)}
               >
-                <Image
-                  src={step.icon}
-                  alt=""
-                  width={16}
-                  height={16}
-                  className={styles.stepNavIcon}
-                />
+                <Image src={step.icon} alt="" width={16} height={16} className={styles.stepNavIcon} />
                 {step.label}
               </button>
             ))}
@@ -406,7 +434,13 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
           {activeStep === "basic" && (
             <>
               <h2 className={styles.stepTitle}>{activeStepMeta?.viewTitle}</h2>
-              <StepBasic draft={draft} onChange={updateDraft} />
+              <StepBasic
+                draft={draft}
+                onChange={updateDraft}
+                departments={departments}
+                onCoverUpload={handleCoverUpload}
+                isUploadingCover={isUploadingCover}
+              />
             </>
           )}
 
@@ -415,7 +449,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
               viewTitle={activeStepMeta?.viewTitle}
               modules={draft.modules}
               onAddModule={handleAddModule}
-              onDeleteModule={handleDeleteModule}
+              onAddLesson={handleAddLesson}
             />
           )}
 

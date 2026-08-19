@@ -1,14 +1,27 @@
 import { notFound } from "next/navigation";
 import CourseExamPage from "@/components/courses/course-exam-page";
-import { getCourseExam } from "@/data/course-exam-data";
+import { auth } from "@/auth";
+import { getCourseDetail } from "@revolab/backend/services/courses";
+import { getCourseExam } from "@revolab/backend/services/quiz";
 
 export default async function ExamPage({ params }) {
   const { id } = await params;
-  const examData = getCourseExam(id);
+  const session = await auth();
+  if (!session?.user?.id) notFound();
 
-  if (!examData) {
+  const [course, exam] = await Promise.all([getCourseDetail(id), getCourseExam(id)]);
+
+  if (!course || !exam) {
     notFound();
   }
 
-  return <CourseExamPage examData={examData} />;
+  return (
+    <CourseExamPage
+      examData={{
+        course: { id: course.id, title: course.title },
+        exam,
+        lastLessonId: course.firstLessonId,
+      }}
+    />
+  );
 }

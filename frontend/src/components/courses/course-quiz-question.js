@@ -8,10 +8,12 @@ export default function CourseQuizQuestion({
   questionIndex,
   totalQuestions,
   onAnswer,
+  disabled = false,
 }) {
   const [selectedId, setSelectedId] = useState(null);
 
   const handleSelect = (option) => {
+    if (disabled) return;
     setSelectedId(option.id);
     onAnswer(option);
   };

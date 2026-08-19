@@ -6,6 +6,16 @@ export function findCertificate(userId, courseId) {
   });
 }
 
+export function findCertificateByUserAndCourseSlug(userId, courseSlug) {
+  return prisma.certificate.findFirst({
+    where: { userId, course: { slug: courseSlug } },
+    include: {
+      user: { select: { nombre: true } },
+      course: { select: { title: true, slug: true } },
+    },
+  });
+}
+
 export function findCertificateById(id) {
   return prisma.certificate.findUnique({
     where: { id },

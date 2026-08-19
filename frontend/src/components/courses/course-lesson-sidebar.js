@@ -26,7 +26,7 @@ export default function CourseLessonSidebar({
         <ul className={styles.lessonList}>
           {module.lessons.map((lesson) => {
             const isActive = lesson.id === currentLessonId;
-            const isCompleted = Number(lesson.id) < Number(currentLessonId);
+            const isCompleted = lesson.completed ?? false;
 
             return (
               <li key={lesson.id}>

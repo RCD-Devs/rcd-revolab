@@ -3,14 +3,21 @@ import Link from "next/link";
 import styles from "./course-detail-panel.module.css";
 
 const stats = [
-  { icon: "/icons/clock.svg", key: "videoHours" },
+  { icon: "/icons/clock.svg", key: "videoHoursLabel" },
   { icon: "/icons/course-level.svg", key: "level" },
-  { icon: "/icons/course-transcript.svg", key: "includesTranscripts" },
-  { icon: "/icons/course-certificate.svg", key: "includesCertificate" },
+  { icon: "/icons/course-transcript.svg", key: "transcriptsLabel" },
+  { icon: "/icons/course-certificate.svg", key: "certificateLabel" },
 ];
 
 export default function CourseDetailPanel({ course }) {
-  const lessonUrl = `/cursos/${course.id}/leccion/1`;
+  const panelCourse = {
+    ...course,
+    transcriptsLabel: "Incluye transcripciones",
+    certificateLabel: "Certificado al finalizar",
+  };
+  const lessonUrl = course.firstLessonId
+    ? `/cursos/${course.id}/leccion/${course.firstLessonId}`
+    : `/cursos/${course.id}`;
   const examUrl = `/cursos/${course.id}/examen`;
 
   return (
@@ -36,12 +43,15 @@ export default function CourseDetailPanel({ course }) {
         </Link>
 
         <ul className={styles.stats}>
-          {stats.map((stat) => (
-            <li key={stat.key} className={styles.stat}>
-              <Image src={stat.icon} alt="" width={20} height={20} />
-              <span>{course[stat.key]}</span>
-            </li>
-          ))}
+          {stats.map(
+            (stat) =>
+              panelCourse[stat.key] && (
+                <li key={stat.key} className={styles.stat}>
+                  <Image src={stat.icon} alt="" width={20} height={20} />
+                  <span>{panelCourse[stat.key]}</span>
+                </li>
+              ),
+          )}
         </ul>
 
         <div className={styles.certificate}>
@@ -51,7 +61,7 @@ export default function CourseDetailPanel({ course }) {
             </span>
             <div className={styles.certificateText}>
               <p className={styles.certificateLabel}>Certificado</p>
-              <p className={styles.certificateName}>{course.certificateName}</p>
+              <p className={styles.certificateName}>{course.title}</p>
             </div>
           </div>
         </div>

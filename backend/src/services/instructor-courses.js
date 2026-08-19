@@ -17,6 +17,36 @@ export async function listInstructorCourses(instructorId) {
   return courses.map(mapCourseSummary);
 }
 
+export async function getCourseForEdit(slug, instructorId) {
+  const course = await instructorCourseRepository.findCourseDetailForInstructor(
+    slug,
+    instructorId,
+  );
+  if (!course) return null;
+
+  return {
+    id: course.slug,
+    title: course.title,
+    description: course.description,
+    status: course.status,
+    coverImageUrl: course.coverImageUrl,
+    visibility: course.visibility,
+    enrollmentRequirement: course.enrollmentRequirement,
+    autoCertificate: course.autoCertificate,
+    departmentId: course.departmentId,
+    department: course.department?.label ?? null,
+    modules: course.modules.map((moduleItem) => ({
+      id: moduleItem.id,
+      title: moduleItem.title,
+      lessons: moduleItem.lessons.map((lesson) => ({
+        id: lesson.id,
+        title: lesson.title,
+        type: lesson.type,
+      })),
+    })),
+  };
+}
+
 async function generateUniqueSlug(title) {
   const base = slugify(title) || 'curso';
   let slug = base;

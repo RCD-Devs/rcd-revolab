@@ -13,6 +13,7 @@
     "./integrations/*": "./src/integrations/*.js"
   },
   "scripts": {
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "node prisma/seed.js"

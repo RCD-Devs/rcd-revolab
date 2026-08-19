@@ -1,22 +1,26 @@
 {
-  "name": "rcd-revolab-backend",
-  "version": "1.0.0",
-  "description": "Backend de RevoLab - plataforma interna de e-learning",
-  "main": "server.js",
+  "name": "@revolab/backend",
+  "version": "0.1.0",
+  "description": "Lógica interna de RevoLab (servicios, repositorios, Prisma) consumida por frontend/",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./config/*": "./src/config/*.js",
+    "./services/*": "./src/services/*.js",
+    "./repositories/*": "./src/repositories/*.js",
+    "./validations/*": "./src/validations/*.js",
+    "./auth/*": "./src/auth/*.js",
+    "./integrations/*": "./src/integrations/*.js"
+  },
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "node prisma/seed.js"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
-    "cors": "^2.8.6",
-    "dotenv": "^16.6.1",
-    "express": "^4.22.2"
+    "@prisma/client": "^5.22.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7",
     "prisma": "^5.22.0"
   }
 }

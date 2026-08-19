@@ -9,10 +9,11 @@ export default auth((req) => {
   const isAdminRoute = pathname.startsWith("/admin");
   const isInstructorRoute = pathname.startsWith("/instructor");
   const isPerfilRoute = pathname.startsWith("/perfil");
+  const isHomeRoute = pathname.startsWith("/home");
   const isCourseProgressRoute = /^\/cursos\/[^/]+\/(leccion|examen)(\/|$)/.test(pathname);
 
   const requiresSession =
-    isAdminRoute || isInstructorRoute || isPerfilRoute || isCourseProgressRoute;
+    isAdminRoute || isInstructorRoute || isPerfilRoute || isHomeRoute || isCourseProgressRoute;
 
   if (!session && requiresSession) {
     const loginUrl = new URL("/login", req.nextUrl);
@@ -36,6 +37,7 @@ export const config = {
     "/admin/:path*",
     "/instructor/:path*",
     "/perfil/:path*",
+    "/home/:path*",
     "/cursos/:id/leccion/:path*",
     "/cursos/:id/examen/:path*",
   ],

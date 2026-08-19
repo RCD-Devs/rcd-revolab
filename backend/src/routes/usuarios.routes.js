@@ -1,1 +1,0 @@
-//  Ejemplo para una ruta de usuarios

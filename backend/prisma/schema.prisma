@@ -6,22 +6,268 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-// Modelos de ejemplo.
+enum Role {
+  ADMIN
+  INSTRUCTOR
+  STUDENT
+}
+
+enum CourseStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+}
+
+enum CourseVisibility {
+  PUBLIC
+  HIDDEN
+}
+
+enum EnrollmentRequirement {
+  NONE
+  RANK_SPECIALIST
+}
+
+enum LessonType {
+  VIDEO
+  DOCUMENT
+  QUIZ
+  TOOLS
+}
+
+enum QuizKind {
+  LESSON_QUIZ
+  FINAL_EXAM
+}
+
+enum EnrollmentStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+/// Departamento de la organización al que pertenece una persona (ej. "Experiencia Digital"),
+/// distinto de la categoría de catálogo con la que se explora un curso.
+model Department {
+  id     String @id @default(uuid())
+  slug   String @unique
+  label  String
+
+  users   User[]
+  courses Course[]
+}
+
+/// Categoría de catálogo para explorar/filtrar cursos (ej. "Growth Hacking", "Analytics & SEO").
+model Category {
+  id    String @id @default(uuid())
+  slug  String @unique
+  label String
+
+  courses Course[]
+}
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  nombre    String
-  createdAt DateTime @default(now())
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  nombre       String
+  avatarUrl    String?
+  role         Role     @default(STUDENT)
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  rankId       String?
+  rank         Rank?    @relation(fields: [rankId], references: [id])
+  careerIqNote String?  // ej: "En progreso 75%" hacia el próximo rango
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  coursesTaught  Course[]          @relation("InstructorCourses")
+  enrollments    Enrollment[]
+  lessonProgress LessonProgress[]
+  quizAttempts   QuizAttempt[]
+  certificates   Certificate[]
+  notifications  Notification[]
+  comments       Comment[]
 }
 
 model Course {
+  id                    String                @id @default(uuid())
+  slug                  String                @unique
+  title                 String
+  description           String
+  about                 String[]
+  learningOutcomes      String[]
+  tools                 Json? // [{ emoji, name }]
+  coverImageUrl         String?
+  level                 String? // "Fundamentos" | "Nivel Intermedio" | "Nivel Avanzado"
+  durationLabel         String?
+  videoHoursLabel       String?
+  status                CourseStatus          @default(DRAFT)
+  visibility            CourseVisibility      @default(PUBLIC)
+  enrollmentRequirement EnrollmentRequirement @default(NONE)
+  autoCertificate       Boolean               @default(false)
+  categoryId            String?
+  category              Category?             @relation(fields: [categoryId], references: [id])
+  departmentId          String?
+  department            Department?           @relation(fields: [departmentId], references: [id])
+  instructorId          String
+  instructor            User                  @relation("InstructorCourses", fields: [instructorId], references: [id])
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  publishedAt           DateTime?
+
+  modules      Module[]
+  enrollments  Enrollment[]
+  certificates Certificate[]
+  comments     Comment[]
+  finalExam    Quiz?         @relation("CourseFinalExam")
+}
+
+model Module {
+  id       String @id @default(uuid())
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title    String
+  order    Int
+
+  lessons Lesson[]
+}
+
+model Lesson {
+  id              String     @id @default(uuid())
+  moduleId        String
+  module          Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title           String
+  type            LessonType @default(VIDEO)
+  order           Int
+  videoKey        String? // key/path en el storage (R2/local/Drive)
+  documentUrl     String?
+  durationSeconds Int?
+  transcript      String[]
+
+  quiz     Quiz?             @relation("LessonQuiz")
+  progress LessonProgress[]
+}
+
+model Quiz {
+  id            String   @id @default(uuid())
+  kind          QuizKind
+  title         String
+  description   String?
+  passThreshold Int      @default(80)
+
+  lessonId String? @unique
+  lesson   Lesson? @relation("LessonQuiz", fields: [lessonId], references: [id], onDelete: Cascade)
+
+  courseId String? @unique
+  course   Course? @relation("CourseFinalExam", fields: [courseId], references: [id], onDelete: Cascade)
+
+  questions Question[]
+  attempts  QuizAttempt[]
+}
+
+model Question {
+  id     String @id @default(uuid())
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text   String
+  order  Int
+
+  options Option[]
+}
+
+model Option {
+  id         String   @id @default(uuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  label      String
+  isCorrect  Boolean  @default(false)
+  order      Int
+}
+
+model QuizAttempt {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
+  answers   Json // { [questionId]: optionId }
+  score     Int
+  passed    Boolean
+  createdAt DateTime @default(now())
+}
+
+model Enrollment {
+  id              String           @id @default(uuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  courseId        String
+  course          Course           @relation(fields: [courseId], references: [id])
+  status          EnrollmentStatus @default(IN_PROGRESS)
+  progressPercent Int              @default(0)
+  enrolledAt      DateTime         @default(now())
+  completedAt     DateTime?
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id                  String    @id @default(uuid())
+  userId              String
+  user                User      @relation(fields: [userId], references: [id])
+  lessonId            String
+  lesson              Lesson    @relation(fields: [lessonId], references: [id])
+  completed           Boolean   @default(false)
+  lastPositionSeconds Int       @default(0)
+  completedAt         DateTime?
+
+  @@unique([userId, lessonId])
+}
+
+model Certificate {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  courseId        String
+  course          Course   @relation(fields: [courseId], references: [id])
+  pdfKey          String // key/path en storage
+  linkedinMessage String
+  issuedAt        DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+model Rank {
+  id       String @id @default(uuid())
+  key      String @unique // "cadete", "tripulante", ...
+  title    String
+  category String // EXPLORACIÓN | EXPANSIÓN | TRASCENDENCIA
+  order    Int
+  users    User[]
+}
+
+model Notification {
   id          String   @id @default(uuid())
-  titulo      String
-  descripcion String?
-  publicado   Boolean  @default(false)
+  userId      String? // null = broadcast a todos
+  user        User?    @relation(fields: [userId], references: [id])
+  title       String
+  description String
+  type        String // "course" | "comment" | ...
+  isRead      Boolean  @default(false)
   createdAt   DateTime @default(now())
+}
+
+// Placeholder de Fase 2 (post-MVP), incluido solo para no romper el modelo después
+model Comment {
+  id        String   @id @default(uuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
 }

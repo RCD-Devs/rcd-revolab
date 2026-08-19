@@ -2,28 +2,27 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 import styles from "./login-form.module.css";
 
-const ALLOWED_DOMAINS = [
-  "@rompecabeza.cl",
-  "@mind",
-  "@souldigital",
-];
+const ALLOWED_DOMAINS = ["@rompecabeza.cl"];
 
 function isInstitutionalEmail(email) {
   return ALLOWED_DOMAINS.some((domain) =>
-    email.toLowerCase().includes(domain.toLowerCase())
+    email.toLowerCase().endsWith(domain.toLowerCase())
   );
 }
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [formError, setFormError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   function validateEmail(value) {
@@ -31,7 +30,7 @@ export default function LoginForm() {
       return "";
     }
     if (!isInstitutionalEmail(value)) {
-      return "Solo se permite correo institucional (@rompecabeza.cl, @mind, @souldigital, etc.)";
+      return "Solo se permite correo institucional (@rompecabeza.cl).";
     }
     return "";
   }
@@ -40,33 +39,53 @@ export default function LoginForm() {
     setEmailError(validateEmail(email));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     const emailErr = !email.trim()
-      ? "Solo se permite correo institucional (@rompecabeza.cl, @mind, @souldigital, etc.)"
+      ? "Solo se permite correo institucional (@rompecabeza.cl)."
       : validateEmail(email);
     const passwordErr = !password.trim() ? "Ingresa tu contraseña." : "";
 
     setEmailError(emailErr);
     setPasswordError(passwordErr);
+    setFormError("");
 
     if (emailErr || passwordErr) return;
 
     setIsLoading(true);
 
-    localStorage.setItem(
-      "revolab_user",
-      JSON.stringify({ email, nombre: email.split("@")[0] })
-    );
-    localStorage.setItem("revolab_token", "session-" + Date.now());
-    document.cookie = `revolab_token=session; path=/; max-age=86400; SameSite=Lax`;
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
 
-    router.push("/home");
+    setIsLoading(false);
+
+    if (result?.error) {
+      setFormError("Correo o contraseña incorrectos.");
+      return;
+    }
+
+    router.push(searchParams.get("callbackUrl") || "/home");
   }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
+      {formError && (
+        <div className={styles.alert} role="alert">
+          <Image
+            src="/icons/error.svg"
+            alt=""
+            width={16}
+            height={16}
+            className={styles.alertIcon}
+          />
+          <span className={styles.alertText}>{formError}</span>
+        </div>
+      )}
+
       <div className={styles.field}>
         <label htmlFor="email" className={styles.label}>
           Usa tu correo institucional

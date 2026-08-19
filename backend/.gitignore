@@ -24,3 +24,6 @@ build/
 
 # ─── Coverage de tests ───
 coverage/
+
+# ─── Storage local de desarrollo ───
+.storage/

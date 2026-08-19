@@ -1,18 +1,31 @@
 import HomeHero from "@/components/home/home-hero";
 import CourseCarousel from "@/components/home/course-carousel";
 import ContinueCard from "@/components/home/continue-card";
-import {
-  featuredSlides,
-  recommendedCourses,
-  newCourses,
-  continueCourses,
-} from "@/data/home-data";
+import { auth } from "@/auth";
+import { listCourses, getRecommendedCourses } from "@revolab/backend/services/courses";
+import { getProfileCourses } from "@revolab/backend/services/profile";
 import styles from "./home.module.css";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
+  const [recommendedCourses, newCourses, continueCourses] = await Promise.all([
+    getRecommendedCourses(),
+    listCourses({ filter: "nuevos" }),
+    session?.user?.id ? getProfileCourses(session.user.id, "in-progress") : Promise.resolve([]),
+  ]);
+
   return (
     <div className={styles.page}>
-      <HomeHero slides={featuredSlides} />
+      <HomeHero slides={recommendedCourses.slice(0, 2).map((course) => ({
+        id: course.id,
+        courseId: course.id,
+        title: course.title,
+        description: course.description,
+        instructorName: "Ariel Jeria",
+        instructorRole: "Gerente General Rompecabeza",
+        instructorImage: "/images/home/instructor-ariel.webp",
+      }))} />
 
       <div className={styles.sections}>
         <CourseCarousel
@@ -31,14 +44,22 @@ export default function Home() {
           loop
         />
 
-        <section className={styles.continueSection}>
-          <h2 className={styles.continueTitle}>Continúa donde lo dejaste</h2>
-          <div className={styles.continueGrid}>
-            {continueCourses.map((course) => (
-              <ContinueCard key={course.id} {...course} />
-            ))}
-          </div>
-        </section>
+        {continueCourses.length > 0 && (
+          <section className={styles.continueSection}>
+            <h2 className={styles.continueTitle}>Continúa donde lo dejaste</h2>
+            <div className={styles.continueGrid}>
+              {continueCourses.map((course) => (
+                <ContinueCard
+                  key={course.id}
+                  title={course.title}
+                  module="Continuar viendo"
+                  progress={course.progress}
+                  image={course.image}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

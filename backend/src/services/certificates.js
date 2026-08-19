@@ -89,10 +89,7 @@ export async function issueCertificate({ userId, course }) {
   });
 }
 
-export async function getCertificateForUser(certificateId, userId) {
-  const certificate = await certificateRepository.findCertificateById(certificateId);
-  if (!certificate || certificate.userId !== userId) return null;
-
+function toPublicCertificate(certificate) {
   return {
     id: certificate.id,
     courseTitle: certificate.course.title,
@@ -101,4 +98,19 @@ export async function getCertificateForUser(certificateId, userId) {
     issuedAt: certificate.issuedAt,
     pdfKey: certificate.pdfKey,
   };
+}
+
+export async function getCertificateForUser(certificateId, userId) {
+  const certificate = await certificateRepository.findCertificateById(certificateId);
+  if (!certificate || certificate.userId !== userId) return null;
+  return toPublicCertificate(certificate);
+}
+
+export async function getCertificateForUserAndCourse(courseSlug, userId) {
+  const certificate = await certificateRepository.findCertificateByUserAndCourseSlug(
+    userId,
+    courseSlug,
+  );
+  if (!certificate) return null;
+  return toPublicCertificate(certificate);
 }

@@ -44,3 +44,28 @@ export function upsertEnrollment(userId, courseId, data) {
     create: { userId, courseId, ...data },
   });
 }
+
+export function findCourseStructureBySlug(slug) {
+  return prisma.course.findFirst({
+    where: { slug },
+    include: {
+      modules: {
+        orderBy: { order: 'asc' },
+        include: {
+          lessons: {
+            orderBy: { order: 'asc' },
+            include: { quiz: { select: { id: true, title: true, description: true } } },
+          },
+        },
+      },
+      finalExam: { select: { id: true, title: true } },
+    },
+  });
+}
+
+export function findLessonProgressForCourse(userId, courseId) {
+  return prisma.lessonProgress.findMany({
+    where: { userId, lesson: { module: { courseId } } },
+    select: { lessonId: true, completed: true },
+  });
+}

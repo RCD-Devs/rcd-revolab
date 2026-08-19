@@ -4,17 +4,13 @@ import { useState } from "react";
 import Image from "next/image";
 import CourseModuleCta from "@/components/courses/course-module-cta";
 import ctaStyles from "@/components/courses/course-module-cta.module.css";
-import { courseDetailTabs } from "@/data/course-detail-data";
-import {
-  DEFAULT_QUIZ_LESSON_ID,
-  getLessonQuiz,
-  getQuizPath,
-} from "@/data/course-quiz-data";
 import styles from "./course-detail-content.module.css";
+
+const courseDetailTabs = ["Descripción", "Contenido", "Transcripciones", "Comentarios", "Quiz"];
 
 export default function CourseDetailContent({ course }) {
   const [activeTab, setActiveTab] = useState(courseDetailTabs[0]);
-  const quiz = getLessonQuiz(course.id);
+  const hasQuiz = Boolean(course.firstLessonId);
 
   return (
     <div className={styles.content}>
@@ -76,15 +72,15 @@ export default function CourseDetailContent({ course }) {
         </div>
       )}
 
-      {activeTab === "Quiz" && quiz && (
+      {activeTab === "Quiz" && hasQuiz && (
         <div className={styles.panel} role="tabpanel">
           <CourseModuleCta
             ariaLabel="Quiz del curso"
             iconSrc="/icons/quiz-brain.svg"
             iconWrapClassName={ctaStyles.iconWrapQuiz}
-            title={quiz.title}
-            description={quiz.description}
-            href={getQuizPath(course.id, DEFAULT_QUIZ_LESSON_ID)}
+            title="Quiz de Lección"
+            description="Responde el quiz de la primera lección para asegurar tu aprendizaje."
+            href={`/cursos/${course.id}/leccion/${course.firstLessonId}/quiz`}
             ctaLabel="Realizar quiz"
           />
         </div>

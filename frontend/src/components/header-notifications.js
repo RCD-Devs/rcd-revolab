@@ -1,11 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import {
-  initialNotifications,
-  notificationIcons,
-} from "@/data/notifications-data";
+import { useSession } from "next-auth/react";
 import { useDropdownBehavior } from "@/hooks/use-dropdown-behavior";
 import panelStyles from "./dropdown-panel.module.css";
 import styles from "./header-notifications.module.css";
@@ -15,11 +12,25 @@ const iconBackgrounds = {
   comment: "rgba(194, 122, 255, 0.2)",
 };
 
+const notificationIcons = {
+  course: "/icons/notification-course.svg",
+  comment: "/icons/notification-comment.svg",
+};
+
 export default function HeaderNotifications({ className = "" }) {
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const { status } = useSession();
+  const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const newCount = notifications.filter((item) => item.isNew).length;
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    fetch("/api/notifications")
+      .then((res) => res.json())
+      .then((data) => setNotifications(data.notifications ?? []))
+      .catch(() => setNotifications([]));
+  }, [status]);
+
+  const newCount = notifications.filter((item) => !item.isRead).length;
   const hasNotifications = newCount > 0;
 
   const { wrapProps, isRendered, isVisible, handleTransitionEnd } =
@@ -30,16 +41,22 @@ export default function HeaderNotifications({ className = "" }) {
     setIsOpen((prev) => !prev);
   };
 
-  const handleMarkAllRead = () => {
-    setNotifications((prev) => prev.map((item) => ({ ...item, isNew: false })));
+  const markRead = async (id) => {
+    setNotifications((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isRead: true } : item)),
+    );
+    await fetch(`/api/notifications/${id}/read`, { method: "PATCH" }).catch(() => {});
+  };
+
+  const handleMarkAllRead = async () => {
+    const unread = notifications.filter((item) => !item.isRead);
     setIsOpen(false);
+    await Promise.all(unread.map((item) => markRead(item.id)));
   };
 
   const handleNotificationClick = (id) => {
-    setNotifications((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isNew: false } : item))
-    );
     setIsOpen(false);
+    markRead(id);
   };
 
   return (
@@ -103,7 +120,11 @@ export default function HeaderNotifications({ className = "" }) {
                     <span className={styles.itemDescription}>
                       {item.description}
                     </span>
-                    <span className={styles.itemTime}>{item.time}</span>
+                    <span className={styles.itemTime}>
+                      {new Intl.DateTimeFormat("es-CL", { day: "numeric", month: "short" }).format(
+                        new Date(item.createdAt),
+                      )}
+                    </span>
                   </span>
                 </button>
               </li>

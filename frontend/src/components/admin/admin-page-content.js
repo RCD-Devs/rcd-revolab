@@ -3,39 +3,81 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  adminPageMeta,
-  adminStats,
-  adminUsers,
-  filterAdminUsers,
-  formatCompletedCourses,
-  getDesktopUsers,
-  getMobileUsers,
-  hasHiddenMobileUsers,
-} from "@/data/admin-data";
 import styles from "./admin-page.module.css";
+
+const adminPageMeta = {
+  title: "Panel de Administración",
+  subtitle: "Gestión de usuarios y cursos de la plataforma.",
+  exportLabel: "Exportar Reportes",
+  usersSectionTitle: "Gestión de Usuarios",
+  searchPlaceholder: "Buscar usuario...",
+  loadMoreLabel: "Ver más usuarios",
+  backHref: "/home",
+};
+
+const MOBILE_PREVIEW_COUNT = 3;
+
+function getInitials(name) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+}
+
+function formatCompletedCourses(count) {
+  return count < 10 ? `0${count}` : String(count);
+}
+
+function formatDate(value) {
+  return new Intl.DateTimeFormat("es-CL", { day: "numeric", month: "short" }).format(
+    new Date(value),
+  );
+}
 
 export default function AdminPageContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showAllMobileUsers, setShowAllMobileUsers] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/admin/stats")
+      .then((res) => res.json())
+      .then((data) => setStats(data.stats ?? null))
+      .catch(() => setStats(null));
+
+    fetch("/api/admin/users")
+      .then((res) => res.json())
+      .then((data) => setUsers(data.users ?? []))
+      .catch(() => setUsers([]));
+  }, []);
 
   useEffect(() => {
     setShowAllMobileUsers(false);
   }, [searchQuery]);
 
-  const filteredUsers = useMemo(
-    () => filterAdminUsers(adminUsers, searchQuery),
-    [searchQuery],
-  );
+  const filteredUsers = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return users;
+    return users.filter((user) =>
+      [user.name, user.area, user.rank].filter(Boolean).join(" ").toLowerCase().includes(query),
+    );
+  }, [users, searchQuery]);
 
-  const desktopUsers = getDesktopUsers(filteredUsers);
-  const mobileUsers = getMobileUsers(
-    filteredUsers,
-    showAllMobileUsers,
-    searchQuery,
-  );
-  const hasMoreMobileUsers =
-    hasHiddenMobileUsers(filteredUsers, searchQuery) && !showAllMobileUsers;
+  const mobileUsers = showAllMobileUsers
+    ? filteredUsers
+    : filteredUsers.slice(0, MOBILE_PREVIEW_COUNT);
+  const hasMoreMobileUsers = !showAllMobileUsers && filteredUsers.length > MOBILE_PREVIEW_COUNT;
+
+  const adminStats = stats
+    ? [
+        { id: "active-users", label: "Usuarios Activos", value: stats.activeUsers, icon: "/icons/admin-stat-users.svg", tone: "blue" },
+        { id: "published-courses", label: "Cursos Publicados", value: stats.publishedCourses, icon: "/icons/admin-stat-courses.svg", tone: "teal" },
+        { id: "completion-rate", label: "Tasa de Finalización", value: `${stats.completionRate}%`, icon: "/icons/admin-stat-chart.svg", tone: "purple" },
+      ]
+    : [];
 
   return (
     <div className={styles.page}>
@@ -47,11 +89,6 @@ export default function AdminPageContent() {
             <p className={styles.subheaderSubtitle}>{adminPageMeta.subtitle}</p>
           </div>
         </Link>
-
-        <button type="button" className={styles.exportButton}>
-          <Image src="/icons/download-white.svg" alt="" width={16} height={16} />
-          <span>{adminPageMeta.exportLabel}</span>
-        </button>
       </div>
 
       <div className={styles.container}>
@@ -60,19 +97,11 @@ export default function AdminPageContent() {
             <h1 className={styles.heroTitle}>{adminPageMeta.title}</h1>
             <p className={styles.heroSubtitle}>{adminPageMeta.subtitle}</p>
           </div>
-
-          <button type="button" className={styles.heroExportButton}>
-            <Image src="/icons/download-white.svg" alt="" width={16} height={16} />
-            <span>{adminPageMeta.exportLabel}</span>
-          </button>
         </section>
 
         <section className={styles.stats} aria-label="Métricas de la plataforma">
           {adminStats.map((stat) => (
-            <article
-              key={stat.id}
-              className={styles.statCard}
-            >
+            <article key={stat.id} className={styles.statCard}>
               <div className={`${styles.statIcon} ${styles[`statIcon_${stat.tone}`]}`}>
                 <Image src={stat.icon} alt="" width={24} height={24} />
               </div>
@@ -91,13 +120,7 @@ export default function AdminPageContent() {
             </h2>
 
             <label className={styles.searchField}>
-              <Image
-                className={styles.searchIcon}
-                src="/icons/search.svg"
-                alt=""
-                width={16}
-                height={16}
-              />
+              <Image className={styles.searchIcon} src="/icons/search.svg" alt="" width={16} height={16} />
               <input
                 type="search"
                 value={searchQuery}
@@ -120,30 +143,30 @@ export default function AdminPageContent() {
                 </tr>
               </thead>
               <tbody>
-                {desktopUsers.map((user) => (
+                {filteredUsers.map((user) => (
                   <tr key={user.id}>
                     <td>
                       <div className={styles.userNameCell}>
                         <span className={styles.userAvatar} aria-hidden="true">
-                          {user.initials}
+                          {getInitials(user.name)}
                         </span>
                         <span className={styles.userName}>{user.name}</span>
                       </div>
                     </td>
                     <td>
-                      <span className={styles.areaTag}>{user.area}</span>
+                      <span className={styles.areaTag}>{user.area ?? "—"}</span>
                     </td>
                     <td>
-                      <span className={styles.userRank}>{user.rank}</span>
+                      <span className={styles.userRank}>{user.rank ?? "—"}</span>
                     </td>
                     <td>{user.completedCourses}</td>
-                    <td className={styles.lastActivity}>{user.lastActivity}</td>
+                    <td className={styles.lastActivity}>{formatDate(user.lastActivity)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
-            {desktopUsers.length === 0 && (
+            {filteredUsers.length === 0 && (
               <p className={styles.emptyState}>No se encontraron usuarios.</p>
             )}
           </div>
@@ -159,12 +182,12 @@ export default function AdminPageContent() {
                 <article key={user.id} className={styles.mobileUserCard}>
                   <div className={styles.mobileUserMain}>
                     <span className={styles.userAvatar} aria-hidden="true">
-                      {user.initials}
+                      {getInitials(user.name)}
                     </span>
                     <div className={styles.mobileUserCopy}>
                       <p className={styles.userName}>{user.name}</p>
-                      <p className={styles.mobileUserArea}>{user.mobileArea}</p>
-                      <p className={styles.userRank}>{user.rank}</p>
+                      <p className={styles.mobileUserArea}>{user.area ?? "—"}</p>
+                      <p className={styles.userRank}>{user.rank ?? "—"}</p>
                     </div>
                   </div>
 
@@ -182,7 +205,7 @@ export default function AdminPageContent() {
               <p className={styles.emptyState}>No se encontraron usuarios.</p>
             )}
 
-            {hasMoreMobileUsers && !showAllMobileUsers && (
+            {hasMoreMobileUsers && (
               <div className={styles.mobileListFooter}>
                 <button
                   type="button"

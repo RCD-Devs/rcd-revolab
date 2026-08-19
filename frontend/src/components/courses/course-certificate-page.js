@@ -7,15 +7,19 @@ import SiteLogo from "@/components/site-logo";
 import CourseCertificateLinkedinModal from "./course-certificate-linkedin-modal";
 import styles from "./course-certificate-page.module.css";
 
-export default function CourseCertificatePage({ examData }) {
-  const { course, exam } = examData;
-  const { certificate } = exam;
+export default function CourseCertificatePage({ courseId, certificate }) {
   const [showLinkedinModal, setShowLinkedinModal] = useState(false);
+
+  const issuedAtLabel = new Intl.DateTimeFormat("es-CL", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(certificate.issuedAt));
 
   return (
     <div className={styles.page}>
       <div className={styles.content}>
-        <Link href={`/cursos/${course.id}`} className={styles.backLink}>
+        <Link href={`/cursos/${courseId}`} className={styles.backLink}>
           <Image src="/icons/chevron-left.svg" alt="" width={16} height={16} />
           Volver al curso
         </Link>
@@ -27,7 +31,7 @@ export default function CourseCertificatePage({ examData }) {
 
             <div className={styles.certificateInner}>
               <SiteLogo
-                href={`/cursos/${course.id}`}
+                href={`/cursos/${courseId}`}
                 className={styles.certificateLogo}
                 imageClassName={styles.certificateLogoImage}
               />
@@ -41,13 +45,8 @@ export default function CourseCertificatePage({ examData }) {
 
               <div className={styles.certificateFooter}>
                 <div className={styles.dateBlock}>
-                  <p className={styles.dateValue}>{certificate.issuedAt}</p>
-                  <p className={styles.dateLabel}>{certificate.issuedAtLabel}</p>
-                </div>
-
-                <div className={styles.signatureBlock}>
-                  <span className={styles.signatureLine} aria-hidden="true" />
-                  <p className={styles.signatureLabel}>{certificate.instructorSignature}</p>
+                  <p className={styles.dateValue}>{issuedAtLabel}</p>
+                  <p className={styles.dateLabel}>Fecha de emisión</p>
                 </div>
               </div>
             </div>
@@ -55,20 +54,18 @@ export default function CourseCertificatePage({ examData }) {
 
           <aside className={styles.sidebar}>
             <div>
-              <h3 className={styles.missionTitle}>{certificate.missionTitle}</h3>
-              <p className={styles.missionDescription}>{certificate.missionDescription}</p>
-            </div>
-
-            <div className={styles.careerBox}>
-              <Image src="/icons/intro-career.svg" alt="" width={24} height={24} />
-              <div className={styles.careerCopy}>
-                <p className={styles.careerTitle}>{certificate.careerIqTitle}</p>
-                <p className={styles.careerDescription}>{certificate.careerIqDescription}</p>
-              </div>
+              <h3 className={styles.missionTitle}>¡Misión cumplida!</h3>
+              <p className={styles.missionDescription}>
+                Tu certificado oficial ya está disponible. Puedes descargarlo o compartirlo en
+                LinkedIn.
+              </p>
             </div>
 
             <div className={styles.actions}>
-              <a href={certificate.pdfUrl} className={styles.downloadButton} download>
+              <a
+                href={`/api/certificates/${certificate.id}/pdf`}
+                className={styles.downloadButton}
+              >
                 <Image src="/icons/download-white.svg" alt="" width={16} height={16} />
                 Descargar PDF
               </a>

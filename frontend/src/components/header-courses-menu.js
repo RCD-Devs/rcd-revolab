@@ -1,17 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { courseCategories } from "@/data/courses-menu-data";
 import { useDropdownBehavior } from "@/hooks/use-dropdown-behavior";
 import panelStyles from "./dropdown-panel.module.css";
 import styles from "./header-courses-menu.module.css";
 
 export default function HeaderCoursesMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const [courseCategories, setCourseCategories] = useState([]);
   const { wrapProps, isRendered, isVisible, handleTransitionEnd } =
     useDropdownBehavior(isOpen, setIsOpen);
+
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((res) => res.json())
+      .then((data) => setCourseCategories(data.categories ?? []))
+      .catch(() => setCourseCategories([]));
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen((prev) => !prev);

@@ -6,9 +6,18 @@ import Image from "next/image";
 import CourseExamPanel from "./course-exam-panel";
 import CourseExamQuestion from "./course-exam-question";
 import CourseExamNav from "./course-exam-nav";
-import { calculateExamScore } from "@/data/course-exam-data";
 import pageStyles from "./course-assessment-page.module.css";
 import styles from "./course-exam.module.css";
+
+const COPY = {
+  startLabel: "Comenzar Examen",
+  success: { title: "¡Felicidades!", description: "Has completado el curso y desbloqueado tu certificado oficial.", ctaLabel: "Ver Certificado" },
+  failure: {
+    title: "No has aprobado",
+    description: "Te sugerimos repasar el curso y volver a intentarlo.",
+    reviewLabel: "Repasar",
+  },
+};
 
 export default function CourseExamPage({ examData }) {
   const { course, exam, lastLessonId } = examData;
@@ -16,9 +25,11 @@ export default function CourseExamPage({ examData }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [score, setScore] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const courseUrl = `/cursos/${course.id}`;
   const certificateUrl = `/cursos/${course.id}/examen/certificado`;
+
   const handleStart = () => {
     setQuestionIndex(0);
     setAnswers({});
@@ -26,19 +37,29 @@ export default function CourseExamPage({ examData }) {
     setPhase("question");
   };
 
-  const handleAnswer = (option) => {
+  const handleAnswer = async (option) => {
     const question = exam.questions[questionIndex];
     const nextAnswers = { ...answers, [question.id]: option.id };
     setAnswers(nextAnswers);
 
-    if (questionIndex >= exam.questions.length - 1) {
-      const finalScore = calculateExamScore(exam.questions, nextAnswers);
-      setScore(finalScore);
-      setPhase(finalScore >= exam.passThreshold ? "success" : "failure");
+    if (questionIndex < exam.questions.length - 1) {
+      setQuestionIndex((current) => current + 1);
       return;
     }
 
-    setQuestionIndex((current) => current + 1);
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`/api/courses/${course.id}/exam/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers: nextAnswers }),
+      });
+      const result = await response.json();
+      setScore(result.score ?? 0);
+      setPhase(result.passed ? "success" : "failure");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleRetry = () => {
@@ -74,7 +95,7 @@ export default function CourseExamPage({ examData }) {
             variant="intro"
             title={exam.title}
             description={exam.description}
-            startLabel={exam.startLabel}
+            startLabel={COPY.startLabel}
             onStart={handleStart}
           />
         )}
@@ -86,29 +107,28 @@ export default function CourseExamPage({ examData }) {
             questionIndex={questionIndex}
             totalQuestions={exam.questions.length}
             onAnswer={handleAnswer}
+            disabled={isSubmitting}
           />
         )}
 
         {phase === "success" && (
           <CourseExamPanel
             variant="success"
-            title={exam.success.title}
-            description={exam.success.description}
+            title={COPY.success.title}
+            description={COPY.success.description}
             score={score}
             certificateUrl={certificateUrl}
-            successCtaLabel={exam.success.ctaLabel}
+            successCtaLabel={COPY.success.ctaLabel}
           />
         )}
 
         {phase === "failure" && (
           <CourseExamPanel
             variant="failure"
-            title={exam.failure.title}
-            description={exam.failure.description}
+            title={COPY.failure.title}
+            description={COPY.failure.description}
             score={score}
-            pdfUrl={exam.failure.pdfUrl}
-            pdfLabel={exam.failure.pdfLabel}
-            failureReviewLabel={exam.failure.reviewLabel}
+            failureReviewLabel={COPY.failure.reviewLabel}
             onRetry={handleRetry}
           />
         )}

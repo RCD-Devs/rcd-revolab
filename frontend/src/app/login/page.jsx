@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import LoginLogo from "@/components/login/login-logo";
 import LoginHeader from "@/components/login/login-header";
 import LoginForm from "@/components/login/login-form";
@@ -22,7 +23,9 @@ export default function LoginPage() {
         <article className={styles.card}>
           <LoginLogo />
           <LoginHeader />
-          <LoginForm />
+          <Suspense fallback={null}>
+            <LoginForm />
+          </Suspense>
         </article>
       </div>
 

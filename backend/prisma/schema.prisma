@@ -73,6 +73,7 @@ model Category {
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
+  passwordHash String
   nombre       String
   avatarUrl    String?
   role         Role     @default(STUDENT)

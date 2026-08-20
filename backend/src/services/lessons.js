@@ -1,5 +1,6 @@
 import * as lessonRepository from '../repositories/lesson-repository.js';
 import { recalculateEnrollmentProgress } from './enrollment.js';
+import { getStorageProvider } from '../integrations/storage/storage-provider.js';
 
 function formatDuration(seconds) {
   if (!seconds && seconds !== 0) return '';
@@ -48,7 +49,9 @@ export async function getLessonPageData(courseSlug, lessonId, userId) {
     lesson: {
       id: currentLesson.id,
       title: currentLesson.title,
-      videoUrl: currentLesson.videoKey ? `/api/media/${currentLesson.videoKey}` : null,
+      videoUrl: currentLesson.videoKey
+        ? await getStorageProvider().getPublicUrl(currentLesson.videoKey)
+        : null,
     },
     previousLesson: lessonIndex > 0 ? { id: allLessons[lessonIndex - 1].id } : null,
     nextLesson:
@@ -75,7 +78,7 @@ export async function getLessonForUser(lessonId, userId) {
     order: lesson.order,
     durationSeconds: lesson.durationSeconds,
     transcript: lesson.transcript,
-    videoUrl: lesson.videoKey ? `/api/media/${lesson.videoKey}` : null,
+    videoUrl: lesson.videoKey ? await getStorageProvider().getPublicUrl(lesson.videoKey) : null,
     documentUrl: lesson.documentUrl,
     course: {
       id: lesson.module.course.slug,

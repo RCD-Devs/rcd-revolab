@@ -3,15 +3,24 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 import { useDropdownBehavior } from "@/hooks/use-dropdown-behavior";
 import panelStyles from "./dropdown-panel.module.css";
 import styles from "./header-profile-menu.module.css";
 
-const menuItems = [
+const baseMenuItems = [
   { id: "profile", label: "Mi Perfil", icon: "/icons/profile-user.svg", href: "/perfil" },
 ];
 
+const adminMenuItem = {
+  id: "admin",
+  label: "Panel Admin",
+  icon: "/icons/admin-stat-chart.svg",
+  href: "/admin",
+};
+
 export default function HeaderProfileMenu() {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const { wrapProps, isRendered, isVisible, handleTransitionEnd } =
     useDropdownBehavior(isOpen, setIsOpen);
@@ -19,6 +28,9 @@ export default function HeaderProfileMenu() {
   const toggleMenu = () => {
     setIsOpen((prev) => !prev);
   };
+
+  const menuItems =
+    session?.user?.role === "ADMIN" ? [...baseMenuItems, adminMenuItem] : baseMenuItems;
 
   return (
     <div className={styles.wrap} {...wrapProps}>
@@ -30,7 +42,7 @@ export default function HeaderProfileMenu() {
         aria-haspopup="menu"
         onClick={toggleMenu}
       >
-        <span className={styles.profileName}>Nombre Apellido</span>
+        <span className={styles.profileName}>{session?.user?.name ?? ""}</span>
         <span className={styles.avatar} aria-hidden="true">
           <Image src="/icons/users.svg" alt="" width={20} height={20} />
         </span>
@@ -58,15 +70,18 @@ export default function HeaderProfileMenu() {
 
           <span className={styles.divider} aria-hidden="true" />
 
-          <a
-            href="#"
+          <button
+            type="button"
             className={`${styles.item} ${styles.itemDanger}`}
             role="menuitem"
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              setIsOpen(false);
+              signOut({ callbackUrl: "/login" });
+            }}
           >
             <Image src="/icons/profile-logout.svg" alt="" width={16} height={16} />
             <span>Cerrar sesión</span>
-          </a>
+          </button>
         </div>
       )}
     </div>

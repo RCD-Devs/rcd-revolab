@@ -91,6 +91,21 @@ export async function createAdminUser({ email, nombre, role, departmentId }) {
   };
 }
 
+// Genera una contraseña temporal nueva para un usuario que perdio acceso
+// (no hay flujo de "olvide mi contraseña" por email, no existe infra de
+// envio de correo en el proyecto). Mismo patron que createAdminUser: se
+// muestra una sola vez en el momento, no se guarda en ningun lado.
+export async function resetUserPassword(userId) {
+  const target = await adminRepository.findUserById(userId);
+  if (!target) return { ok: false, error: 'Usuario no encontrado' };
+
+  const temporaryPassword = generateTemporaryPassword();
+  const passwordHash = await hashPassword(temporaryPassword);
+  await adminRepository.updateUser(userId, { passwordHash });
+
+  return { ok: true, temporaryPassword };
+}
+
 export async function updateAdminUser(userId, { nombre, role, departmentId }) {
   const target = await adminRepository.findUserById(userId);
   if (!target) return { ok: false, error: 'Usuario no encontrado' };

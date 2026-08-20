@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import AdminCreateUserModal from "./admin-create-user-modal";
+import AdminResetPasswordModal from "./admin-reset-password-modal";
 import styles from "./admin-page.module.css";
 
 const adminPageMeta = {
@@ -45,6 +46,7 @@ export default function AdminPageContent() {
   const [departments, setDepartments] = useState([]);
   const [stats, setStats] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [resetPasswordResult, setResetPasswordResult] = useState(null);
 
   function loadUsers() {
     fetch("/api/admin/users")
@@ -130,6 +132,18 @@ export default function AdminPageContent() {
       return;
     }
     loadUsers();
+  }
+
+  async function handleResetPassword(user) {
+    const response = await fetch(`/api/admin/users/${user.id}/reset-password`, {
+      method: "POST",
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      alert(data.error ?? "No se pudo restablecer la contraseña");
+      return;
+    }
+    setResetPasswordResult({ name: user.name, temporaryPassword: data.temporaryPassword });
   }
 
   async function handleDeleteUser(user) {
@@ -275,6 +289,15 @@ export default function AdminPageContent() {
                     <td className={styles.lastActivity}>{formatDate(user.lastActivity)}</td>
                     <td>
                       <div className={styles.courseActions}>
+                        {user.isActive && (
+                          <button
+                            type="button"
+                            className={styles.actionButton}
+                            onClick={() => handleResetPassword(user)}
+                          >
+                            Restablecer contraseña
+                          </button>
+                        )}
                         <button
                           type="button"
                           className={styles.toggleActiveButton}
@@ -425,6 +448,14 @@ export default function AdminPageContent() {
           departments={departments}
           onClose={() => setShowCreateModal(false)}
           onCreated={loadUsers}
+        />
+      )}
+
+      {resetPasswordResult && (
+        <AdminResetPasswordModal
+          name={resetPasswordResult.name}
+          temporaryPassword={resetPasswordResult.temporaryPassword}
+          onClose={() => setResetPasswordResult(null)}
         />
       )}
     </div>

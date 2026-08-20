@@ -12,17 +12,33 @@ export function findCourseBySlugForInstructor(slug, instructorId) {
   return prisma.course.findFirst({ where: { slug, instructorId } });
 }
 
+// Sin filtro de propietario: solo para uso por un actor ADMIN.
+export function findCourseBySlugAny(slug) {
+  return prisma.course.findFirst({ where: { slug } });
+}
+
+export function deleteCourse(courseId) {
+  return prisma.course.delete({ where: { id: courseId } });
+}
+
+const courseDetailInclude = {
+  department: { select: { label: true } },
+  modules: {
+    orderBy: { order: 'asc' },
+    include: { lessons: { orderBy: { order: 'asc' } } },
+  },
+};
+
 export function findCourseDetailForInstructor(slug, instructorId) {
   return prisma.course.findFirst({
     where: { slug, instructorId },
-    include: {
-      department: { select: { label: true } },
-      modules: {
-        orderBy: { order: 'asc' },
-        include: { lessons: { orderBy: { order: 'asc' } } },
-      },
-    },
+    include: courseDetailInclude,
   });
+}
+
+// Sin filtro de propietario: solo para uso por un actor ADMIN.
+export function findCourseDetailAny(slug) {
+  return prisma.course.findFirst({ where: { slug }, include: courseDetailInclude });
 }
 
 export function findCourseBySlug(slug) {
@@ -70,6 +86,11 @@ export function findLessonForInstructor(lessonId, instructorId) {
   return prisma.lesson.findFirst({
     where: { id: lessonId, module: { course: { instructorId } } },
   });
+}
+
+// Sin filtro de propietario: solo para uso por un actor ADMIN.
+export function findLessonAny(lessonId) {
+  return prisma.lesson.findUnique({ where: { id: lessonId } });
 }
 
 export function updateLessonVideoKey(lessonId, videoKey) {

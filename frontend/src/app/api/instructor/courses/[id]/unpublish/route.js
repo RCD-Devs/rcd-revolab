@@ -1,20 +1,18 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/require-role";
-import { addModule } from "@revolab/backend/services/instructor-courses";
+import { unpublishCourse } from "@revolab/backend/services/instructor-courses";
 
-export async function POST(request, { params }) {
+export async function POST(_request, { params }) {
   const { session, response } = await requireRole("INSTRUCTOR", "ADMIN");
   if (response) return response;
 
   const { id } = await params;
-  const body = await request.json().catch(() => ({}));
-
   const isAdmin = session.user.role === "ADMIN";
-  const moduleRecord = await addModule(id, session.user.id, { title: body.title }, isAdmin);
+  const course = await unpublishCourse(id, session.user.id, isAdmin);
 
-  if (!moduleRecord) {
+  if (!course) {
     return NextResponse.json({ error: "Curso no encontrado" }, { status: 404 });
   }
 
-  return NextResponse.json({ module: moduleRecord }, { status: 201 });
+  return NextResponse.json({ course });
 }

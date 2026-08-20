@@ -7,7 +7,8 @@ export async function POST(_request, { params }) {
   if (response) return response;
 
   const { id } = await params;
-  const course = await publishCourse(id, session.user.id);
+  const isAdmin = session.user.role === "ADMIN";
+  const course = await publishCourse(id, session.user.id, isAdmin);
 
   if (!course) {
     return NextResponse.json({ error: "Curso no encontrado" }, { status: 404 });

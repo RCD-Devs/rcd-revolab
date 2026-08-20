@@ -5,16 +5,8 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "@revolab/backend/config/db";
 import { verifyPassword } from "@revolab/backend/auth/password";
+import { isAllowedInstitutionalEmail } from "@revolab/backend/validations/email";
 import { authConfig } from "./auth.config";
-
-// Dominios institucionales habilitados para iniciar sesión.
-// TODO: agregar el resto de dominios reales (ej. mind/souldigital) cuando se confirmen.
-const ALLOWED_EMAIL_DOMAINS = ["rompecabeza.cl"];
-
-function isAllowedDomain(email) {
-  const domain = email.split("@")[1]?.toLowerCase();
-  return Boolean(domain) && ALLOWED_EMAIL_DOMAINS.includes(domain);
-}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
@@ -28,12 +20,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const email = credentials?.email?.toString().trim().toLowerCase();
         const password = credentials?.password?.toString();
 
-        if (!email || !password || !isAllowedDomain(email)) {
+        if (!email || !password || !isAllowedInstitutionalEmail(email)) {
           return null;
         }
 
         const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) return null;
+        if (!user || !user.isActive) return null;
 
         const isValid = await verifyPassword(password, user.passwordHash);
         if (!isValid) return null;

@@ -6,7 +6,15 @@ export function findLessonById(lessonId) {
     include: {
       module: {
         include: {
-          course: { select: { id: true, slug: true, title: true } },
+          course: {
+            select: {
+              id: true,
+              slug: true,
+              title: true,
+              instructorId: true,
+              enrollmentRequirement: true,
+            },
+          },
         },
       },
     },
@@ -37,12 +45,36 @@ export function countCompletedLessonsForUser(userId, courseId) {
   });
 }
 
+export async function findCourseFinalExamId(courseId) {
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    select: { finalExam: { select: { id: true } } },
+  });
+  return course?.finalExam?.id ?? null;
+}
+
 export function upsertEnrollment(userId, courseId, data) {
   return prisma.enrollment.upsert({
     where: { userId_courseId: { userId, courseId } },
     update: data,
     create: { userId, courseId, ...data },
   });
+}
+
+// Crea el Enrollment en el primer acceso al contenido del curso; si ya
+// existe no lo toca (no pisar progressPercent/status ya calculados). No usa
+// upsert con update vacio porque Prisma igual tira P2002 en ese caso.
+export async function ensureEnrollment(userId, courseId) {
+  try {
+    return await prisma.enrollment.create({
+      data: { userId, courseId, status: 'IN_PROGRESS', progressPercent: 0 },
+    });
+  } catch (error) {
+    if (error.code === 'P2002') {
+      return prisma.enrollment.findUnique({ where: { userId_courseId: { userId, courseId } } });
+    }
+    throw error;
+  }
 }
 
 export function findCourseStructureBySlug(slug) {

@@ -39,6 +39,10 @@ export function findAllRanksOrdered() {
   return prisma.rank.findMany({ orderBy: { order: 'asc' } });
 }
 
+export function findRankByKey(key) {
+  return prisma.rank.findUnique({ where: { key } });
+}
+
 export function updateUserProfile(userId, data) {
   return prisma.user.update({ where: { id: userId }, data });
 }

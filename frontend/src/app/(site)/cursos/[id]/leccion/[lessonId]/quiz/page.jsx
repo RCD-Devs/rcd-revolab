@@ -10,12 +10,20 @@ export default async function QuizPage({ params }) {
   if (!session?.user?.id) notFound();
 
   const [lessonData, quiz] = await Promise.all([
-    getLessonPageData(id, lessonId, session.user.id),
-    getLessonQuiz(lessonId),
+    getLessonPageData(id, lessonId, session.user.id, session.user.role),
+    getLessonQuiz(lessonId, session.user.id, session.user.role),
   ]);
 
   if (!lessonData || !quiz) {
     notFound();
+  }
+
+  if (lessonData.accessDenied || quiz.accessDenied) {
+    return (
+      <div style={{ padding: "64px 24px", textAlign: "center" }}>
+        <p>{lessonData.accessDenied ? lessonData.message : quiz.message}</p>
+      </div>
+    );
   }
 
   return (

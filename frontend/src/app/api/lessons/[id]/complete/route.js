@@ -9,10 +9,14 @@ export async function POST(_request, { params }) {
   }
 
   const { id } = await params;
-  const result = await completeLesson(id, session.user.id);
+  const result = await completeLesson(id, session.user.id, session.user.role);
 
   if (!result) {
     return NextResponse.json({ error: "Lección no encontrada" }, { status: 404 });
+  }
+
+  if (result.accessDenied) {
+    return NextResponse.json({ error: result.message }, { status: 403 });
   }
 
   return NextResponse.json(result);

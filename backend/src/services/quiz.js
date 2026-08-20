@@ -1,6 +1,6 @@
 import * as quizRepository from '../repositories/quiz-repository.js';
 import * as courseRepository from '../repositories/course-repository.js';
-import { recalculateEnrollmentProgress } from './enrollment.js';
+import { recalculateEnrollmentProgress, ensureCourseAccess } from './enrollment.js';
 import { issueCertificate } from './certificates.js';
 
 // Misma lógica que calculateExamScore en frontend/src/data/course-exam-data.js,
@@ -28,9 +28,12 @@ function toPublicQuestion(question) {
   };
 }
 
-export async function getLessonQuiz(lessonId) {
+export async function getLessonQuiz(lessonId, userId, role) {
   const quiz = await quizRepository.findLessonQuiz(lessonId);
   if (!quiz) return null;
+
+  const access = await ensureCourseAccess({ userId, role, course: quiz.lesson.module.course });
+  if (!access.allowed) return { accessDenied: true, message: access.message };
 
   return {
     id: quiz.id,
@@ -41,9 +44,12 @@ export async function getLessonQuiz(lessonId) {
   };
 }
 
-export async function submitLessonQuiz(lessonId, userId, answers) {
+export async function submitLessonQuiz(lessonId, userId, answers, role) {
   const quiz = await quizRepository.findLessonQuiz(lessonId);
   if (!quiz) return null;
+
+  const access = await ensureCourseAccess({ userId, role, course: quiz.lesson.module.course });
+  if (!access.allowed) return { accessDenied: true, message: access.message };
 
   const score = calculateScore(quiz.questions, answers);
   const passed = score >= quiz.passThreshold;
@@ -53,9 +59,12 @@ export async function submitLessonQuiz(lessonId, userId, answers) {
   return { score, passed, passThreshold: quiz.passThreshold };
 }
 
-export async function getCourseExam(courseSlug) {
+export async function getCourseExam(courseSlug, userId, role) {
   const course = await courseRepository.findCourseForExamBySlug(courseSlug);
   if (!course) return null;
+
+  const access = await ensureCourseAccess({ userId, role, course });
+  if (!access.allowed) return { accessDenied: true, message: access.message };
 
   const quiz = await quizRepository.findCourseExam(course.id);
   if (!quiz) return null;
@@ -69,9 +78,12 @@ export async function getCourseExam(courseSlug) {
   };
 }
 
-export async function submitCourseExam(courseSlug, userId, answers) {
+export async function submitCourseExam(courseSlug, userId, answers, role) {
   const course = await courseRepository.findCourseForExamBySlug(courseSlug);
   if (!course) return null;
+
+  const access = await ensureCourseAccess({ userId, role, course });
+  if (!access.allowed) return { accessDenied: true, message: access.message };
 
   const quiz = await quizRepository.findCourseExam(course.id);
   if (!quiz) return null;

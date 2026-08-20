@@ -9,10 +9,14 @@ export async function GET(_request, { params }) {
   }
 
   const { id } = await params;
-  const quiz = await getLessonQuiz(id);
+  const quiz = await getLessonQuiz(id, session.user.id, session.user.role);
 
   if (!quiz) {
     return NextResponse.json({ error: "Quiz no encontrado" }, { status: 404 });
+  }
+
+  if (quiz.accessDenied) {
+    return NextResponse.json({ error: quiz.message }, { status: 403 });
   }
 
   return NextResponse.json({ quiz });

@@ -16,10 +16,14 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ error: "positionSeconds inválido" }, { status: 400 });
   }
 
-  const result = await updateLessonPosition(id, session.user.id, positionSeconds);
+  const result = await updateLessonPosition(id, session.user.id, positionSeconds, session.user.role);
 
   if (!result) {
     return NextResponse.json({ error: "Lección no encontrada" }, { status: 404 });
+  }
+
+  if (result.accessDenied) {
+    return NextResponse.json({ error: result.message }, { status: 403 });
   }
 
   return NextResponse.json(result);

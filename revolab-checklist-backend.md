@@ -234,21 +234,19 @@ Etapa 7. Decisiones tomadas el 2026-08-20 con Alexis, y avance real:
       `/api/media/`, que solo existe para storage local — con R2 hubiera
       dado 404 siempre. Se agregó `getPublicUrl(key)` al contrato de
       storage-provider (rama `feature/etapa8-css-roles`).
-- [ ] **Pendiente de Alexis — crear la cuenta/bucket:** yo no puedo crear
-      cuentas externas. Pasos en Cloudflare:
-      1. Crear cuenta en https://dash.cloudflare.com (plan gratis).
-      2. R2 Object Storage → Create bucket → nombre ej. `revolab-media`.
-      3. En el bucket, **Settings → Public access → Allow Access** (activa
-         el dominio público `pub-xxxx.r2.dev`) — necesario para que
-         portadas/avatares/video carguen sin firma.
-      4. R2 → Manage API Tokens → Create API Token con permiso
-         Object Read & Write, scopeado a ese bucket.
-      5. Pasarme: Account ID, Access Key ID, Secret Access Key, nombre del
-         bucket, y la URL pública `pub-xxxx.r2.dev` del paso 3.
-      Con eso yo activo `STORAGE_PROVIDER=r2` y las 5 env vars
-      (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
-      `R2_BUCKET_NAME`, `R2_PUBLIC_URL`) en Vercel, y verifico que las
-      subidas funcionen en producción.
+- [x] **Cuenta y bucket creados por Alexis** (2026-08-20): bucket
+      `revolab-media`, acceso público habilitado, API token generado.
+      Probado en local con credenciales reales: subida de avatar contra
+      el bucket funcionando de punta a punta.
+- [x] **Fix adicional necesario para que funcionara:** `next/image` exige
+      whitelist explícita de dominios remotos — se agregó `remotePatterns`
+      para `*.r2.dev` en `frontend/next.config.mjs` (si no, tira
+      "Invalid src prop ... hostname not configured").
+- [ ] **Pendiente:** setear las mismas 5 env vars en Vercel (Production)
+      para que quede activo también en `revolab-dev.vercel.app`:
+      `STORAGE_PROVIDER=r2`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`,
+      `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL`. Local ya
+      tiene las credenciales reales en `frontend/.env.local` (gitignored).
 - [ ] Actualizar `README.md` raíz para reflejar el stack real.
 - [ ] Limpieza: borrar `frontend/src/data/*.js` que ya no se usan (todos
       salvo, potencialmente, contenido editorial fijo si queda alguno).

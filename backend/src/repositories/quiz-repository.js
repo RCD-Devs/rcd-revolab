@@ -10,7 +10,20 @@ const withQuestionsAndOptions = {
 export function findLessonQuiz(lessonId) {
   return prisma.quiz.findUnique({
     where: { lessonId },
-    include: withQuestionsAndOptions,
+    include: {
+      ...withQuestionsAndOptions,
+      lesson: {
+        select: {
+          module: {
+            select: {
+              course: {
+                select: { id: true, instructorId: true, enrollmentRequirement: true },
+              },
+            },
+          },
+        },
+      },
+    },
   });
 }
 
@@ -25,4 +38,12 @@ export function createQuizAttempt({ userId, quizId, answers, score, passed }) {
   return prisma.quizAttempt.create({
     data: { userId, quizId, answers, score, passed },
   });
+}
+
+export async function hasPassedAttempt(userId, quizId) {
+  const attempt = await prisma.quizAttempt.findFirst({
+    where: { userId, quizId, passed: true },
+    select: { id: true },
+  });
+  return Boolean(attempt);
 }

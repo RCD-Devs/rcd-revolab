@@ -9,10 +9,14 @@ export async function GET(_request, { params }) {
   }
 
   const { id } = await params;
-  const lesson = await getLessonForUser(id, session.user.id);
+  const lesson = await getLessonForUser(id, session.user.id, session.user.role);
 
   if (!lesson) {
     return NextResponse.json({ error: "Lección no encontrada" }, { status: 404 });
+  }
+
+  if (lesson.accessDenied) {
+    return NextResponse.json({ error: lesson.message }, { status: 403 });
   }
 
   return NextResponse.json({ lesson });

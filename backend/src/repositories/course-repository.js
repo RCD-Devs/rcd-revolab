@@ -83,6 +83,8 @@ export function findCourseForExamBySlug(slug) {
       slug: true,
       title: true,
       autoCertificate: true,
+      instructorId: true,
+      enrollmentRequirement: true,
       instructor: { select: { nombre: true } },
     },
   });

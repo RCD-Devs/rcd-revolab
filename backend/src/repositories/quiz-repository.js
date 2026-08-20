@@ -10,7 +10,20 @@ const withQuestionsAndOptions = {
 export function findLessonQuiz(lessonId) {
   return prisma.quiz.findUnique({
     where: { lessonId },
-    include: withQuestionsAndOptions,
+    include: {
+      ...withQuestionsAndOptions,
+      lesson: {
+        select: {
+          module: {
+            select: {
+              course: {
+                select: { id: true, instructorId: true, enrollmentRequirement: true },
+              },
+            },
+          },
+        },
+      },
+    },
   });
 }
 

@@ -12,10 +12,14 @@ export async function POST(request, { params }) {
   const body = await request.json().catch(() => ({}));
   const answers = body.answers && typeof body.answers === "object" ? body.answers : {};
 
-  const result = await submitLessonQuiz(id, session.user.id, answers);
+  const result = await submitLessonQuiz(id, session.user.id, answers, session.user.role);
 
   if (!result) {
     return NextResponse.json({ error: "Quiz no encontrado" }, { status: 404 });
+  }
+
+  if (result.accessDenied) {
+    return NextResponse.json({ error: result.message }, { status: 403 });
   }
 
   return NextResponse.json(result);

@@ -1,5 +1,5 @@
 import * as lessonRepository from '../repositories/lesson-repository.js';
-import { recalculateEnrollmentProgress } from './enrollment.js';
+import { recalculateEnrollmentProgress, ensureCourseAccess } from './enrollment.js';
 import { getStorageProvider } from '../integrations/storage/storage-provider.js';
 
 function formatDuration(seconds) {
@@ -12,9 +12,12 @@ function formatDuration(seconds) {
 // Arma todo lo que necesita la pagina de una leccion: la leccion actual,
 // el modulo (con progreso real por leccion para el sidebar), navegacion
 // anterior/siguiente y, si la leccion tiene quiz, sus metadatos.
-export async function getLessonPageData(courseSlug, lessonId, userId) {
+export async function getLessonPageData(courseSlug, lessonId, userId, role) {
   const course = await lessonRepository.findCourseStructureBySlug(courseSlug);
   if (!course) return null;
+
+  const access = await ensureCourseAccess({ userId, role, course });
+  if (!access.allowed) return { accessDenied: true, message: access.message };
 
   const allLessons = course.modules.flatMap((moduleItem) => moduleItem.lessons);
   const lessonIndex = allLessons.findIndex((item) => item.id === lessonId);
@@ -65,9 +68,12 @@ export async function getLessonPageData(courseSlug, lessonId, userId) {
   };
 }
 
-export async function getLessonForUser(lessonId, userId) {
+export async function getLessonForUser(lessonId, userId, role) {
   const lesson = await lessonRepository.findLessonById(lessonId);
   if (!lesson) return null;
+
+  const access = await ensureCourseAccess({ userId, role, course: lesson.module.course });
+  if (!access.allowed) return { accessDenied: true, message: access.message };
 
   const progress = await lessonRepository.findLessonProgress(userId, lessonId);
 
@@ -91,9 +97,12 @@ export async function getLessonForUser(lessonId, userId) {
   };
 }
 
-export async function completeLesson(lessonId, userId) {
+export async function completeLesson(lessonId, userId, role) {
   const lesson = await lessonRepository.findLessonById(lessonId);
   if (!lesson) return null;
+
+  const access = await ensureCourseAccess({ userId, role, course: lesson.module.course });
+  if (!access.allowed) return { accessDenied: true, message: access.message };
 
   await lessonRepository.upsertLessonProgress(userId, lessonId, {
     completed: true,
@@ -110,9 +119,12 @@ export async function completeLesson(lessonId, userId) {
   };
 }
 
-export async function updateLessonPosition(lessonId, userId, positionSeconds) {
+export async function updateLessonPosition(lessonId, userId, positionSeconds, role) {
   const lesson = await lessonRepository.findLessonById(lessonId);
   if (!lesson) return null;
+
+  const access = await ensureCourseAccess({ userId, role, course: lesson.module.course });
+  if (!access.allowed) return { accessDenied: true, message: access.message };
 
   const progress = await lessonRepository.upsertLessonProgress(userId, lessonId, {
     lastPositionSeconds: positionSeconds,

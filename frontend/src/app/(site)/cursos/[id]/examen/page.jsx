@@ -9,10 +9,21 @@ export default async function ExamPage({ params }) {
   const session = await auth();
   if (!session?.user?.id) notFound();
 
-  const [course, exam] = await Promise.all([getCourseDetail(id), getCourseExam(id)]);
+  const [course, exam] = await Promise.all([
+    getCourseDetail(id),
+    getCourseExam(id, session.user.id, session.user.role),
+  ]);
 
   if (!course || !exam) {
     notFound();
+  }
+
+  if (exam.accessDenied) {
+    return (
+      <div style={{ padding: "64px 24px", textAlign: "center" }}>
+        <p>{exam.message}</p>
+      </div>
+    );
   }
 
   return (

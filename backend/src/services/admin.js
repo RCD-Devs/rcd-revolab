@@ -37,7 +37,7 @@ export async function getAdminUsers() {
   return users.map((user) => ({
     id: user.id,
     name: user.nombre,
-    email: user.email,
+    email: user.isActive ? user.email : (user.previousEmail ?? user.email),
     role: user.role,
     isActive: user.isActive,
     departmentId: user.departmentId,
@@ -110,10 +110,75 @@ export async function updateAdminUser(userId, { nombre, role, departmentId }) {
   };
 }
 
+// Enviar a la papelera (isActive: false) libera el email real: se reemplaza
+// por un valor unico no reutilizable y se guarda en previousEmail, para que
+// el correo institucional pueda reasignarse de inmediato a otra persona sin
+// mezclar el historial de esta cuenta (ver decision en revolab-checklist-backend.md).
 export async function setUserActive(userId, isActive) {
   const target = await adminRepository.findUserById(userId);
   if (!target) return { ok: false, error: 'Usuario no encontrado' };
 
-  const updated = await adminRepository.updateUser(userId, { isActive });
+  if (!isActive) {
+    if (target.previousEmail) {
+      const updated = await adminRepository.updateUser(userId, { isActive: false });
+      return { ok: true, user: { id: updated.id, isActive: updated.isActive } };
+    }
+
+    const trashedEmail = `deleted-${Date.now()}-${target.email}`;
+    const updated = await adminRepository.updateUser(userId, {
+      isActive: false,
+      email: trashedEmail,
+      previousEmail: target.email,
+    });
+    return { ok: true, user: { id: updated.id, isActive: updated.isActive } };
+  }
+
+  if (target.previousEmail) {
+    const emailTaken = await adminRepository.findUserByEmail(target.previousEmail);
+    if (emailTaken) {
+      return {
+        ok: false,
+        error: `No se puede reactivar: el correo ${target.previousEmail} ya está en uso por otra cuenta. Crea una cuenta nueva si esta persona necesita acceso.`,
+      };
+    }
+
+    const updated = await adminRepository.updateUser(userId, {
+      isActive: true,
+      email: target.previousEmail,
+      previousEmail: null,
+    });
+    return { ok: true, user: { id: updated.id, isActive: updated.isActive } };
+  }
+
+  const updated = await adminRepository.updateUser(userId, { isActive: true });
   return { ok: true, user: { id: updated.id, isActive: updated.isActive } };
+}
+
+// Borrado permanente: solo permitido desde la papelera (isActive: false) y
+// solo si no hay historial (cursos dictados, inscripciones, certificados) —
+// mismo patron que deleteCourse en instructor-courses.js.
+export async function permanentlyDeleteUser(userId) {
+  const target = await adminRepository.findUserById(userId);
+  if (!target) return null;
+
+  if (target.isActive) {
+    return {
+      deleted: false,
+      error: 'El usuario debe estar en la papelera antes de eliminarlo permanentemente.',
+    };
+  }
+
+  try {
+    await adminRepository.deleteUser(userId);
+    return { deleted: true };
+  } catch (error) {
+    if (error.code === 'P2003' || error.code === 'P2014') {
+      return {
+        deleted: false,
+        error:
+          'No se puede eliminar: tiene cursos, inscripciones o certificados asociados. Debe permanecer en la papelera.',
+      };
+    }
+    throw error;
+  }
 }

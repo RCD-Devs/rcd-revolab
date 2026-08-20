@@ -242,11 +242,12 @@ Etapa 7. Decisiones tomadas el 2026-08-20 con Alexis, y avance real:
       whitelist explícita de dominios remotos — se agregó `remotePatterns`
       para `*.r2.dev` en `frontend/next.config.mjs` (si no, tira
       "Invalid src prop ... hostname not configured").
-- [ ] **Pendiente:** setear las mismas 5 env vars en Vercel (Production)
-      para que quede activo también en `revolab-dev.vercel.app`:
-      `STORAGE_PROVIDER=r2`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`,
-      `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL`. Local ya
-      tiene las credenciales reales en `frontend/.env.local` (gitignored).
+- [x] **R2 activo y confirmado en producción** (2026-08-20): Alexis seteó
+      las 6 env vars en Vercel (Production) y mergeó `feature/etapa8-css-roles`
+      a `main`. Probado con una subida de foto de perfil real en
+      `revolab-dev.vercel.app` — persiste después de recargar la página,
+      o sea quedó guardada en la BD con una URL pública de R2 funcional.
+      **Etapa 8 storage: cerrada.**
 - [ ] Actualizar `README.md` raíz para reflejar el stack real.
 - [ ] Limpieza: borrar `frontend/src/data/*.js` que ya no se usan (todos
       salvo, potencialmente, contenido editorial fijo si queda alguno).

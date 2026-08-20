@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import styles from "./admin-create-user-modal.module.css";
 
 const ROLES = [
   { value: "STUDENT", label: "Estudiante" },
@@ -40,81 +41,106 @@ export default function AdminCreateUserModal({ departments, onClose, onCreated }
   }
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.6)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 100,
-      }}
-    >
+    <div className={styles.overlay} role="presentation" onClick={onClose}>
       <div
-        style={{
-          background: "#0f1420",
-          border: "1px solid #2a3142",
-          borderRadius: 12,
-          padding: 24,
-          width: 380,
-          color: "#fff",
-        }}
+        className={styles.modal}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-user-modal-title"
+        onClick={(event) => event.stopPropagation()}
       >
-        <h3 style={{ marginTop: 0 }}>Crear usuario</h3>
+        <h3 id="create-user-modal-title" className={styles.title}>
+          Crear usuario
+        </h3>
 
         {result ? (
-          <div>
-            <p>Usuario creado: {result.user.email}</p>
-            <p>
-              Contraseña temporal: <strong>{result.temporaryPassword}</strong>
-            </p>
-            <p style={{ fontSize: 12, opacity: 0.7 }}>
+          <div className={styles.result}>
+            <p className={styles.resultText}>Usuario creado: {result.user.email}</p>
+            <p className={styles.resultText}>Contraseña temporal:</p>
+            <p className={styles.resultPassword}>{result.temporaryPassword}</p>
+            <p className={styles.resultHint}>
               Cópiala y compártela con la persona ahora — no se volverá a mostrar.
             </p>
-            <button type="button" onClick={onClose}>
+            <button type="button" className={styles.closeButton} onClick={onClose}>
               Cerrar
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <input
-              type="email"
-              placeholder="nombre@rompecabeza.cl"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Nombre completo"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              required
-            />
-            <select value={role} onChange={(event) => setRole(event.target.value)}>
-              {ROLES.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <select value={departmentId} onChange={(event) => setDepartmentId(event.target.value)}>
-              <option value="">Sin departamento</option>
-              {departments.map((department) => (
-                <option key={department.id} value={department.id}>
-                  {department.label}
-                </option>
-              ))}
-            </select>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="create-user-email">
+                Correo
+              </label>
+              <input
+                id="create-user-email"
+                type="email"
+                className={styles.input}
+                placeholder="nombre@rompecabeza.cl"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+              />
+            </div>
 
-            {error && <p style={{ color: "#ff6b6b" }}>{error}</p>}
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="create-user-name">
+                Nombre completo
+              </label>
+              <input
+                id="create-user-name"
+                type="text"
+                className={styles.input}
+                placeholder="Nombre completo"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                required
+              />
+            </div>
 
-            <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-              <button type="submit" disabled={isSaving}>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="create-user-role">
+                Rol
+              </label>
+              <select
+                id="create-user-role"
+                className={styles.select}
+                value={role}
+                onChange={(event) => setRole(event.target.value)}
+              >
+                {ROLES.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="create-user-department">
+                Departamento
+              </label>
+              <select
+                id="create-user-department"
+                className={styles.select}
+                value={departmentId}
+                onChange={(event) => setDepartmentId(event.target.value)}
+              >
+                <option value="">Sin departamento</option>
+                {departments.map((department) => (
+                  <option key={department.id} value={department.id}>
+                    {department.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {error && <p className={styles.error}>{error}</p>}
+
+            <div className={styles.actions}>
+              <button type="submit" className={styles.primaryButton} disabled={isSaving}>
                 Crear
               </button>
-              <button type="button" onClick={onClose}>
+              <button type="button" className={styles.secondaryButton} onClick={onClose}>
                 Cancelar
               </button>
             </div>

@@ -183,31 +183,78 @@ escenario (ej. usuario sin ningún historial).
 
 ---
 
-## Etapa 8 — Producción real y deuda técnica (pendiente)
+## Etapa 8 — Producción real y deuda técnica (en curso)
 
 No estaba en el plan original; es lo que quedó abierto después de la
-Etapa 7. Sugerido como próximo bloque de trabajo:
+Etapa 7. Decisiones tomadas el 2026-08-20 con Alexis, y avance real:
 
-- [ ] Crear cuenta/bucket de Cloudflare R2 y activar `STORAGE_PROVIDER=r2`
-      en producción (el código ya está listo, Track B de la Etapa 2).
+- [x] Estilos: modal de crear usuario, formulario de cambio de contraseña,
+      tabla de moderación de cursos y botón "marcar lección completada"
+      ya tienen CSS (rama `feature/etapa8-css-roles`).
+- [x] **Bug encontrado y corregido:** el nav (desktop y mobile) nunca tuvo
+      wiring a la sesión — no existía ningún link a `/admin` (había que
+      escribir la URL a mano), "Cerrar sesión" era un enlace muerto que no
+      llamaba a `signOut()`, y el nombre mostrado era un placeholder fijo.
+      Corregido conectando `useSession()` en `header-profile-menu.js` y
+      `header-mobile-menu.js`.
+- [x] Dominios institucionales: confirmados y agregados `@somosmind.com` y
+      `@souldigital.cl` a `ALLOWED_EMAIL_DOMAINS` (antes solo
+      `@rompecabeza.cl`). Se eliminó también una lista duplicada de
+      dominios en `login-form.js` que no estaba sincronizada con el backend.
+      **Pendiente (feature más grande, no iniciada):** hacerlo administrable
+      desde el panel admin (tabla nueva + UI CRUD) en vez de hardcodeado.
+- [x] **Decisión de diseño tomada — borrado de usuarios ("papelera"):** el
+      email institucional se reasigna entre personas distintas con el
+      tiempo (alguien deja la agencia, el correo se reutiliza para otra
+      persona). El historial de cursos/certificados/inscripciones **no
+      puede depender de que la cuenta de usuario siga existiendo**, así
+      que al mandar una cuenta a la papelera se libera el email real
+      (se renombra internamente, guardando el original para auditoría)
+      para que pueda reasignarse de inmediato a una cuenta nueva — el
+      historial viejo queda intacto, enganchado a la fila de usuario vieja,
+      nunca se mezcla con la cuenta nueva. Si la persona vuelve a la
+      agencia, empieza con cuenta nueva de cero (no se resucita la vieja).
+      Borrado permanente solo se implementará si el usuario no tiene
+      historial. **Implementación pendiente:** migración de schema +
+      endpoint de enviar a papelera + vista de papelera en admin.
+- [x] **Decisión final de storage: Cloudflare R2 en capa gratuita.** Se
+      evaluó Google Drive como alternativa y se descartó — una cuenta de
+      servicio no tiene cuota de almacenamiento propia sin Google Workspace
+      pagado, los links de Drive no soportan bien range-requests (necesario
+      para adelantar/retroceder video) y se limitan por cuota de descargas,
+      y no hay URLs firmadas con expiración al estilo S3. R2 gratis da 10GB
+      + sin cobro de egress, y el código ya está listo.
+- [x] **Bug encontrado y corregido antes de activar R2:** `uploadCourseCover`
+      y `updateProfileAvatar` guardaban en la BD el resultado de
+      `getSignedUrl()` (URL con firma que expira en 1h) en vez de una URL
+      estable — con storage local no se notaba porque su versión de
+      `getSignedUrl` nunca expira, pero con R2 activo las portadas de curso
+      y avatares se hubieran roto una hora después de subirse. También
+      `lessons.js` armaba la URL de video con un path hardcodeado a
+      `/api/media/`, que solo existe para storage local — con R2 hubiera
+      dado 404 siempre. Se agregó `getPublicUrl(key)` al contrato de
+      storage-provider (rama `feature/etapa8-css-roles`).
+- [x] **Cuenta y bucket creados por Alexis** (2026-08-20): bucket
+      `revolab-media`, acceso público habilitado, API token generado.
+      Probado en local con credenciales reales: subida de avatar contra
+      el bucket funcionando de punta a punta.
+- [x] **Fix adicional necesario para que funcionara:** `next/image` exige
+      whitelist explícita de dominios remotos — se agregó `remotePatterns`
+      para `*.r2.dev` en `frontend/next.config.mjs` (si no, tira
+      "Invalid src prop ... hostname not configured").
+- [ ] **Pendiente:** setear las mismas 5 env vars en Vercel (Production)
+      para que quede activo también en `revolab-dev.vercel.app`:
+      `STORAGE_PROVIDER=r2`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`,
+      `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL`. Local ya
+      tiene las credenciales reales en `frontend/.env.local` (gitignored).
 - [ ] Actualizar `README.md` raíz para reflejar el stack real.
-- [ ] Estilos: todo lo construido en la Etapa 7 (modal de crear usuario,
-      formulario de cambio de contraseña, tabla de moderación de cursos,
-      botón "marcar lección completada") está funcional pero sin CSS.
-- [ ] Confirmar la decisión de borrado de usuarios (ver Etapa 7).
 - [ ] Limpieza: borrar `frontend/src/data/*.js` que ya no se usan (todos
       salvo, potencialmente, contenido editorial fijo si queda alguno).
 - [ ] Actualizar Prisma 5.22 → 7.x (hay un salto de versión mayor
       disponible, no se hizo por no estar en el alcance pedido).
 - [ ] Migrar `middleware.js` a la convención `proxy.js` que pide Next.js 16
       (hoy solo un warning en build, no error).
-- [ ] Confirmar los dominios institucionales reales pendientes (`@mind`,
-      `@souldigital` en el mock original, nunca confirmados) si hace falta
-      agregarlos a `ALLOWED_EMAIL_DOMAINS`.
-- [ ] Definir si se agregan más colaboradores/roles al repo ahora que quedó
-      público (o si conviene pasarlo a privado — GitHub permite repos
-      privados gratis ilimitados, y Vercel Hobby funciona igual con
-      privados).
+- [x] **Repo: queda público por ahora** (decisión confirmada 2026-08-20).
 
 **Fuera de alcance MVP, documentado desde el inicio, no urgente:**
 comentarios reales en curso, "Constructor de Rutas de Aprendizaje",

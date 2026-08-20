@@ -165,11 +165,13 @@
 .item {
   display: flex;
   align-items: center;
+  width: 100%;
   gap: 12px;
   margin-top: 4px;
   padding: 12px;
   border: 1px solid transparent;
   border-radius: 14px;
+  background: transparent;
   color: var(--color-text-muted);
   font-family: var(--font-family-base);
   font-size: 14px;
@@ -177,6 +179,7 @@
   line-height: 20px;
   letter-spacing: -0.1504px;
   text-decoration: none;
+  cursor: pointer;
   transition:
     background-color 0.2s ease,
     color 0.2s ease,

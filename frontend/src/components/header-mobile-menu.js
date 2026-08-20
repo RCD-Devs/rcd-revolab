@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 import { useDropdownTransition } from "@/hooks/use-dropdown-transition";
 import styles from "./header-mobile-menu.module.css";
 
@@ -19,10 +20,21 @@ const navItems = [
   { id: "certificados", label: "Certificados", icon: "/icons/nav-certificate.svg" },
 ];
 
+const adminNavItem = {
+  id: "admin",
+  label: "Panel Admin",
+  icon: "/icons/admin-stat-chart.svg",
+  href: "/admin",
+};
+
 export default function HeaderMobileMenu() {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const { isRendered, isVisible, handleTransitionEnd } =
     useDropdownTransition(isOpen);
+
+  const items =
+    session?.user?.role === "ADMIN" ? [...navItems, adminNavItem] : navItems;
 
   const close = () => setIsOpen(false);
 
@@ -96,7 +108,7 @@ export default function HeaderMobileMenu() {
                   <Image src="/icons/nav-user.svg" alt="" width={20} height={20} />
                 </span>
                 <span className={styles.profileText}>
-                  <span className={styles.profileName}>Nombre Apellido</span>
+                  <span className={styles.profileName}>{session?.user?.name ?? ""}</span>
                   <span className={styles.profileRole}>Perfil</span>
                 </span>
               </Link>
@@ -105,7 +117,7 @@ export default function HeaderMobileMenu() {
             <nav className={styles.nav} aria-label="Navegación">
               <p className={styles.sectionTitle}>Navegación</p>
 
-              {navItems.map((item) => (
+              {items.map((item) => (
                 <a
                   key={item.id}
                   href={item.href || "#"}
@@ -121,14 +133,17 @@ export default function HeaderMobileMenu() {
 
               <p className={styles.sectionTitle}>Cuenta</p>
 
-              <a
-                href="#"
+              <button
+                type="button"
                 className={`${styles.item} ${styles.itemDanger}`}
-                onClick={close}
+                onClick={() => {
+                  close();
+                  signOut({ callbackUrl: "/login" });
+                }}
               >
                 <Image src="/icons/nav-logout.svg" alt="" width={20} height={20} />
                 <span>Cerrar sesión</span>
-              </a>
+              </button>
             </nav>
           </aside>
         </div>

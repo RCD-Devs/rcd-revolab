@@ -69,7 +69,7 @@ export async function updateProfileAvatar(userId, buffer, contentType) {
   const storage = getStorageProvider();
   const key = `avatars/${userId}-${Date.now()}`;
   await storage.upload(key, buffer, contentType);
-  const url = await storage.getSignedUrl(key);
+  const url = await storage.getPublicUrl(key);
 
   const updated = await profileRepository.updateUserProfile(userId, { avatarUrl: url });
   return { avatar: updated.avatarUrl };

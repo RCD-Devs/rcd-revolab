@@ -4,15 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { isAllowedInstitutionalEmail } from "@revolab/backend/validations/email";
 import styles from "./login-form.module.css";
-
-const ALLOWED_DOMAINS = ["@rompecabeza.cl"];
-
-function isInstitutionalEmail(email) {
-  return ALLOWED_DOMAINS.some((domain) =>
-    email.toLowerCase().endsWith(domain.toLowerCase())
-  );
-}
 
 export default function LoginForm() {
   const router = useRouter();
@@ -29,8 +22,8 @@ export default function LoginForm() {
     if (!value.trim()) {
       return "";
     }
-    if (!isInstitutionalEmail(value)) {
-      return "Solo se permite correo institucional (@rompecabeza.cl).";
+    if (!isAllowedInstitutionalEmail(value)) {
+      return "Solo se permite correo institucional.";
     }
     return "";
   }
@@ -43,7 +36,7 @@ export default function LoginForm() {
     e.preventDefault();
 
     const emailErr = !email.trim()
-      ? "Solo se permite correo institucional (@rompecabeza.cl)."
+      ? "Solo se permite correo institucional."
       : validateEmail(email);
     const passwordErr = !password.trim() ? "Ingresa tu contraseña." : "";
 

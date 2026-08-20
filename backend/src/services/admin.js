@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import * as adminRepository from '../repositories/admin-repository.js';
 import { hashPassword } from '../auth/password.js';
-import { isAllowedInstitutionalEmail } from '../validations/email.js';
+import { isAllowedInstitutionalEmail, ALLOWED_EMAIL_DOMAINS } from '../validations/email.js';
 
 export async function getAdminStats() {
   const [activeUsers, publishedCourses, totalEnrollments, completedEnrollments] =
@@ -58,7 +58,8 @@ export async function createAdminUser({ email, nombre, role, departmentId }) {
   const normalizedEmail = email?.trim().toLowerCase();
 
   if (!isAllowedInstitutionalEmail(normalizedEmail)) {
-    return { ok: false, error: 'Debe ser un correo institucional (@rompecabeza.cl)' };
+    const domainsList = ALLOWED_EMAIL_DOMAINS.map((domain) => `@${domain}`).join(', ');
+    return { ok: false, error: `Debe ser un correo institucional (${domainsList})` };
   }
   if (!nombre?.trim()) {
     return { ok: false, error: 'El nombre es obligatorio' };

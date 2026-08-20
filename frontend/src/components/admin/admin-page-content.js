@@ -119,11 +119,26 @@ export default function AdminPageContent() {
   }
 
   async function handleToggleActive(user) {
-    await fetch(`/api/admin/users/${user.id}/status`, {
+    const response = await fetch(`/api/admin/users/${user.id}/status`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isActive: !user.isActive }),
     });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      alert(data.error ?? "No se pudo actualizar el estado del usuario");
+      return;
+    }
+    loadUsers();
+  }
+
+  async function handleDeleteUser(user) {
+    const response = await fetch(`/api/admin/users/${user.id}`, { method: "DELETE" });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      alert(data.error ?? "No se pudo eliminar el usuario");
+      return;
+    }
     loadUsers();
   }
 
@@ -218,7 +233,12 @@ export default function AdminPageContent() {
                         <span className={styles.userAvatar} aria-hidden="true">
                           {getInitials(user.name)}
                         </span>
-                        <span className={styles.userName}>{user.name}</span>
+                        <span>
+                          <span className={styles.userName}>{user.name}</span>
+                          {!user.isActive && (
+                            <p className={styles.userEmailHint}>En papelera · {user.email}</p>
+                          )}
+                        </span>
                       </div>
                     </td>
                     <td>
@@ -254,13 +274,24 @@ export default function AdminPageContent() {
                     <td>{user.completedCourses}</td>
                     <td className={styles.lastActivity}>{formatDate(user.lastActivity)}</td>
                     <td>
-                      <button
-                        type="button"
-                        className={styles.toggleActiveButton}
-                        onClick={() => handleToggleActive(user)}
-                      >
-                        {user.isActive ? "Desactivar" : "Activar"}
-                      </button>
+                      <div className={styles.courseActions}>
+                        <button
+                          type="button"
+                          className={styles.toggleActiveButton}
+                          onClick={() => handleToggleActive(user)}
+                        >
+                          {user.isActive ? "Desactivar" : "Activar"}
+                        </button>
+                        {!user.isActive && (
+                          <button
+                            type="button"
+                            className={`${styles.actionButton} ${styles.actionButtonDanger}`}
+                            onClick={() => handleDeleteUser(user)}
+                          >
+                            Eliminar
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

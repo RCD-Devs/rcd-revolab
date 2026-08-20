@@ -53,9 +53,9 @@ enum EnrollmentStatus {
 /// Departamento de la organización al que pertenece una persona (ej. "Experiencia Digital"),
 /// distinto de la categoría de catálogo con la que se explora un curso.
 model Department {
-  id     String @id @default(uuid())
-  slug   String @unique
-  label  String
+  id    String @id @default(uuid())
+  slug  String @unique
+  label String
 
   users   User[]
   courses Course[]
@@ -71,22 +71,27 @@ model Category {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  passwordHash String
-  nombre       String
-  avatarUrl    String?
-  role         Role     @default(STUDENT)
-  isActive     Boolean  @default(true)
-  departmentId String?
-  department   Department? @relation(fields: [departmentId], references: [id])
-  rankId       String?
-  rank         Rank?    @relation(fields: [rankId], references: [id])
-  careerIqNote String?  // ej: "En progreso 75%" hacia el próximo rango
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String      @id @default(uuid())
+  email         String      @unique
+  /// Email real mientras la cuenta está en la papelera: al desactivar se
+  /// libera `email` (se reemplaza por un valor único no reutilizable) para
+  /// que el correo institucional pueda reasignarse de inmediato a otra
+  /// persona sin mezclar el historial de cursos/certificados de esta cuenta.
+  previousEmail String?
+  passwordHash  String
+  nombre        String
+  avatarUrl     String?
+  role          Role        @default(STUDENT)
+  isActive      Boolean     @default(true)
+  departmentId  String?
+  department    Department? @relation(fields: [departmentId], references: [id])
+  rankId        String?
+  rank          Rank?       @relation(fields: [rankId], references: [id])
+  careerIqNote  String? // ej: "En progreso 75%" hacia el próximo rango
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
-  coursesTaught  Course[]          @relation("InstructorCourses")
+  coursesTaught  Course[]         @relation("InstructorCourses")
   enrollments    Enrollment[]
   lessonProgress LessonProgress[]
   quizAttempts   QuizAttempt[]
@@ -150,7 +155,7 @@ model Lesson {
   durationSeconds Int?
   transcript      String[]
 
-  quiz     Quiz?             @relation("LessonQuiz")
+  quiz     Quiz?            @relation("LessonQuiz")
   progress LessonProgress[]
 }
 

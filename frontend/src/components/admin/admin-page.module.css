@@ -376,6 +376,13 @@
   letter-spacing: -0.2344px;
 }
 
+.userEmailHint {
+  margin: 2px 0 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-muted);
+}
+
 .userRank {
   margin: 0;
   font-size: 12px;

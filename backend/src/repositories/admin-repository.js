@@ -20,6 +20,10 @@ export function updateUser(id, data) {
   return prisma.user.update({ where: { id }, data });
 }
 
+export function deleteUser(id) {
+  return prisma.user.delete({ where: { id } });
+}
+
 export function countPublishedCourses() {
   return prisma.course.count({ where: { status: 'PUBLISHED' } });
 }
@@ -49,6 +53,7 @@ export function findAllUsersWithStats() {
       id: true,
       nombre: true,
       email: true,
+      previousEmail: true,
       role: true,
       isActive: true,
       departmentId: true,

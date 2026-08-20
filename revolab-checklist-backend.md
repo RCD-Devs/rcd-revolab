@@ -215,8 +215,20 @@ Etapa 7. Decisiones tomadas el 2026-08-20 con Alexis, y avance real:
       nunca se mezcla con la cuenta nueva. Si la persona vuelve a la
       agencia, empieza con cuenta nueva de cero (no se resucita la vieja).
       Borrado permanente solo se implementará si el usuario no tiene
-      historial. **Implementación pendiente:** migración de schema +
-      endpoint de enviar a papelera + vista de papelera en admin.
+      historial.
+- [x] **Papelera de usuarios implementada** (rama
+      `feature/etapa8-papelera-usuarios`): `User.previousEmail` guarda el
+      email real mientras la cuenta está desactivada; `setUserActive`
+      libera/restaura el email real al desactivar/reactivar (bloquea la
+      reactivación con mensaje claro si el email ya lo tomó otra cuenta);
+      `DELETE /api/admin/users/[id]` + botón "Eliminar" en el panel admin
+      (solo visible en la papelera) hacen el borrado permanente, con el
+      mismo patrón de `deleteCourse` — falla con mensaje claro si el
+      usuario tiene cursos/inscripciones/certificados asociados. Probado
+      en local contra la base real: creado un usuario, enviado a la
+      papelera, creada una cuenta nueva con el mismo email sin conflicto
+      (ambas coexisten con su propio historial), borrado permanente de
+      ambas al terminar.
 - [x] **Decisión final de storage: Cloudflare R2 en capa gratuita.** Se
       evaluó Google Drive como alternativa y se descartó — una cuenta de
       servicio no tiene cuota de almacenamiento propia sin Google Workspace

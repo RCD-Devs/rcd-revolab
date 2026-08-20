@@ -163,7 +163,7 @@ export async function uploadCourseCover(slug, actorId, buffer, contentType, isAd
   const storage = getStorageProvider();
   const key = `courses/${slug}/cover-${Date.now()}`;
   await storage.upload(key, buffer, contentType);
-  const url = await storage.getSignedUrl(key);
+  const url = await storage.getPublicUrl(key);
 
   const updated = await instructorCourseRepository.updateCourse(course.id, {
     coverImageUrl: url,
@@ -214,5 +214,5 @@ export async function uploadLessonVideo(lessonId, actorId, buffer, contentType, 
   await storage.upload(key, buffer, contentType);
 
   const updated = await instructorCourseRepository.updateLessonVideoKey(lessonId, key);
-  return { id: updated.id, videoUrl: await storage.getSignedUrl(key) };
+  return { id: updated.id, videoUrl: await storage.getPublicUrl(key) };
 }

@@ -41,6 +41,15 @@ export async function getSignedUrl(key, { expiresInSeconds = 3600 } = {}) {
   return presignUrl(getClient(), command, { expiresIn: expiresInSeconds });
 }
 
+// URL pública estable (no expira) para contenido servido desde un bucket con
+// acceso público habilitado: portadas de curso, avatares y video de lección.
+// Requiere R2_PUBLIC_URL (el dominio r2.dev del bucket o un dominio propio).
+// No usar para contenido sensible — para eso, getSignedUrl.
+export async function getPublicUrl(key) {
+  const base = process.env.R2_PUBLIC_URL?.replace(/\/+$/, '');
+  return `${base}/${key}`;
+}
+
 export async function remove(key) {
   await getClient().send(
     new DeleteObjectCommand({ Bucket: process.env.R2_BUCKET_NAME, Key: key }),

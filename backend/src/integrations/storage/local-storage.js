@@ -31,6 +31,11 @@ export async function getSignedUrl(key) {
   return `/api/media/${key.replace(/^\/+/, '')}`;
 }
 
+// Local no distingue público/privado: mismo Route Handler para ambos.
+export async function getPublicUrl(key) {
+  return getSignedUrl(key);
+}
+
 export async function readFileByKey(key) {
   return readFile(resolveKeyPath(key));
 }

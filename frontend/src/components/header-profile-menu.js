@@ -19,6 +19,13 @@ const adminMenuItem = {
   href: "/admin",
 };
 
+const instructorMenuItem = {
+  id: "instructor",
+  label: "Panel Instructor",
+  icon: "/icons/admin-stat-courses.svg",
+  href: "/instructor",
+};
+
 export default function HeaderProfileMenu() {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
@@ -29,8 +36,11 @@ export default function HeaderProfileMenu() {
     setIsOpen((prev) => !prev);
   };
 
-  const menuItems =
-    session?.user?.role === "ADMIN" ? [...baseMenuItems, adminMenuItem] : baseMenuItems;
+  const roleMenuItems = {
+    ADMIN: [adminMenuItem],
+    INSTRUCTOR: [instructorMenuItem],
+  };
+  const menuItems = [...baseMenuItems, ...(roleMenuItems[session?.user?.role] ?? [])];
 
   return (
     <div className={styles.wrap} {...wrapProps}>

@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import AdminCreateUserModal from "./admin-create-user-modal";
 import AdminResetPasswordModal from "./admin-reset-password-modal";
+import AdminRoleCell from "./admin-role-cell";
+import AdminUserActionsMenu from "./admin-user-actions-menu";
 import styles from "./admin-page.module.css";
 
 const adminPageMeta = {
@@ -17,7 +19,6 @@ const adminPageMeta = {
 };
 
 const MOBILE_PREVIEW_COUNT = 3;
-const ROLES = ["STUDENT", "INSTRUCTOR", "ADMIN"];
 
 function getInitials(name) {
   return name
@@ -233,10 +234,10 @@ export default function AdminPageContent() {
                   <th scope="col">Nombre</th>
                   <th scope="col">Área</th>
                   <th scope="col">Rol</th>
-                  <th scope="col">Rango Actual</th>
-                  <th scope="col">Cursos Completados</th>
-                  <th scope="col">Última Actividad</th>
-                  <th scope="col">Estado</th>
+                  <th scope="col">Rango</th>
+                  <th scope="col">Cursos</th>
+                  <th scope="col">Actividad</th>
+                  <th scope="col">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -270,17 +271,7 @@ export default function AdminPageContent() {
                       </select>
                     </td>
                     <td>
-                      <select
-                        className={styles.tableSelect}
-                        value={user.role}
-                        onChange={(event) => handleRoleChange(user.id, event.target.value)}
-                      >
-                        {ROLES.map((role) => (
-                          <option key={role} value={role}>
-                            {role}
-                          </option>
-                        ))}
-                      </select>
+                      <AdminRoleCell user={user} onSave={handleRoleChange} />
                     </td>
                     <td>
                       <span className={styles.userRank}>{user.rank ?? "—"}</span>
@@ -288,33 +279,12 @@ export default function AdminPageContent() {
                     <td>{user.completedCourses}</td>
                     <td className={styles.lastActivity}>{formatDate(user.lastActivity)}</td>
                     <td>
-                      <div className={styles.courseActions}>
-                        {user.isActive && (
-                          <button
-                            type="button"
-                            className={styles.actionButton}
-                            onClick={() => handleResetPassword(user)}
-                          >
-                            Restablecer contraseña
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          className={styles.toggleActiveButton}
-                          onClick={() => handleToggleActive(user)}
-                        >
-                          {user.isActive ? "Desactivar" : "Activar"}
-                        </button>
-                        {!user.isActive && (
-                          <button
-                            type="button"
-                            className={`${styles.actionButton} ${styles.actionButtonDanger}`}
-                            onClick={() => handleDeleteUser(user)}
-                          >
-                            Eliminar
-                          </button>
-                        )}
-                      </div>
+                      <AdminUserActionsMenu
+                        user={user}
+                        onResetPassword={handleResetPassword}
+                        onToggleActive={handleToggleActive}
+                        onDelete={handleDeleteUser}
+                      />
                     </td>
                   </tr>
                 ))}

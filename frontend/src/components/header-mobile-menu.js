@@ -27,14 +27,24 @@ const adminNavItem = {
   href: "/admin",
 };
 
+const instructorNavItem = {
+  id: "instructor",
+  label: "Panel Instructor",
+  icon: "/icons/admin-stat-courses.svg",
+  href: "/instructor",
+};
+
 export default function HeaderMobileMenu() {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const { isRendered, isVisible, handleTransitionEnd } =
     useDropdownTransition(isOpen);
 
-  const items =
-    session?.user?.role === "ADMIN" ? [...navItems, adminNavItem] : navItems;
+  const roleNavItems = {
+    ADMIN: [adminNavItem],
+    INSTRUCTOR: [instructorNavItem],
+  };
+  const items = [...navItems, ...(roleNavItems[session?.user?.role] ?? [])];
 
   const close = () => setIsOpen(false);
 

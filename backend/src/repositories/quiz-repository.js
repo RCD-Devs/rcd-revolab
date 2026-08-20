@@ -39,3 +39,11 @@ export function createQuizAttempt({ userId, quizId, answers, score, passed }) {
     data: { userId, quizId, answers, score, passed },
   });
 }
+
+export async function hasPassedAttempt(userId, quizId) {
+  const attempt = await prisma.quizAttempt.findFirst({
+    where: { userId, quizId, passed: true },
+    select: { id: true },
+  });
+  return Boolean(attempt);
+}

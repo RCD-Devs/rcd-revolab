@@ -45,6 +45,14 @@ export function countCompletedLessonsForUser(userId, courseId) {
   });
 }
 
+export async function findCourseFinalExamId(courseId) {
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    select: { finalExam: { select: { id: true } } },
+  });
+  return course?.finalExam?.id ?? null;
+}
+
 export function upsertEnrollment(userId, courseId, data) {
   return prisma.enrollment.upsert({
     where: { userId_courseId: { userId, courseId } },

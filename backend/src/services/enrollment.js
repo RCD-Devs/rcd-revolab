@@ -1,5 +1,6 @@
 import * as lessonRepository from '../repositories/lesson-repository.js';
 import * as profileRepository from '../repositories/profile-repository.js';
+import * as quizRepository from '../repositories/quiz-repository.js';
 
 const SPECIALIST_RANK_KEY = 'especialista';
 
@@ -35,15 +36,23 @@ export async function ensureCourseAccess({ userId, role, course }) {
 }
 
 // Recalcula el progreso de un usuario en un curso a partir de sus
-// LessonProgress reales, y actualiza (o crea) el Enrollment.
+// LessonProgress reales, y actualiza (o crea) el Enrollment. Si el curso
+// tiene examen final, completar todas las lecciones no basta para pasar
+// a COMPLETED: hace falta ademas haber aprobado ese examen.
 export async function recalculateEnrollmentProgress(userId, courseId) {
-  const [total, completed] = await Promise.all([
+  const [total, completed, finalExamId] = await Promise.all([
     lessonRepository.countCourseLessons(courseId),
     lessonRepository.countCompletedLessonsForUser(userId, courseId),
+    lessonRepository.findCourseFinalExamId(courseId),
   ]);
 
+  const allLessonsDone = total > 0 && completed >= total;
+  const examPassed = finalExamId
+    ? await quizRepository.hasPassedAttempt(userId, finalExamId)
+    : true;
+  const isCompleted = allLessonsDone && examPassed;
+
   const progressPercent = total === 0 ? 0 : Math.round((completed / total) * 100);
-  const isCompleted = total > 0 && completed >= total;
 
   return lessonRepository.upsertEnrollment(userId, courseId, {
     progressPercent,

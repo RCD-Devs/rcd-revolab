@@ -217,12 +217,38 @@ Etapa 7. Decisiones tomadas el 2026-08-20 con Alexis, y avance real:
       Borrado permanente solo se implementará si el usuario no tiene
       historial. **Implementación pendiente:** migración de schema +
       endpoint de enviar a papelera + vista de papelera en admin.
-- [ ] Crear cuenta/bucket de Cloudflare R2 — **decisión: no por ahora**,
-      preocupa el costo. R2 sí tiene capa gratis (10GB + sin cobro de
-      egress) pero se prefiere evitar otra cuenta externa mientras no haya
-      un entorno compartido real. Evaluar como alternativa de testing un
-      storage-provider de Google Drive (no existe ningún stub hoy, habría
-      que construirlo) o seguir con el storage local que ya funciona.
+- [x] **Decisión final de storage: Cloudflare R2 en capa gratuita.** Se
+      evaluó Google Drive como alternativa y se descartó — una cuenta de
+      servicio no tiene cuota de almacenamiento propia sin Google Workspace
+      pagado, los links de Drive no soportan bien range-requests (necesario
+      para adelantar/retroceder video) y se limitan por cuota de descargas,
+      y no hay URLs firmadas con expiración al estilo S3. R2 gratis da 10GB
+      + sin cobro de egress, y el código ya está listo.
+- [x] **Bug encontrado y corregido antes de activar R2:** `uploadCourseCover`
+      y `updateProfileAvatar` guardaban en la BD el resultado de
+      `getSignedUrl()` (URL con firma que expira en 1h) en vez de una URL
+      estable — con storage local no se notaba porque su versión de
+      `getSignedUrl` nunca expira, pero con R2 activo las portadas de curso
+      y avatares se hubieran roto una hora después de subirse. También
+      `lessons.js` armaba la URL de video con un path hardcodeado a
+      `/api/media/`, que solo existe para storage local — con R2 hubiera
+      dado 404 siempre. Se agregó `getPublicUrl(key)` al contrato de
+      storage-provider (rama `feature/etapa8-css-roles`).
+- [ ] **Pendiente de Alexis — crear la cuenta/bucket:** yo no puedo crear
+      cuentas externas. Pasos en Cloudflare:
+      1. Crear cuenta en https://dash.cloudflare.com (plan gratis).
+      2. R2 Object Storage → Create bucket → nombre ej. `revolab-media`.
+      3. En el bucket, **Settings → Public access → Allow Access** (activa
+         el dominio público `pub-xxxx.r2.dev`) — necesario para que
+         portadas/avatares/video carguen sin firma.
+      4. R2 → Manage API Tokens → Create API Token con permiso
+         Object Read & Write, scopeado a ese bucket.
+      5. Pasarme: Account ID, Access Key ID, Secret Access Key, nombre del
+         bucket, y la URL pública `pub-xxxx.r2.dev` del paso 3.
+      Con eso yo activo `STORAGE_PROVIDER=r2` y las 5 env vars
+      (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
+      `R2_BUCKET_NAME`, `R2_PUBLIC_URL`) en Vercel, y verifico que las
+      subidas funcionen en producción.
 - [ ] Actualizar `README.md` raíz para reflejar el stack real.
 - [ ] Limpieza: borrar `frontend/src/data/*.js` que ya no se usan (todos
       salvo, potencialmente, contenido editorial fijo si queda alguno).

@@ -546,6 +546,106 @@
   color: var(--btn-danger-hover-color);
 }
 
+.roleCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.roleSaveButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid var(--color-primary);
+  border-radius: 8px;
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.roleSaveButton:hover {
+  background: var(--btn-primary-hover-bg);
+  border-color: var(--btn-primary-hover-border);
+}
+
+.actionsMenuWrap {
+  position: relative;
+  display: inline-block;
+}
+
+.actionsMenuTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-white);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.actionsMenuTrigger:hover {
+  background: var(--btn-outline-hover-bg);
+  border-color: var(--btn-outline-hover-border);
+}
+
+.actionsMenuPanel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  min-width: 200px;
+  padding: 6px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 10px;
+  background: #1a2b3c;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.3),
+    0 4px 6px -4px rgba(0, 0, 0, 0.3);
+}
+
+.actionsMenuItem {
+  display: block;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-white);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+
+.actionsMenuItem:hover {
+  background: rgba(0, 229, 200, 0.08);
+}
+
+.actionsMenuItemDanger {
+  color: #ff6467;
+}
+
+.actionsMenuItemDanger:hover {
+  background: rgba(255, 100, 103, 0.08);
+}
+
 @media (min-width: 769px) {
   .subheader {
     display: flex;
@@ -582,6 +682,7 @@
   }
 
   .usersPanel {
+    overflow: visible;
     border-color: var(--color-input-border);
     border-radius: 16px;
     background: var(--color-home-surface);
@@ -626,7 +727,7 @@
 
   .desktopTableWrap {
     display: block;
-    overflow-x: auto;
+    overflow-x: visible;
   }
 
   .mobileListWrap {
@@ -639,23 +740,23 @@
   }
 
   .usersTable thead th {
-    padding: 16px 16px 16px;
+    padding: 12px 10px;
     border-bottom: 1px solid var(--color-input-border);
     background: var(--color-secondary);
     color: var(--color-text-muted);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    line-height: 20px;
+    line-height: 18px;
     letter-spacing: -0.1504px;
     text-align: left;
     white-space: nowrap;
   }
 
   .usersTable tbody td {
-    padding: 16px;
+    padding: 10px;
     border-bottom: 1px solid var(--color-input-border);
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 13px;
+    line-height: 18px;
     letter-spacing: -0.1504px;
     vertical-align: middle;
     white-space: nowrap;
@@ -668,7 +769,7 @@
   .userNameCell {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 12px;
   }
 
   .userName {
@@ -700,5 +801,16 @@
 
   .lastActivity {
     color: var(--color-text-muted);
+  }
+
+  .usersTable .userAvatar {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
+  .usersTable .tableSelect {
+    padding: 5px 8px;
+    font-size: 12.5px;
   }
 }

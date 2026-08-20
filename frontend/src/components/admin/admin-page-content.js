@@ -176,7 +176,7 @@ export default function AdminPageContent() {
               {adminPageMeta.usersSectionTitle}
             </h2>
 
-            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            <div className={styles.usersPanelActions}>
               <label className={styles.searchField}>
                 <Image className={styles.searchIcon} src="/icons/search.svg" alt="" width={16} height={16} />
                 <input
@@ -187,7 +187,11 @@ export default function AdminPageContent() {
                   className={styles.searchInput}
                 />
               </label>
-              <button type="button" onClick={() => setShowCreateModal(true)}>
+              <button
+                type="button"
+                className={styles.createUserButton}
+                onClick={() => setShowCreateModal(true)}
+              >
                 + Crear usuario
               </button>
             </div>
@@ -219,6 +223,7 @@ export default function AdminPageContent() {
                     </td>
                     <td>
                       <select
+                        className={styles.tableSelect}
                         defaultValue={user.departmentId ?? ""}
                         onChange={(event) => handleDepartmentChange(user.id, event.target.value)}
                       >
@@ -231,7 +236,11 @@ export default function AdminPageContent() {
                       </select>
                     </td>
                     <td>
-                      <select value={user.role} onChange={(event) => handleRoleChange(user.id, event.target.value)}>
+                      <select
+                        className={styles.tableSelect}
+                        value={user.role}
+                        onChange={(event) => handleRoleChange(user.id, event.target.value)}
+                      >
                         {ROLES.map((role) => (
                           <option key={role} value={role}>
                             {role}
@@ -245,7 +254,11 @@ export default function AdminPageContent() {
                     <td>{user.completedCourses}</td>
                     <td className={styles.lastActivity}>{formatDate(user.lastActivity)}</td>
                     <td>
-                      <button type="button" onClick={() => handleToggleActive(user)}>
+                      <button
+                        type="button"
+                        className={styles.toggleActiveButton}
+                        onClick={() => handleToggleActive(user)}
+                      >
                         {user.isActive ? "Desactivar" : "Activar"}
                       </button>
                     </td>
@@ -309,7 +322,10 @@ export default function AdminPageContent() {
           </div>
         </section>
 
-        <section className={styles.usersPanel} aria-labelledby="admin-courses-title" style={{ marginTop: 32 }}>
+        <section
+          className={`${styles.usersPanel} ${styles.coursesSection}`}
+          aria-labelledby="admin-courses-title"
+        >
           <div className={styles.usersPanelHeader}>
             <h2 id="admin-courses-title" className={styles.usersPanelTitle}>
               Todos los Cursos
@@ -332,16 +348,36 @@ export default function AdminPageContent() {
                   <tr key={course.id}>
                     <td>{course.title}</td>
                     <td>{course.instructorName}</td>
-                    <td>{course.status}</td>
+                    <td>
+                      <span
+                        className={`${styles.statusBadge} ${
+                          styles[`statusBadge_${course.status}`] ?? ""
+                        }`}
+                      >
+                        {course.status}
+                      </span>
+                    </td>
                     <td>{course.students}</td>
-                    <td style={{ display: "flex", gap: 8 }}>
-                      <Link href={`/instructor/cursos/${course.id}/editar`}>Editar</Link>
-                      <button type="button" onClick={() => handleTogglePublish(course)}>
-                        {course.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
-                      </button>
-                      <button type="button" onClick={() => handleDeleteCourse(course)}>
-                        Eliminar
-                      </button>
+                    <td>
+                      <div className={styles.courseActions}>
+                        <Link href={`/instructor/cursos/${course.id}/editar`} className={styles.actionLink}>
+                          Editar
+                        </Link>
+                        <button
+                          type="button"
+                          className={styles.actionButton}
+                          onClick={() => handleTogglePublish(course)}
+                        >
+                          {course.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.actionButton} ${styles.actionButtonDanger}`}
+                          onClick={() => handleDeleteCourse(course)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

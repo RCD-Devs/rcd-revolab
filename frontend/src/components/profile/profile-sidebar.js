@@ -16,6 +16,7 @@ export default function ProfileSidebar({ user, rank }) {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [passwordFields, setPasswordFields] = useState({ current: "", next: "" });
   const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
   const handleEditPhoto = () => {
@@ -61,6 +62,7 @@ export default function ProfileSidebar({ user, rank }) {
     event.preventDefault();
     setIsSavingPassword(true);
     setPasswordMessage("");
+    setPasswordError(false);
     try {
       const response = await fetch("/api/profile/password", {
         method: "POST",
@@ -72,6 +74,7 @@ export default function ProfileSidebar({ user, rank }) {
       });
       const data = await response.json();
       if (!response.ok) {
+        setPasswordError(true);
         setPasswordMessage(data.error ?? "No se pudo cambiar la contraseña");
         return;
       }
@@ -162,17 +165,17 @@ export default function ProfileSidebar({ user, rank }) {
 
         <button
           type="button"
-          className={styles.avatarButton}
-          style={{ width: "100%", marginTop: 16, borderRadius: 8, padding: "10px 0" }}
+          className={styles.passwordToggle}
           onClick={() => setShowPasswordForm((show) => !show)}
         >
           {showPasswordForm ? "Cancelar" : "Cambiar contraseña"}
         </button>
 
         {showPasswordForm && (
-          <form onSubmit={handleChangePassword} style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+          <form onSubmit={handleChangePassword} className={styles.passwordForm}>
             <input
               type="password"
+              className={styles.passwordInput}
               placeholder="Contraseña actual"
               value={passwordFields.current}
               onChange={(event) =>
@@ -182,16 +185,25 @@ export default function ProfileSidebar({ user, rank }) {
             />
             <input
               type="password"
+              className={styles.passwordInput}
               placeholder="Nueva contraseña"
               value={passwordFields.next}
               onChange={(event) => setPasswordFields((f) => ({ ...f, next: event.target.value }))}
               minLength={8}
               required
             />
-            <button type="submit" disabled={isSavingPassword}>
+            <button type="submit" className={styles.passwordSubmit} disabled={isSavingPassword}>
               Guardar contraseña
             </button>
-            {passwordMessage && <p>{passwordMessage}</p>}
+            {passwordMessage && (
+              <p
+                className={`${styles.passwordMessage} ${
+                  passwordError ? styles.passwordMessageError : ""
+                }`}
+              >
+                {passwordMessage}
+              </p>
+            )}
           </form>
         )}
       </div>

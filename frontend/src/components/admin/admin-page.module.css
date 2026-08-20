@@ -393,6 +393,152 @@
   font-size: 14px;
 }
 
+.coursesSection {
+  margin-top: 32px;
+}
+
+.usersPanelActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.createUserButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-height: 42px;
+  padding: 8px 16px;
+  border: 1px solid var(--color-primary);
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.createUserButton:hover {
+  background: var(--btn-primary-hover-bg);
+  border-color: var(--btn-primary-hover-border);
+  color: var(--btn-primary-hover-color);
+}
+
+.tableSelect {
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 10px;
+  background: var(--color-secondary);
+  color: var(--color-white);
+  font: inherit;
+  font-size: 13px;
+}
+
+.tableSelect:focus {
+  outline: none;
+  border-color: rgba(0, 229, 200, 0.45);
+}
+
+.toggleActiveButton {
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-white);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.toggleActiveButton:hover {
+  background: var(--btn-outline-hover-bg);
+  border-color: var(--btn-outline-hover-border);
+  color: var(--btn-outline-hover-color);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.statusBadge_PUBLISHED {
+  background: rgba(0, 229, 200, 0.15);
+  color: var(--color-primary);
+}
+
+.statusBadge_DRAFT {
+  background: rgba(136, 153, 170, 0.15);
+  color: var(--color-text-muted);
+}
+
+.statusBadge_REVIEW {
+  background: rgba(43, 127, 255, 0.15);
+  color: #7fb3ff;
+}
+
+.courseActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.actionLink,
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 5px 12px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-white);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.actionLink:hover,
+.actionButton:hover {
+  background: var(--btn-outline-hover-bg);
+  border-color: var(--btn-outline-hover-border);
+  color: var(--btn-outline-hover-color);
+}
+
+.actionButtonDanger {
+  border-color: #ff4d6d;
+  background: #ff4d6d;
+  color: var(--color-white);
+}
+
+.actionButtonDanger:hover {
+  background: var(--btn-danger-hover-bg);
+  border-color: var(--btn-danger-hover-border);
+  color: var(--btn-danger-hover-color);
+}
+
 @media (min-width: 769px) {
   .subheader {
     display: flex;

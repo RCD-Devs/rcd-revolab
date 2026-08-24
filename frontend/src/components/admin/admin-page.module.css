@@ -578,6 +578,13 @@
 .actionsMenuWrap {
   position: relative;
   display: inline-block;
+  /* El padding extiende el área "hoverable" del wrap para cubrir el
+     espacio visual entre el trigger y el panel (ver top del panel).
+     El margin negativo cancela el efecto en el layout. Sin esto, ese
+     espacio queda fuera del wrap y el mouse dispara mouseleave al
+     cruzarlo, cerrando el menú antes de poder hacer click en una opción. */
+  padding-bottom: 6px;
+  margin-bottom: -6px;
 }
 
 .actionsMenuTrigger {
@@ -605,7 +612,7 @@
 
 .actionsMenuPanel {
   position: absolute;
-  top: calc(100% + 6px);
+  top: 100%;
   right: 0;
   z-index: 20;
   min-width: 200px;

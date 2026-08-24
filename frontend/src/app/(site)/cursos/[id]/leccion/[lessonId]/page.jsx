@@ -1,7 +1,12 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import CourseLessonPage from "@/components/courses/course-lesson-page";
 import { auth } from "@/auth";
-import { getLessonPageData } from "@revolab/backend/services/lessons";
+import { getLessonPageData as getLessonPageDataUncached } from "@revolab/backend/services/lessons";
+
+// generateMetadata y el componente de la ruta corren ambos por request:
+// sin memoizar, cada navegación dispara la consulta (con joins) dos veces.
+const getLessonPageData = cache(getLessonPageDataUncached);
 
 export async function generateMetadata({ params }) {
   const { id, lessonId } = await params;

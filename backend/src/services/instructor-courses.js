@@ -50,14 +50,28 @@ export async function getCourseForEdit(slug, actorId, isAdmin = false) {
     autoCertificate: course.autoCertificate,
     departmentId: course.departmentId,
     department: course.department?.label ?? null,
-    modules: course.modules.map((moduleItem) => ({
-      id: moduleItem.id,
-      title: moduleItem.title,
-      lessons: moduleItem.lessons.map((lesson) => ({
-        id: lesson.id,
-        title: lesson.title,
-        type: lesson.type,
+    modules: await Promise.all(
+      course.modules.map(async (moduleItem) => ({
+        id: moduleItem.id,
+        title: moduleItem.title,
+        lessons: await Promise.all(moduleItem.lessons.map((lesson) => mapLessonForEdit(lesson))),
       })),
+    ),
+  };
+}
+
+async function mapLessonForEdit(lesson) {
+  return {
+    id: lesson.id,
+    title: lesson.title,
+    type: lesson.type,
+    content: lesson.content,
+    videoUrl: lesson.videoKey ? await getStorageProvider().getPublicUrl(lesson.videoKey) : null,
+    materials: (lesson.materials ?? []).map((material) => ({
+      id: material.id,
+      fileName: material.fileName,
+      fileUrl: material.fileUrl,
+      fileType: material.fileType,
     })),
   };
 }
@@ -185,6 +199,14 @@ export async function addModule(slug, actorId, { title }, isAdmin = false) {
   return { id: module_.id, title: module_.title, order: module_.order };
 }
 
+export async function removeModule(slug, moduleId, actorId, isAdmin = false) {
+  const course = await resolveCourse(slug, actorId, isAdmin);
+  if (!course) return null;
+
+  const result = await instructorCourseRepository.deleteModule(moduleId, course.id);
+  return { deleted: result.count > 0 };
+}
+
 export async function addLesson(slug, moduleId, actorId, { title, type }, isAdmin = false) {
   const course = await resolveCourse(slug, actorId, isAdmin);
   if (!course) return null;
@@ -215,4 +237,50 @@ export async function uploadLessonVideo(lessonId, actorId, buffer, contentType, 
 
   const updated = await instructorCourseRepository.updateLessonVideoKey(lessonId, key);
   return { id: updated.id, videoUrl: await storage.getPublicUrl(key) };
+}
+
+export async function updateLesson(lessonId, actorId, { title, content }, isAdmin = false) {
+  const lesson = await resolveLesson(lessonId, actorId, isAdmin);
+  if (!lesson) return null;
+
+  const data = {};
+  if (title !== undefined) data.title = title;
+  if (content !== undefined) data.content = content;
+
+  const updated = await instructorCourseRepository.updateLesson(lessonId, data);
+  return { id: updated.id, title: updated.title, content: updated.content };
+}
+
+export async function uploadLessonMaterial(
+  lessonId,
+  actorId,
+  buffer,
+  contentType,
+  fileName,
+  isAdmin = false,
+) {
+  const lesson = await resolveLesson(lessonId, actorId, isAdmin);
+  if (!lesson) return null;
+
+  const storage = getStorageProvider();
+  const extension = fileName.includes('.') ? `.${fileName.split('.').pop()}` : '';
+  const key = `lessons/${lessonId}/materials/${Date.now()}${extension}`;
+  await storage.upload(key, buffer, contentType);
+  const fileUrl = await storage.getPublicUrl(key);
+
+  const material = await instructorCourseRepository.createLessonMaterial(lessonId, {
+    fileName,
+    fileUrl,
+    fileType: contentType,
+  });
+
+  return { id: material.id, fileName: material.fileName, fileUrl: material.fileUrl, fileType: material.fileType };
+}
+
+export async function deleteLessonMaterial(materialId, lessonId, actorId, isAdmin = false) {
+  const lesson = await resolveLesson(lessonId, actorId, isAdmin);
+  if (!lesson) return null;
+
+  const result = await instructorCourseRepository.deleteLessonMaterial(materialId, lessonId);
+  return { deleted: result.count > 0 };
 }

@@ -31,6 +31,7 @@ function StepBasic({
   departments,
   onCoverUpload,
   isUploadingCover,
+  coverError,
   onContinue,
   continueError,
 }) {
@@ -92,12 +93,14 @@ function StepBasic({
           <Image
             src={draft.coverImageUrl}
             alt=""
-            width={200}
-            height={112}
+            width={320}
+            height={180}
             className={styles.uploadPreview}
           />
         )}
-        <label className={styles.uploadZone}>
+        <label
+          className={`${styles.uploadZone} ${draft.coverImageUrl ? styles.uploadZoneCompact : ""}`}
+        >
           <input
             type="file"
             accept="image/*"
@@ -108,12 +111,21 @@ function StepBasic({
             }}
             disabled={isUploadingCover}
           />
-          <Image src="/icons/instructor-upload.svg" alt="" width={40} height={40} />
+          {!draft.coverImageUrl && (
+            <Image src="/icons/instructor-upload.svg" alt="" width={40} height={40} />
+          )}
           <span className={styles.uploadTitle}>
-            {isUploadingCover ? "Subiendo..." : "Sube una imagen o arrástrala aquí"}
+            {isUploadingCover
+              ? "Subiendo..."
+              : draft.coverImageUrl
+                ? "Reemplazar portada"
+                : "Sube una imagen o arrástrala aquí"}
           </span>
-          <span className={styles.uploadHint}>1920x1080px (Recomendado)</span>
+          {!draft.coverImageUrl && (
+            <span className={styles.uploadHint}>1920x1080px (Recomendado)</span>
+          )}
         </label>
+        {coverError && <p className={styles.stepError}>{coverError}</p>}
       </div>
 
       {continueError && <p className={styles.stepError}>{continueError}</p>}
@@ -324,6 +336,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [coverError, setCoverError] = useState("");
   const [basicError, setBasicError] = useState("");
   const [contentErrors, setContentErrors] = useState([]);
   const [editingLesson, setEditingLesson] = useState(null);
@@ -399,6 +412,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
 
   async function handleCoverUpload(file) {
     setIsUploadingCover(true);
+    setCoverError("");
     try {
       const currentId = await ensureCourseExists();
       const formData = new FormData();
@@ -407,8 +421,26 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
         method: "POST",
         body: formData,
       });
-      const data = await response.json();
-      if (data.coverImageUrl) updateDraft({ coverImageUrl: data.coverImageUrl });
+
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        // Respuesta no-JSON (ej. 413 de la plataforma): sin este catch,
+        // response.json() tira y el error queda silencioso.
+      }
+
+      if (!response.ok || !data?.coverImageUrl) {
+        setCoverError(
+          response.status === 413
+            ? "La imagen pesa demasiado para subirla así."
+            : data?.error || `No se pudo subir la portada (error ${response.status}).`,
+        );
+        return;
+      }
+      updateDraft({ coverImageUrl: data.coverImageUrl });
+    } catch {
+      setCoverError("No se pudo subir la portada. Revisa tu conexión e intenta de nuevo.");
     } finally {
       setIsUploadingCover(false);
     }
@@ -562,6 +594,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
                 departments={departments}
                 onCoverUpload={handleCoverUpload}
                 isUploadingCover={isUploadingCover}
+                coverError={coverError}
                 onContinue={handleContinueToContent}
                 continueError={basicError}
               />

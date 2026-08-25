@@ -4,6 +4,11 @@ import { useState } from "react";
 import Image from "next/image";
 import styles from "./instructor-lesson-editor-modal.module.css";
 
+function formatFileSize(bytes) {
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export default function InstructorLessonEditorModal({ lesson, onClose, onLessonUpdated }) {
   const [title, setTitle] = useState(lesson.title);
   const [content, setContent] = useState(lesson.content ?? "");
@@ -15,23 +20,41 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
   const [savedHint, setSavedHint] = useState(false);
   const [error, setError] = useState("");
 
+  async function saveText() {
+    const response = await fetch(`/api/instructor/lessons/${lesson.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, content }),
+    });
+    if (!response.ok) {
+      setError("No se pudo guardar la lección.");
+      return false;
+    }
+    onLessonUpdated(lesson.id, { title, content });
+    return true;
+  }
+
   async function handleSaveText(event) {
     event.preventDefault();
     setIsSavingText(true);
     setError("");
     try {
-      const response = await fetch(`/api/instructor/lessons/${lesson.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content }),
-      });
-      if (!response.ok) {
-        setError("No se pudo guardar la lección.");
-        return;
+      const ok = await saveText();
+      if (ok) {
+        setSavedHint(true);
+        setTimeout(() => setSavedHint(false), 2000);
       }
-      onLessonUpdated(lesson.id, { title, content });
-      setSavedHint(true);
-      setTimeout(() => setSavedHint(false), 2000);
+    } finally {
+      setIsSavingText(false);
+    }
+  }
+
+  async function handleSaveAndClose() {
+    setIsSavingText(true);
+    setError("");
+    try {
+      const ok = await saveText();
+      if (ok) onClose();
     } finally {
       setIsSavingText(false);
     }
@@ -47,13 +70,28 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
         method: "POST",
         body: formData,
       });
-      const data = await response.json();
-      if (!response.ok || !data.videoUrl) {
-        setError("No se pudo subir el video.");
+
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        // La respuesta no fue JSON (ej. un 413 de la plataforma antes de
+        // llegar a nuestro handler): sin este catch, response.json()
+        // tira y el error queda silencioso, como si "no pasara nada".
+      }
+
+      if (!response.ok || !data?.videoUrl) {
+        setError(
+          response.status === 413
+            ? `El video pesa demasiado para subirlo así (${formatFileSize(file.size)}). Probá con un archivo más liviano.`
+            : data?.error || `No se pudo subir el video (error ${response.status}).`,
+        );
         return;
       }
       setVideoUrl(data.videoUrl);
       onLessonUpdated(lesson.id, { videoUrl: data.videoUrl });
+    } catch {
+      setError("No se pudo subir el video. Revisa tu conexión e intenta de nuevo.");
     } finally {
       setIsUploadingVideo(false);
     }
@@ -70,9 +108,20 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
           method: "POST",
           body: formData,
         });
-        const data = await response.json();
-        if (!response.ok || !data.material) {
-          setError("No se pudo subir uno de los archivos.");
+
+        let data = null;
+        try {
+          data = await response.json();
+        } catch {
+          // Ver comentario equivalente en handleVideoUpload.
+        }
+
+        if (!response.ok || !data?.material) {
+          setError(
+            response.status === 413
+              ? `"${file.name}" pesa demasiado para subirlo así (${formatFileSize(file.size)}).`
+              : data?.error || `No se pudo subir "${file.name}" (error ${response.status}).`,
+          );
           continue;
         }
         setMaterials((current) => {
@@ -81,6 +130,8 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
           return next;
         });
       }
+    } catch {
+      setError("No se pudieron subir los archivos. Revisa tu conexión e intenta de nuevo.");
     } finally {
       setIsUploadingMaterial(false);
     }
@@ -153,14 +204,23 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
           {error && <p className={styles.error}>{error}</p>}
 
           <div className={styles.actions}>
-            <button type="submit" className={styles.primaryButton} disabled={isSavingText}>
-              {isSavingText ? "Guardando..." : savedHint ? "Guardado" : "Guardar texto"}
+            <button
+              type="button"
+              className={styles.primaryButton}
+              disabled={isSavingText}
+              onClick={handleSaveAndClose}
+            >
+              {isSavingText ? "Guardando..." : "Guardar lección"}
             </button>
-            <button type="button" className={styles.secondaryButton} onClick={onClose}>
-              Cerrar
+            <button type="submit" className={styles.secondaryButton} disabled={isSavingText}>
+              {savedHint ? "Guardado" : "Guardar texto"}
             </button>
           </div>
         </form>
+
+        <button type="button" className={styles.cancelLink} onClick={onClose}>
+          Cancelar sin guardar
+        </button>
 
         <div className={styles.field}>
           <span className={styles.label}>Video de la lección</span>

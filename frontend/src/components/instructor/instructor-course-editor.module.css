@@ -288,6 +288,17 @@
   opacity: 0.7;
 }
 
+.uploadPreview {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  margin-bottom: 8px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 12px;
+}
+
 .uploadZone {
   display: flex;
   flex-direction: column;
@@ -299,11 +310,21 @@
   border: 2px dashed #243447;
   border-radius: 16px;
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, min-height 0.2s ease, padding 0.2s ease;
 }
 
 .uploadZone:hover {
   border-color: rgba(0, 229, 200, 0.35);
+}
+
+.uploadZoneCompact {
+  flex-direction: row;
+  min-height: 0;
+  padding: 10px 14px;
+}
+
+.uploadZoneCompact .uploadTitle {
+  color: var(--color-primary);
 }
 
 .uploadInput {

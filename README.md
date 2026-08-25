@@ -1,10 +1,11 @@
 # RevoLab
 
-Plataforma interna de e-learning de la agencia. Funciona de forma similar a Udemy, pero pensada para el equipo: cada persona crea su perfil, explora cursos por área y avanza en su desarrollo profesional dentro de la organización. Incluye también un espacio de creación y gestión de cursos para instructores y administradores.
+Plataforma interna de e-learning de la agencia. Funciona de forma similar a Udemy o Platzi, pero pensada para el equipo: cada persona crea su perfil, explora cursos por área y avanza en su desarrollo profesional dentro de la organización. Incluye también un espacio de creación y gestión de cursos para instructores y administradores.
 
 El nombre combina **Revo** (el concepto de *re-evolucionar*) y **Lab** (experimentar, explorar, descubrir).
 
 **Repositorio:** https://github.com/RCD-Devs/rcd-revolab
+**Producción:** https://revolab-dev.vercel.app
 
 ---
 
@@ -23,85 +24,87 @@ El nombre combina **Revo** (el concepto de *re-evolucionar*) y **Lab** (experime
 
 ## Funcionalidades
 
-**Para quien consume cursos:**
+**Para quien consume cursos (rol `STUDENT`, y cualquier `INSTRUCTOR`/`ADMIN` también puede consumir):**
 
-- Inicio de sesión y perfil de usuario (área, progreso, cursos realizados, rango).
-- Home con cursos recomendados, nuevos y en desarrollo.
-- Catálogo de cursos separado por áreas de aprendizaje.
-- Detalle del curso: descripción, contenido, comentarios y quiz final.
-- Reproductor de clases (curso player) para avanzar clase a clase.
-- Quiz final para aprobar y registrar la finalización del curso.
-- Espacio trainee con seguimiento de cursos obligatorios y mentor asignado.
+- Inicio de sesión con dominio institucional (Auth.js) y perfil editable (nombre, foto, contraseña, área, rango).
+- Home con cursos recomendados, nuevos y "continúa donde lo dejaste".
+- Catálogo de cursos con búsqueda y filtro por categoría.
+- Detalle del curso: descripción, temario (módulos/lecciones), comentarios y quiz.
+- Reproductor de lección con transcripción, materiales descargables y progreso real por lección.
+- Quiz por lección y examen final del curso, con certificado en PDF descargable al aprobar.
+- Sistema de rangos (gamificación) e inscripción automática al primer acceso al contenido, con opción de cancelar inscripción.
 
-**Para quien crea y gestiona cursos:**
+**Para quien crea y gestiona cursos (rol `INSTRUCTOR`):**
 
-- Panel de instructor para crear y administrar cursos.
-- Carga de curso: información base (título, descripción, portada), módulos y contenido, y reglas de acceso (público o con permiso).
-- Panel de administración para gestionar usuarios y cursos, con métricas de usuarios activos, cursos publicados y tasa de finalización.
+- Panel de instructor para crear, editar, publicar y despublicar cursos propios.
+- Editor de curso: información básica, portada, clasificación (área/categoría/nivel), contenido de la página pública (about/aprenderás/herramientas), módulos y lecciones (con reordenamiento y borrado), subida de video directo a storage, materiales complementarios y transcripción.
+- Vista de estudiantes inscritos por curso, con progreso individual y resultado del examen final.
 
-> El alcance del primer MVP prioriza el flujo crítico: **iniciar sesión → revisar cursos disponibles → entrar a un curso → comenzar la primera clase**, con la condición habilitante de poder crear y cargar cursos.
+**Para administración (rol `ADMIN`):**
+
+- Control total sobre cursos de cualquier instructor (editar, publicar, eliminar).
+- Gestión completa de usuarios: crear, cambiar rol/área, desactivar (papelera con reasignación de email) y borrado permanente cuando no tiene historial asociado.
+- Métricas globales (usuarios activos, cursos publicados).
 
 ---
 
 ## Stack tecnológico
 
-### Definido
+| Capa                  | Tecnología                                                       |
+|------------------------|-------------------------------------------------------------------|
+| Framework              | Next.js (App Router, React) — un solo proyecto para frontend y API |
+| Autenticación          | Auth.js v5 (`next-auth`), sesión JWT, Credentials Provider        |
+| ORM / Base de datos    | Prisma + PostgreSQL (hosteado en Supabase)                        |
+| Storage de archivos    | Cloudflare R2 (S3-compatible) en producción; filesystem local en desarrollo, mismo contrato para ambos |
+| Estilos                | CSS Modules                                                       |
+| Infraestructura        | Vercel (Root Directory: `frontend`)                                |
+| Gestor de paquetes     | pnpm (workspaces)                                                  |
 
-| Capa          | Tecnología                          |
-|---------------|-------------------------------------|
-| Backend       | Node.js + Express                   |
-| Frontend      | React + TypeScript                  |
-| ORM           | Prisma                              |
-| Base de datos | PostgreSQL                          |
-
-### En evaluación
-
-| Aspecto              | Opciones en evaluación                      |
-|----------------------|---------------------------------------------|
-| Meta-framework front | React a secas o con Astro                   |
-| Autenticación        | Auth.js o JWT                               |
-| Storage de archivos  | Cloudflare R2, AWS S3 o Cloudinary          |
-| Infraestructura      | Railway, Vercel o Cloudflare                |
-| Infra de base de datos | Supabase                        |
+> El backend **no es un servidor Express separado**: es un paquete interno (`@revolab/backend`) con el schema de Prisma, repositorios y servicios, consumido directamente por los Route Handlers y Server Components de Next.js dentro del mismo proceso.
 
 ---
 
 ## Estructura del proyecto
 
-Monorepo con el backend y el frontend en un mismo repositorio:
+Monorepo con pnpm workspaces (`frontend/` + `backend/`):
 
 ```
-revolab/
-├── .gitignore
-├── README.md
-├── backend/
+rcd-revolab/
+├── pnpm-workspace.yaml
+├── package.json            # scripts raíz (dev, build, lint delegan a frontend/)
+├── backend/                 # paquete interno @revolab/backend, sin servidor propio
 │   ├── prisma/
-│   │   └── schema.prisma   # modelo de datos de Prisma
+│   │   ├── schema.prisma    # modelo de datos
+│   │   ├── migrations/
+│   │   └── seed.js
 │   ├── src/
-│   │   ├── config/         # conexión a DB, configuración general
-│   │   ├── routes/         # definición de rutas
-│   │   ├── controllers/    # lógica de cada endpoint
-│   │   ├── services/       # lógica de negocio
-│   │   ├── models/         # modelos de datos
-│   │   ├── middlewares/    # auth, validaciones, manejo de errores
-│   │   ├── utils/          # helpers
-│   │   └── app.js          # configuración de Express
-│   ├── .env.example        # plantilla de variables de entorno
-│   ├── package.json
-│   └── server.js           # punto de entrada
-└── frontend/
-    └── ...                 # según el stack que se defina
+│   │   ├── config/          # conexión a Prisma
+│   │   ├── auth/            # hashing de contraseñas
+│   │   ├── integrations/    # storage (local / R2)
+│   │   ├── repositories/    # acceso a datos (Prisma) por dominio
+│   │   ├── services/        # lógica de negocio, lo que consume el frontend
+│   │   ├── validations/     # slugs, etc.
+│   │   └── constants/       # valores sin dependencias, importables desde el cliente
+│   └── .env.example
+└── frontend/                # Next.js App Router
+    ├── src/
+    │   ├── app/              # rutas (páginas + Route Handlers bajo app/api/)
+    │   ├── components/       # componentes por dominio (courses, instructor, admin, profile...)
+    │   ├── lib/               # helpers de Route Handlers (ej. requireRole)
+    │   ├── data/              # contenido editorial fijo (no mocks de datos reales)
+    │   ├── auth.js / auth.config.js  # Auth.js completo / config liviana para proxy
+    │   └── proxy.js           # protección de rutas por sesión/rol (antes middleware.js)
+    └── .env.local.example
 ```
-
-Cada lado (`backend/` y `frontend/`) maneja sus propias dependencias y su propio `node_modules`.
 
 ---
 
 ## Requisitos previos
 
-- [Node.js](https://nodejs.org/) (versión 18 o superior recomendada)
-- npm (incluido con Node.js)
+- [Node.js](https://nodejs.org/) 18 o superior
+- [pnpm](https://pnpm.io/) 9 o superior
 - Git
+- Acceso a la organización de **Supabase** (base de datos) — pedir invitación a quien la administre.
 
 ---
 
@@ -114,65 +117,87 @@ git clone https://github.com/RCD-Devs/rcd-revolab.git
 cd rcd-revolab
 ```
 
-### 2. Configurar el backend
+### 2. Instalar dependencias (una sola vez, desde la raíz)
+
+```bash
+pnpm install
+```
+
+### 3. Configurar las variables de entorno
+
+Ver la sección [Variables de entorno](#variables-de-entorno) — hay que crear `backend/.env` y `frontend/.env.local` a partir de sus respectivos `.env.example`. Ninguno se sube al repositorio.
+
+### 4. Preparar la base de datos
 
 ```bash
 cd backend
-npm install
-cp .env.example .env       # luego completar los valores reales
-npx prisma generate        # genera el cliente de Prisma
-npx prisma migrate dev     # aplica las migraciones a la base de datos
-npm run dev
+pnpm exec prisma generate      # genera el cliente de Prisma
+pnpm exec prisma migrate dev   # aplica migraciones pendientes
+pnpm exec prisma db seed       # opcional: siembra categorías, departamentos, rangos y usuarios de prueba
+cd ..
 ```
 
-El servidor quedará corriendo en `http://localhost:3000` (o el puerto definido en `.env`).
-Para verificar que está arriba, puedes consultar el endpoint de salud: `http://localhost:3000/api/health`.
-
-### 3. Configurar el frontend
+### 5. Levantar el proyecto
 
 ```bash
-cd frontend
-pnpm install
 pnpm dev
 ```
 
-> El frontend será **React + TypeScript** (queda por confirmar si se suma Astro como meta-framework). Las instrucciones se afinarán una vez cerrada esa decisión.
+Queda arriba en `http://localhost:3000`.
 
 ---
 
 ## Variables de entorno
 
-El backend usa un archivo `.env` que **no se sube al repositorio**. Para crearlo, copia la plantilla `.env.example` y completa los valores:
+**`backend/.env`** (copiar desde `backend/.env.example`):
 
+```env
+DATABASE_URL="postgresql://usuario:password@host:6543/postgres?pgbouncer=true"  # pooler de Supabase
+DIRECT_URL="postgresql://usuario:password@host:5432/postgres"                   # conexión directa, para migraciones
+STORAGE_PROVIDER="local"   # "local" en dev, "r2" cuando se prueba contra el bucket real
+# R2_ACCOUNT_ID=
+# R2_ACCESS_KEY_ID=
+# R2_SECRET_ACCESS_KEY=
+# R2_BUCKET_NAME=
+# R2_PUBLIC_URL=
 ```
-PORT=3000
 
-# Base de datos (Prisma + PostgreSQL)
-DATABASE_URL="postgresql://usuario:password@host:5432/revolab?schema=public"
+**`frontend/.env.local`** (copiar desde `frontend/.env.local.example`):
 
-# Autenticación (por definir: Auth.js o JWT)
-# JWT_SECRET=
-
-# Storage (por definir: R2 / S3 / Cloudinary)
-# STORAGE_KEY=
-# STORAGE_SECRET=
+```env
+DATABASE_URL="..."          # el mismo valor de arriba — Next.js corre @revolab/backend en su propio proceso
+AUTH_SECRET="..."           # generar uno propio: openssl rand -base64 32
+AUTH_URL="http://localhost:3000"
+STORAGE_PROVIDER="local"
 ```
+
+En Vercel, las variables de producción ya están cargadas en el proyecto — no hace falta tocarlas salvo que cambie algo.
 
 ---
 
 ## Scripts disponibles
 
-Dentro de `backend/`:
+Desde la raíz del repo:
 
 | Comando         | Descripción                                            |
-|-----------------|--------------------------------------------------------|
-| `npm run dev`   | Levanta el servidor en modo desarrollo (con nodemon).  |
-| `npm start`     | Levanta el servidor en modo producción.                |
+|-----------------|---------------------------------------------------------|
+| `pnpm dev`      | Levanta el frontend (y con él, la API) en modo desarrollo. |
+| `pnpm build`    | Build de producción del frontend.                        |
+| `pnpm lint`     | Corre ESLint sobre el frontend.                           |
+
+Desde `backend/`:
+
+| Comando                     | Descripción                                  |
+|------------------------------|-----------------------------------------------|
+| `pnpm exec prisma studio`    | Explorador visual de la base de datos.        |
+| `pnpm exec prisma migrate dev` | Aplica migraciones pendientes en local.     |
+| `pnpm exec prisma db seed`   | Siembra datos base (categorías, rangos, usuarios de prueba). |
 
 ---
 
 ## Convenciones de trabajo
 
-- El desarrollo se organiza bajo metodología Sprint.
-- El archivo `.env` y la carpeta `node_modules/` nunca se suben al repositorio (ver `.gitignore`).
-- Mantener actualizado `.env.example` cuando se agreguen nuevas variables, para que el resto del equipo pueda replicar la configuración.
+- Flujo de ramas: `feature/*` → PR → `develop` (integración, se despliega como Preview en Vercel) → PR → `main` (producción).
+- El archivo `.env`/`.env.local` y `node_modules/` nunca se suben al repositorio (ver `.gitignore`).
+- Mantener actualizado el `.env.example` correspondiente cuando se agreguen nuevas variables.
+- Documentación adicional del proyecto: `revolab-guia-continuidad.md` (onboarding rápido), `revolab-checklist-backend.md` (estado de avance por etapa) y `revolab-estructura-decisiones.md` (por qué se eligió cada pieza del stack).

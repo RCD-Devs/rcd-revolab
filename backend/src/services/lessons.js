@@ -12,21 +12,27 @@ function formatDuration(seconds) {
 // Arma todo lo que necesita la pagina de una leccion: la leccion actual,
 // el modulo (con progreso real por leccion para el sidebar), navegacion
 // anterior/siguiente y, si la leccion tiene quiz, sus metadatos.
-export async function getLessonPageData(courseSlug, lessonId, userId, role) {
+//
+// La URL publica identifica la leccion por (moduleSlug, lessonSlug), no por
+// su id interno — el id sigue existiendo y se usa para las llamadas a la
+// API (marcar completada, quiz, posicion), pero nunca aparece en la URL.
+export async function getLessonPageData(courseSlug, moduleSlug, lessonSlug, userId, role) {
   const course = await lessonRepository.findCourseStructureBySlug(courseSlug);
   if (!course) return null;
 
   const access = await ensureCourseAccess({ userId, role, course });
   if (!access.allowed) return { accessDenied: true, message: access.message };
 
-  const allLessons = course.modules.flatMap((moduleItem) => moduleItem.lessons);
-  const lessonIndex = allLessons.findIndex((item) => item.id === lessonId);
+  const allLessons = course.modules.flatMap((moduleItem) =>
+    moduleItem.lessons.map((lesson) => ({ ...lesson, modulePath: moduleItem.slug })),
+  );
+  const lessonIndex = allLessons.findIndex(
+    (item) => item.modulePath === moduleSlug && item.slug === lessonSlug,
+  );
   if (lessonIndex === -1) return null;
 
   const currentLesson = allLessons[lessonIndex];
-  const currentModule = course.modules.find((moduleItem) =>
-    moduleItem.lessons.some((item) => item.id === lessonId),
-  );
+  const currentModule = course.modules.find((moduleItem) => moduleItem.slug === moduleSlug);
 
   const progressRows = await lessonRepository.findLessonProgressForCourse(userId, course.id);
   const progressMap = new Map(progressRows.map((row) => [row.lessonId, row.completed]));
@@ -35,6 +41,8 @@ export async function getLessonPageData(courseSlug, lessonId, userId, role) {
   const progressPercent =
     allLessons.length === 0 ? 0 : Math.round((completedCount / allLessons.length) * 100);
 
+  const pathOf = (item) => `${item.modulePath ?? currentModule.slug}/${item.slug}`;
+
   return {
     course: { id: course.slug, title: course.title, image: course.coverImageUrl },
     module: {
@@ -42,6 +50,7 @@ export async function getLessonPageData(courseSlug, lessonId, userId, role) {
       lessons: currentModule.lessons.map((item) => ({
         id: item.id,
         title: item.title,
+        path: `${currentModule.slug}/${item.slug}`,
         duration: formatDuration(item.durationSeconds),
         completed: progressMap.get(item.id) ?? false,
       })),
@@ -52,15 +61,16 @@ export async function getLessonPageData(courseSlug, lessonId, userId, role) {
     lesson: {
       id: currentLesson.id,
       title: currentLesson.title,
+      path: pathOf(currentLesson),
       videoUrl: currentLesson.videoKey
         ? await getStorageProvider().getPublicUrl(currentLesson.videoKey)
         : null,
     },
-    previousLesson: lessonIndex > 0 ? { id: allLessons[lessonIndex - 1].id } : null,
+    previousLesson: lessonIndex > 0 ? { path: pathOf(allLessons[lessonIndex - 1]) } : null,
     nextLesson:
-      lessonIndex < allLessons.length - 1 ? { id: allLessons[lessonIndex + 1].id } : null,
+      lessonIndex < allLessons.length - 1 ? { path: pathOf(allLessons[lessonIndex + 1]) } : null,
     progress: progressPercent,
-    transcript: currentLesson.transcript,
+    transcript: currentLesson.transcript ?? [],
     lessonLabel: `${currentModule.title} • ${currentLesson.title}`,
     quiz: currentLesson.quiz
       ? { title: currentLesson.quiz.title, description: currentLesson.quiz.description }
@@ -83,7 +93,7 @@ export async function getLessonForUser(lessonId, userId, role) {
     type: lesson.type,
     order: lesson.order,
     durationSeconds: lesson.durationSeconds,
-    transcript: lesson.transcript,
+    transcript: lesson.transcript ?? [],
     videoUrl: lesson.videoKey ? await getStorageProvider().getPublicUrl(lesson.videoKey) : null,
     documentUrl: lesson.documentUrl,
     course: {

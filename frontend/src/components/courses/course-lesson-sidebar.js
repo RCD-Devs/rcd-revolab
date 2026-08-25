@@ -31,7 +31,7 @@ export default function CourseLessonSidebar({
             return (
               <li key={lesson.id}>
                 <Link
-                  href={`/cursos/${courseId}/leccion/${lesson.id}`}
+                  href={`/cursos/${courseId}/${lesson.path}`}
                   className={`${styles.lessonItem} ${isActive ? styles.lessonItemActive : ""}`}
                   aria-current={isActive ? "page" : undefined}
                 >

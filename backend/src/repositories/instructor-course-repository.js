@@ -72,8 +72,15 @@ export function countModules(courseId) {
   return prisma.module.count({ where: { courseId } });
 }
 
-export function createModule(courseId, { title, order }) {
-  return prisma.module.create({ data: { courseId, title, order } });
+export function createModule(courseId, { title, slug, order }) {
+  return prisma.module.create({ data: { courseId, title, slug, order } });
+}
+
+export function findModuleBySlug(courseId, slug) {
+  return prisma.module.findUnique({
+    where: { courseId_slug: { courseId, slug } },
+    select: { id: true },
+  });
 }
 
 export function findModuleForCourse(moduleId, courseId) {
@@ -90,8 +97,15 @@ export function countLessons(moduleId) {
   return prisma.lesson.count({ where: { moduleId } });
 }
 
-export function createLesson(moduleId, { title, type, order }) {
-  return prisma.lesson.create({ data: { moduleId, title, type, order } });
+export function createLesson(moduleId, { title, slug, type, order }) {
+  return prisma.lesson.create({ data: { moduleId, title, slug, type, order } });
+}
+
+export function findLessonBySlug(moduleId, slug) {
+  return prisma.lesson.findUnique({
+    where: { moduleId_slug: { moduleId, slug } },
+    select: { id: true },
+  });
 }
 
 export function findLessonForInstructor(lessonId, instructorId) {

@@ -5,23 +5,43 @@ import { getLessonPageData } from "@revolab/backend/services/lessons";
 import { getLessonQuiz } from "@revolab/backend/services/quiz";
 
 export default async function QuizPage({ params }) {
-  const { id, lessonId } = await params;
+  const { id, moduleSlug, lessonSlug } = await params;
   const session = await auth();
   if (!session?.user?.id) notFound();
 
-  const [lessonData, quiz] = await Promise.all([
-    getLessonPageData(id, lessonId, session.user.id, session.user.role),
-    getLessonQuiz(lessonId, session.user.id, session.user.role),
-  ]);
+  const lessonData = await getLessonPageData(
+    id,
+    moduleSlug,
+    lessonSlug,
+    session.user.id,
+    session.user.role,
+  );
 
-  if (!lessonData || !quiz) {
+  if (!lessonData) {
     notFound();
   }
 
-  if (lessonData.accessDenied || quiz.accessDenied) {
+  if (lessonData.accessDenied) {
     return (
       <div style={{ padding: "64px 24px", textAlign: "center" }}>
-        <p>{lessonData.accessDenied ? lessonData.message : quiz.message}</p>
+        <p>{lessonData.message}</p>
+      </div>
+    );
+  }
+
+  // El quiz se busca por el id interno de la leccion (lessonData.lesson.id),
+  // ya resuelto arriba a partir de moduleSlug/lessonSlug — la URL nunca
+  // expone ese id.
+  const quiz = await getLessonQuiz(lessonData.lesson.id, session.user.id, session.user.role);
+
+  if (!quiz) {
+    notFound();
+  }
+
+  if (quiz.accessDenied) {
+    return (
+      <div style={{ padding: "64px 24px", textAlign: "center" }}>
+        <p>{quiz.message}</p>
       </div>
     );
   }

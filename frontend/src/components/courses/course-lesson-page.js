@@ -46,7 +46,7 @@ export default function CourseLessonPage({ lessonData }) {
       <div className={styles.layout}>
         <div className={styles.main}>
           <CourseLessonPlayer
-            image={course.image}
+            videoUrl={lesson.videoUrl}
             ariaLabel={`Reproducir ${lesson.title}`}
           />
 
@@ -74,7 +74,7 @@ export default function CourseLessonPage({ lessonData }) {
                 iconWrapClassName={ctaStyles.iconWrapQuiz}
                 title={quiz.title}
                 description={quiz.description}
-                href={`/cursos/${course.id}/leccion/${lesson.id}/quiz`}
+                href={`/cursos/${course.id}/${lesson.path}/quiz`}
                 ctaLabel="Comenzar Quiz"
                 inline
               />

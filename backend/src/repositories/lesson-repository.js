@@ -106,7 +106,10 @@ export function findCourseStructureBySlug(slug) {
         include: {
           lessons: {
             orderBy: { order: 'asc' },
-            include: { quiz: { select: { id: true, title: true, description: true } } },
+            include: {
+              quiz: { select: { id: true, title: true, description: true } },
+              materials: { orderBy: { createdAt: 'asc' } },
+            },
           },
         },
       },

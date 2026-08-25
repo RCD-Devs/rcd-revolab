@@ -148,6 +148,68 @@
   line-height: 24px;
 }
 
+.contentSummary {
+  margin: -16px 0 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.moduleList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.moduleBlock {
+  overflow: hidden;
+  border: 1px solid var(--color-input-border);
+  border-radius: 16px;
+}
+
+.moduleTitle {
+  margin: 0;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--color-input-border);
+  background: var(--color-home-surface);
+  color: var(--color-white);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.lessonList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lessonItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+}
+
+.lessonItem:not(:last-child) {
+  border-bottom: 1px solid #243447;
+}
+
+.lessonItemTitle {
+  flex: 1;
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.lessonItemDuration {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  line-height: 18px;
+}
+
 @media (max-width: 768px) {
   .content {
     gap: 24px;

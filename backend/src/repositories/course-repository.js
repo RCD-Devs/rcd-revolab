@@ -10,6 +10,7 @@ const catalogCourseSelect = {
   durationLabel: true,
   publishedAt: true,
   category: { select: { slug: true, label: true } },
+  instructor: { select: { nombre: true, avatarUrl: true, department: { select: { label: true } } } },
   _count: { select: { enrollments: true } },
 };
 

@@ -14,6 +14,13 @@ function mapCourseSummary(course) {
     category: course.category?.label ?? null,
     categoryId: course.category?.slug ?? null,
     students: course._count.enrollments,
+    instructor: course.instructor
+      ? {
+          name: course.instructor.nombre,
+          avatarUrl: course.instructor.avatarUrl,
+          role: course.instructor.department?.label ?? 'Instructor',
+        }
+      : null,
   };
 }
 

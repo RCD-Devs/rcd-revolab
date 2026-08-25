@@ -65,6 +65,11 @@ export async function getLessonPageData(courseSlug, moduleSlug, lessonSlug, user
       videoUrl: currentLesson.videoKey
         ? await getStorageProvider().getPublicUrl(currentLesson.videoKey)
         : null,
+      materials: (currentLesson.materials ?? []).map((material) => ({
+        id: material.id,
+        fileName: material.fileName,
+        fileUrl: material.fileUrl,
+      })),
     },
     previousLesson: lessonIndex > 0 ? { path: pathOf(allLessons[lessonIndex - 1]) } : null,
     nextLesson:

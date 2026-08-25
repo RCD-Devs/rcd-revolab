@@ -6,11 +6,19 @@ import CourseModuleCta from "@/components/courses/course-module-cta";
 import ctaStyles from "@/components/courses/course-module-cta.module.css";
 import styles from "./course-detail-content.module.css";
 
-const courseDetailTabs = ["Descripción", "Contenido", "Transcripciones", "Comentarios", "Quiz"];
+const courseDetailTabs = ["Descripción", "Contenido", "Comentarios", "Quiz"];
 
-export default function CourseDetailContent({ course }) {
+const LESSON_TYPE_ICONS = {
+  VIDEO: "/icons/instructor-lesson-video.svg",
+  DOCUMENT: "/icons/instructor-lesson-document.svg",
+  QUIZ: "/icons/instructor-lesson-quiz.svg",
+  TOOLS: "/icons/instructor-lesson-tools.svg",
+};
+
+export default function CourseDetailContent({ course, modules = [] }) {
   const [activeTab, setActiveTab] = useState(courseDetailTabs[0]);
   const hasQuiz = Boolean(course.firstLessonPath);
+  const lessonCount = modules.reduce((total, moduleItem) => total + moduleItem.lessons.length, 0);
 
   return (
     <div className={styles.content}>
@@ -72,6 +80,46 @@ export default function CourseDetailContent({ course }) {
         </div>
       )}
 
+      {activeTab === "Contenido" && (
+        <div className={styles.panel} role="tabpanel">
+          {modules.length === 0 ? (
+            <p className={styles.placeholder}>Este curso todavía no tiene contenido cargado.</p>
+          ) : (
+            <>
+              <p className={styles.contentSummary}>
+                {modules.length} módulo{modules.length === 1 ? "" : "s"} · {lessonCount} lección
+                {lessonCount === 1 ? "" : "es"}
+              </p>
+              <div className={styles.moduleList}>
+                {modules.map((moduleItem, index) => (
+                  <section key={moduleItem.id} className={styles.moduleBlock}>
+                    <h3 className={styles.moduleTitle}>
+                      Módulo {index + 1}: {moduleItem.title}
+                    </h3>
+                    <ul className={styles.lessonList}>
+                      {moduleItem.lessons.map((lesson) => (
+                        <li key={lesson.id} className={styles.lessonItem}>
+                          <Image
+                            src={LESSON_TYPE_ICONS[lesson.type] ?? LESSON_TYPE_ICONS.VIDEO}
+                            alt=""
+                            width={16}
+                            height={16}
+                          />
+                          <span className={styles.lessonItemTitle}>{lesson.title}</span>
+                          {lesson.duration && (
+                            <span className={styles.lessonItemDuration}>{lesson.duration}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
       {activeTab === "Quiz" && hasQuiz && (
         <div className={styles.panel} role="tabpanel">
           <CourseModuleCta
@@ -86,9 +134,9 @@ export default function CourseDetailContent({ course }) {
         </div>
       )}
 
-      {activeTab !== "Descripción" && activeTab !== "Quiz" && (
+      {activeTab === "Comentarios" && (
         <div className={styles.placeholder} role="tabpanel">
-          <p>Contenido de {activeTab} próximamente.</p>
+          <p>Los comentarios llegan pronto.</p>
         </div>
       )}
     </div>

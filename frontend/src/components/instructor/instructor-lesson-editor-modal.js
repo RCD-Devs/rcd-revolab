@@ -54,6 +54,8 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
   const [title, setTitle] = useState(lesson.title);
   const [content, setContent] = useState(lesson.content ?? "");
   const [videoUrl, setVideoUrl] = useState(lesson.videoUrl ?? null);
+  const [transcript, setTranscript] = useState(lesson.transcript ?? []);
+  const [transcriptDraft, setTranscriptDraft] = useState("");
   const [materials, setMaterials] = useState(lesson.materials ?? []);
   const [isSavingText, setIsSavingText] = useState(false);
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
@@ -66,14 +68,25 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
     const response = await fetch(`/api/instructor/lessons/${lesson.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content }),
+      body: JSON.stringify({ title, content, transcript }),
     });
     if (!response.ok) {
       setError("No se pudo guardar la lección.");
       return false;
     }
-    onLessonUpdated(lesson.id, { title, content });
+    onLessonUpdated(lesson.id, { title, content, transcript });
     return true;
+  }
+
+  function addTranscriptParagraph() {
+    const value = transcriptDraft.trim();
+    if (!value) return;
+    setTranscript((current) => [...current, value]);
+    setTranscriptDraft("");
+  }
+
+  function removeTranscriptParagraph(index) {
+    setTranscript((current) => current.filter((_, i) => i !== index));
   }
 
   async function handleSaveText(event) {
@@ -329,6 +342,45 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
           <span className={styles.uploadHint}>
             Máximo {formatFileSize(MAX_LESSON_VIDEO_BYTES)} por video.
           </span>
+        </div>
+
+        <div className={styles.field}>
+          <span className={styles.label}>Transcripción</span>
+          <span className={styles.uploadHint}>
+            Cada párrafo que agregues aparece en la pestaña Transcripción de la lección. Se guarda
+            junto con el texto, con el botón Guardar texto o Guardar lección.
+          </span>
+          {transcript.length > 0 && (
+            <ul className={styles.materialList}>
+              {transcript.map((paragraph, index) => (
+                <li key={index} className={styles.materialItem}>
+                  <span className={`${styles.materialLink} ${styles.transcriptParagraphText}`}>
+                    {paragraph}
+                  </span>
+                  <button
+                    type="button"
+                    className={styles.materialDelete}
+                    onClick={() => removeTranscriptParagraph(index)}
+                    aria-label="Eliminar párrafo"
+                  >
+                    <Image src="/icons/instructor-trash.svg" alt="" width={16} height={16} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className={styles.addRow}>
+            <textarea
+              value={transcriptDraft}
+              onChange={(event) => setTranscriptDraft(event.target.value)}
+              placeholder="Escribe un párrafo de la transcripción..."
+              className={styles.textarea}
+              rows={2}
+            />
+            <button type="button" className={styles.addButton} onClick={addTranscriptParagraph}>
+              + Agregar
+            </button>
+          </div>
         </div>
 
         <div className={styles.field}>

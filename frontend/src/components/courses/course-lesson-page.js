@@ -46,7 +46,7 @@ export default function CourseLessonPage({ lessonData }) {
       <div className={styles.layout}>
         <div className={styles.main}>
           <CourseLessonPlayer
-            image={course.image}
+            videoUrl={lesson.videoUrl}
             ariaLabel={`Reproducir ${lesson.title}`}
           />
 

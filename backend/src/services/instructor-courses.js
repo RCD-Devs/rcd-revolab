@@ -71,6 +71,7 @@ async function mapLessonForEdit(lesson) {
     title: lesson.title,
     type: lesson.type,
     content: lesson.content,
+    transcript: lesson.transcript ?? [],
     videoUrl: lesson.videoKey ? await getStorageProvider().getPublicUrl(lesson.videoKey) : null,
     materials: (lesson.materials ?? []).map((material) => ({
       id: material.id,
@@ -283,16 +284,27 @@ export async function confirmLessonVideoUpload(
   return { id: updated.id, videoUrl: await storage.getPublicUrl(key) };
 }
 
-export async function updateLesson(lessonId, actorId, { title, content }, isAdmin = false) {
+export async function updateLesson(
+  lessonId,
+  actorId,
+  { title, content, transcript },
+  isAdmin = false,
+) {
   const lesson = await resolveLesson(lessonId, actorId, isAdmin);
   if (!lesson) return null;
 
   const data = {};
   if (title !== undefined) data.title = title;
   if (content !== undefined) data.content = content;
+  if (transcript !== undefined) data.transcript = transcript;
 
   const updated = await instructorCourseRepository.updateLesson(lessonId, data);
-  return { id: updated.id, title: updated.title, content: updated.content };
+  return {
+    id: updated.id,
+    title: updated.title,
+    content: updated.content,
+    transcript: updated.transcript,
+  };
 }
 
 export async function uploadLessonMaterial(

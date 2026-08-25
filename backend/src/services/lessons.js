@@ -60,7 +60,7 @@ export async function getLessonPageData(courseSlug, lessonId, userId, role) {
     nextLesson:
       lessonIndex < allLessons.length - 1 ? { id: allLessons[lessonIndex + 1].id } : null,
     progress: progressPercent,
-    transcript: currentLesson.transcript,
+    transcript: currentLesson.transcript ?? [],
     lessonLabel: `${currentModule.title} • ${currentLesson.title}`,
     quiz: currentLesson.quiz
       ? { title: currentLesson.quiz.title, description: currentLesson.quiz.description }
@@ -83,7 +83,7 @@ export async function getLessonForUser(lessonId, userId, role) {
     type: lesson.type,
     order: lesson.order,
     durationSeconds: lesson.durationSeconds,
-    transcript: lesson.transcript,
+    transcript: lesson.transcript ?? [],
     videoUrl: lesson.videoKey ? await getStorageProvider().getPublicUrl(lesson.videoKey) : null,
     documentUrl: lesson.documentUrl,
     course: {

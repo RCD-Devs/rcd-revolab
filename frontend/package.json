@@ -10,7 +10,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "next dev",
-    "prebuild": "pnpm run optimize:assets",
+    "prebuild": "pnpm --filter @revolab/backend run migrate:deploy && pnpm run optimize:assets",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

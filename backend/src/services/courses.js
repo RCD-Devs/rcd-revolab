@@ -88,7 +88,28 @@ export async function getCourseDetail(slug) {
   };
 }
 
+function formatLessonDuration(seconds) {
+  if (!seconds) return null;
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes}:${String(secs).padStart(2, '0')}`;
+}
+
+// Temario publico del curso (para la pestaña "Contenido" antes de
+// inscribirse): titulos y tipo de cada leccion, sin video_url ni contenido
+// de texto — eso sigue gateado por enrollment en getLessonPageData.
 export async function getCourseModules(slug) {
   const course = await courseRepository.findCourseModulesBySlug(slug);
-  return course?.modules ?? null;
+  if (!course) return null;
+
+  return course.modules.map((moduleItem) => ({
+    id: moduleItem.id,
+    title: moduleItem.title,
+    lessons: moduleItem.lessons.map((lesson) => ({
+      id: lesson.id,
+      title: lesson.title,
+      type: lesson.type,
+      duration: formatLessonDuration(lesson.durationSeconds),
+    })),
+  }));
 }

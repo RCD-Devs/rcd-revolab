@@ -3,7 +3,7 @@ import CourseDetailPanel from "@/components/courses/course-detail-panel";
 import CourseDetailContent from "@/components/courses/course-detail-content";
 import styles from "./course-detail-page.module.css";
 
-export default function CourseDetailPage({ course }) {
+export default function CourseDetailPage({ course, modules }) {
   return (
     <div className={styles.page}>
       <CourseDetailHero course={course} />
@@ -14,7 +14,7 @@ export default function CourseDetailPage({ course }) {
         </div>
 
         <div className={styles.main}>
-          <CourseDetailContent course={course} />
+          <CourseDetailContent course={course} modules={modules} />
         </div>
 
         <div className={styles.desktopPanel}>

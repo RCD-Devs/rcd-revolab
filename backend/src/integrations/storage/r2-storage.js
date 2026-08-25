@@ -5,6 +5,7 @@ import {
   PutObjectCommand,
   DeleteObjectCommand,
   GetObjectCommand,
+  HeadObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl as presignUrl } from '@aws-sdk/s3-request-presigner';
 
@@ -39,6 +40,29 @@ export async function upload(key, buffer, contentType) {
 export async function getSignedUrl(key, { expiresInSeconds = 3600 } = {}) {
   const command = new GetObjectCommand({ Bucket: process.env.R2_BUCKET_NAME, Key: key });
   return presignUrl(getClient(), command, { expiresIn: expiresInSeconds });
+}
+
+// URL prefirmada de subida: el navegador hace PUT directo contra R2 con esta
+// URL, sin pasar el archivo por una función serverless de Vercel (que corta
+// el body en 4.5 MB). Requiere que el bucket tenga CORS habilitado para el
+// origen del sitio (ver R2_PUBLIC_URL en .env.example).
+export async function getUploadUrl(key, contentType, { expiresInSeconds = 900 } = {}) {
+  const command = new PutObjectCommand({
+    Bucket: process.env.R2_BUCKET_NAME,
+    Key: key,
+    ContentType: contentType,
+  });
+  return presignUrl(getClient(), command, { expiresIn: expiresInSeconds });
+}
+
+export async function exists(key) {
+  try {
+    await getClient().send(new HeadObjectCommand({ Bucket: process.env.R2_BUCKET_NAME, Key: key }));
+    return true;
+  } catch (error) {
+    if (error.name === 'NotFound' || error.$metadata?.httpStatusCode === 404) return false;
+    throw error;
+  }
 }
 
 // URL pública estable (no expira) para contenido servido desde un bucket con

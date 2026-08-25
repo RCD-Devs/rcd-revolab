@@ -5,7 +5,7 @@ import styles from "./course-lesson-body.module.css";
 
 const TABS = ["Transcripción", "Recursos", "Comentarios"];
 
-export default function CourseLessonBody({ transcript }) {
+export default function CourseLessonBody({ transcript, materials = [] }) {
   const [activeTab, setActiveTab] = useState("Transcripción");
 
   return (
@@ -36,12 +36,28 @@ export default function CourseLessonBody({ transcript }) {
           </div>
         )}
 
-        {activeTab === "Recursos" && (
-          <p className={styles.placeholder}>No hay recursos disponibles para esta lección.</p>
-        )}
+        {activeTab === "Recursos" &&
+          (materials.length > 0 ? (
+            <ul className={styles.resourceList}>
+              {materials.map((material) => (
+                <li key={material.id} className={styles.resourceItem}>
+                  <a
+                    href={material.fileUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.resourceLink}
+                  >
+                    {material.fileName}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className={styles.placeholder}>Esta lección no tiene recursos descargables.</p>
+          ))}
 
         {activeTab === "Comentarios" && (
-          <p className={styles.placeholder}>Aún no hay comentarios en esta lección.</p>
+          <p className={styles.placeholder}>Los comentarios llegan pronto.</p>
         )}
       </div>
     </div>

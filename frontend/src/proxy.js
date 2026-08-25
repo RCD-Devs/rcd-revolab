@@ -15,7 +15,12 @@ export default auth((req) => {
   const isInstructorRoute = pathname.startsWith("/instructor");
   const isPerfilRoute = pathname.startsWith("/perfil");
   const isHomeRoute = pathname.startsWith("/home");
-  const isCourseProgressRoute = /^\/cursos\/[^/]+\/(leccion|examen)(\/|$)/.test(pathname);
+  // Cualquier ruta bajo /cursos/[id]/... (leccion, examen, certificado, etc.)
+  // salvo la pagina de detalle del curso misma (/cursos/[id], publica a
+  // proposito). Antes esto matcheaba literal "leccion" o "examen", pero
+  // las URLs de leccion ya no tienen ese segmento fijo — ahora son
+  // /cursos/[id]/[moduleSlug]/[lessonSlug].
+  const isCourseProgressRoute = /^\/cursos\/[^/]+\/[^/]+(\/|$)/.test(pathname);
 
   const requiresSession =
     isAdminRoute || isInstructorRoute || isPerfilRoute || isHomeRoute || isCourseProgressRoute;
@@ -43,7 +48,6 @@ export const config = {
     "/instructor/:path*",
     "/perfil/:path*",
     "/home/:path*",
-    "/cursos/:id/leccion/:path*",
-    "/cursos/:id/examen/:path*",
+    "/cursos/:id/:seg2/:path*",
   ],
 };

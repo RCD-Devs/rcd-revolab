@@ -74,6 +74,15 @@ export async function getPublicUrl(key) {
   return `${base}/${key}`;
 }
 
+// Inversa de getPublicUrl: para borrar un objeto del que solo se guardo la
+// URL publica (LessonMaterial.fileUrl), no la key cruda. Devuelve null si
+// la URL no calza con R2_PUBLIC_URL (dato viejo, u otro storage).
+export function keyFromUrl(url) {
+  const base = process.env.R2_PUBLIC_URL?.replace(/\/+$/, '');
+  if (base && url?.startsWith(`${base}/`)) return url.slice(base.length + 1);
+  return null;
+}
+
 export async function remove(key) {
   await getClient().send(
     new DeleteObjectCommand({ Bucket: process.env.R2_BUCKET_NAME, Key: key }),

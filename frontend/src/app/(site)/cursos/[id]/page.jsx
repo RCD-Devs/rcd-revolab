@@ -1,11 +1,15 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import CourseDetailPage from "@/components/courses/course-detail-page";
-import { getCourseDetail as getCourseDetailUncached } from "@revolab/backend/services/courses";
+import {
+  getCourseDetail as getCourseDetailUncached,
+  getCourseModules as getCourseModulesUncached,
+} from "@revolab/backend/services/courses";
 
 // generateMetadata y el componente de la ruta corren ambos por request:
 // sin memoizar, cada navegación dispara la consulta (con joins) dos veces.
 const getCourseDetail = cache(getCourseDetailUncached);
+const getCourseModules = cache(getCourseModulesUncached);
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -23,11 +27,11 @@ export async function generateMetadata({ params }) {
 
 export default async function CourseDetailRoute({ params }) {
   const { id } = await params;
-  const course = await getCourseDetail(id);
+  const [course, modules] = await Promise.all([getCourseDetail(id), getCourseModules(id)]);
 
   if (!course) {
     notFound();
   }
 
-  return <CourseDetailPage course={course} />;
+  return <CourseDetailPage course={course} modules={modules ?? []} />;
 }

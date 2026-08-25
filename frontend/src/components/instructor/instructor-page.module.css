@@ -272,11 +272,16 @@
   color: var(--color-text-muted);
 }
 
+.courseActions {
+  display: flex;
+  gap: 8px;
+  align-self: flex-start;
+}
+
 .courseAction {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  align-self: flex-start;
   min-height: 29px;
   padding: 6px 12px;
   border: 1px solid var(--color-input-border);

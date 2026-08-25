@@ -85,8 +85,11 @@ pnpm dev            # desde la raíz, levanta frontend/ en :3000
   la rama `main`, no `develop` (ver nota en la Etapa 0 del checklist: el
   Root Directory del proyecto en Vercel debe ser `frontend`). Todo lo que
   llega a `develop` se despliega como **Preview**, no como producción.
-- **Cloudflare R2** — todavía no existe la cuenta/bucket (pendiente, Etapa 8
-  del checklist). El código de storage ya soporta activarlo apenas exista.
+- **Cloudflare R2** — activo en producción desde el 2026-08-20 (bucket
+  `revolab-media`, ver Etapa 8 del checklist). Las 6 env vars ya están
+  cargadas en Vercel (Production). En local sigue usándose
+  `STORAGE_PROVIDER="local"` por defecto — no hace falta tocar nada para
+  desarrollar, solo para probar contra el bucket real.
 
 ## 6. Flujo de ramas
 

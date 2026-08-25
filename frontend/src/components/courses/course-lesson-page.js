@@ -56,7 +56,7 @@ export default function CourseLessonPage({ lessonData }) {
               <p className={styles.lessonMeta}>{lessonLabel}</p>
             </div>
 
-            <CourseLessonBody transcript={transcript} />
+            <CourseLessonBody transcript={transcript} materials={lesson.materials} />
 
             <button
               type="button"

@@ -387,6 +387,12 @@ export default function AdminPageContent() {
                         <Link href={`/instructor/cursos/${course.id}/editar`} className={styles.actionLink}>
                           Editar
                         </Link>
+                        <Link
+                          href={`/instructor/cursos/${course.id}/estudiantes`}
+                          className={styles.actionLink}
+                        >
+                          Estudiantes
+                        </Link>
                         <button
                           type="button"
                           className={styles.actionButton}

@@ -1,0 +1,113 @@
+.main {
+  padding: 24px 16px 64px;
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-error);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-input-border);
+  border-radius: 16px;
+}
+
+.table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 13px;
+  color: var(--color-white);
+}
+
+.table th,
+.table td {
+  padding: 12px 16px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table th {
+  border-bottom: 1px solid var(--color-input-border);
+  background: #1a2b3c;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.table tbody tr:not(:last-child) td {
+  border-bottom: 1px solid #243447;
+}
+
+.studentName {
+  display: block;
+  font-weight: 500;
+}
+
+.studentEmail {
+  display: block;
+  margin-top: 2px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 185, 0, 0.12);
+  color: #ffb900;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.statusCompleted {
+  background: rgba(0, 229, 200, 0.12);
+  color: var(--color-primary);
+}
+
+.statusFailed {
+  background: rgba(255, 100, 103, 0.12);
+  color: #ff6467;
+}
+
+.progressCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+}
+
+.progressTrack {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: #243447;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 16px;
+  }
+}

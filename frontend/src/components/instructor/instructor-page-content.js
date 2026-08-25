@@ -42,10 +42,16 @@ function getStatusConfig(status) {
 
 function CourseAction({ course }) {
   return (
-    <Link href={`/instructor/cursos/${course.id}/editar`} className={styles.courseAction}>
-      <Image src="/icons/instructor-edit.svg" alt="" width={12} height={12} />
-      Editar
-    </Link>
+    <div className={styles.courseActions}>
+      <Link href={`/instructor/cursos/${course.id}/editar`} className={styles.courseAction}>
+        <Image src="/icons/instructor-edit.svg" alt="" width={12} height={12} />
+        Editar
+      </Link>
+      <Link href={`/instructor/cursos/${course.id}/estudiantes`} className={styles.courseAction}>
+        <Image src="/icons/users.svg" alt="" width={12} height={12} />
+        Estudiantes
+      </Link>
+    </div>
   );
 }
 

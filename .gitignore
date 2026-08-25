@@ -31,3 +31,7 @@ Thumbs.db
 .vscode/
 .cursor/
 .idea/
+
+# Export de Figma Make: solo se usa como referencia local para portar
+# piezas puntuales (ej. la página de Team) al stack real del proyecto.
+figma-make/

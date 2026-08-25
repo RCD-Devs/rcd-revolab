@@ -1,0 +1,281 @@
+.page {
+  position: relative;
+  overflow: hidden;
+  padding: 56px 16px 96px;
+  background: var(--color-secondary);
+  color: var(--color-white);
+}
+
+.page::before,
+.page::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  pointer-events: none;
+}
+
+.page::before {
+  top: -8%;
+  left: 8%;
+  width: 450px;
+  height: 450px;
+  background: rgba(0, 229, 200, 0.08);
+}
+
+.page::after {
+  bottom: 4%;
+  right: 4%;
+  width: 500px;
+  height: 500px;
+  background: rgba(123, 92, 240, 0.08);
+}
+
+.hero {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 6px 16px;
+  border: 1px solid rgba(0, 229, 200, 0.3);
+  border-radius: 999px;
+  background: rgba(0, 229, 200, 0.05);
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0 0 20px;
+  color: var(--color-white);
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+
+.titleAccent {
+  background: linear-gradient(90deg, #00e5c8 0%, #51a2ff 55%, #7b5cf0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.card {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  background: #0d1020;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover,
+.card:focus-within {
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
+}
+
+.photoDefault,
+.photoFun {
+  object-fit: cover;
+  object-position: top;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.photoDefault {
+  filter: grayscale(1) brightness(0.9) contrast(1.1);
+}
+
+.card:hover .photoDefault,
+.card:focus-within .photoDefault {
+  opacity: 0;
+}
+
+.photoFun {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+.card:hover .photoFun,
+.card:focus-within .photoFun {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to top,
+    var(--color-secondary) 0%,
+    rgba(13, 27, 42, 0.4) 45%,
+    transparent 75%
+  );
+  pointer-events: none;
+}
+
+.areaBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--badge-from), var(--badge-to));
+  color: var(--color-white);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.card:hover .areaBadge,
+.card:focus-within .areaBadge {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cardBody {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  padding: 14px;
+}
+
+.name {
+  margin: 0 0 2px;
+  color: var(--color-white);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.role {
+  margin: 0 0 10px;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.linkedinButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.card:hover .linkedinButton,
+.card:focus-within .linkedinButton {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.linkedinButton:hover {
+  background: var(--btn-linkedin);
+  border-color: var(--btn-linkedin);
+}
+
+.footerNote {
+  position: relative;
+  z-index: 1;
+  margin: 56px 0 0;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media (min-width: 640px) {
+  .title {
+    font-size: 52px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page {
+    padding: 80px 32px 120px;
+  }
+
+  .title {
+    font-size: 64px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .name {
+    font-size: 16px;
+  }
+
+  .role {
+    font-size: 13px;
+  }
+}
+
+@media (hover: none) {
+  .photoDefault {
+    opacity: 0;
+  }
+
+  .photoFun {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .areaBadge,
+  .linkedinButton {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

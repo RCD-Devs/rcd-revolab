@@ -71,6 +71,7 @@ async function mapLessonForEdit(lesson) {
     title: lesson.title,
     type: lesson.type,
     content: lesson.content,
+    transcript: lesson.transcript ?? [],
     videoUrl: lesson.videoKey ? await getStorageProvider().getPublicUrl(lesson.videoKey) : null,
     materials: (lesson.materials ?? []).map((material) => ({
       id: material.id,
@@ -191,13 +192,41 @@ export async function uploadCourseCover(slug, actorId, buffer, contentType, isAd
   return { id: updated.slug, coverImageUrl: updated.coverImageUrl };
 }
 
+// Slug estable para la URL publica: se deriva de la posicion al momento de
+// crear el modulo/leccion y no se vuelve a tocar despues (ver comentario en
+// schema.prisma). El loop de sufijo es solo defensivo, por si "order" tuviera
+// huecos o duplicados de un borrado previo.
+async function generateModuleSlug(courseId, order) {
+  const base = `modulo-${order + 1}`;
+  let candidate = base;
+  let suffix = 2;
+  while (await instructorCourseRepository.findModuleBySlug(courseId, candidate)) {
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+  return candidate;
+}
+
+async function generateLessonSlug(moduleId, order) {
+  const base = `leccion-${order + 1}`;
+  let candidate = base;
+  let suffix = 2;
+  while (await instructorCourseRepository.findLessonBySlug(moduleId, candidate)) {
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+  return candidate;
+}
+
 export async function addModule(slug, actorId, { title }, isAdmin = false) {
   const course = await resolveCourse(slug, actorId, isAdmin);
   if (!course) return null;
 
   const order = await instructorCourseRepository.countModules(course.id);
+  const moduleSlug = await generateModuleSlug(course.id, order);
   const module_ = await instructorCourseRepository.createModule(course.id, {
     title: title || `Módulo ${order + 1}`,
+    slug: moduleSlug,
     order,
   });
 
@@ -223,8 +252,10 @@ export async function addLesson(slug, moduleId, actorId, { title, type }, isAdmi
   if (!moduleRecord) return null;
 
   const order = await instructorCourseRepository.countLessons(moduleId);
+  const lessonSlug = await generateLessonSlug(moduleId, order);
   const lesson = await instructorCourseRepository.createLesson(moduleId, {
     title: title || `Lección ${order + 1}`,
+    slug: lessonSlug,
     type: type || 'VIDEO',
     order,
   });
@@ -283,16 +314,27 @@ export async function confirmLessonVideoUpload(
   return { id: updated.id, videoUrl: await storage.getPublicUrl(key) };
 }
 
-export async function updateLesson(lessonId, actorId, { title, content }, isAdmin = false) {
+export async function updateLesson(
+  lessonId,
+  actorId,
+  { title, content, transcript },
+  isAdmin = false,
+) {
   const lesson = await resolveLesson(lessonId, actorId, isAdmin);
   if (!lesson) return null;
 
   const data = {};
   if (title !== undefined) data.title = title;
   if (content !== undefined) data.content = content;
+  if (transcript !== undefined) data.transcript = transcript;
 
   const updated = await instructorCourseRepository.updateLesson(lessonId, data);
-  return { id: updated.id, title: updated.title, content: updated.content };
+  return {
+    id: updated.id,
+    title: updated.title,
+    content: updated.content,
+    transcript: updated.transcript,
+  };
 }
 
 export async function uploadLessonMaterial(

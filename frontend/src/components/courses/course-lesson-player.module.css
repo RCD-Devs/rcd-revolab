@@ -6,40 +6,21 @@
   overflow: hidden;
 }
 
-.image {
-  object-fit: cover;
+.video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
+.empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.playButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(0, 229, 200, 0.9);
-  cursor: pointer;
-  padding: 0;
-  transition: transform 0.2s ease;
-}
-
-.playButton:hover {
-  transform: scale(1.05);
-}
-
-@media (max-width: 768px) {
-  .playButton {
-    width: 64px;
-    height: 64px;
-  }
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
 }

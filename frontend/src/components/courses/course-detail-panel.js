@@ -15,8 +15,8 @@ export default function CourseDetailPanel({ course }) {
     transcriptsLabel: "Incluye transcripciones",
     certificateLabel: "Certificado al finalizar",
   };
-  const lessonUrl = course.firstLessonId
-    ? `/cursos/${course.id}/leccion/${course.firstLessonId}`
+  const lessonUrl = course.firstLessonPath
+    ? `/cursos/${course.id}/${course.firstLessonPath}`
     : `/cursos/${course.id}`;
   const examUrl = `/cursos/${course.id}/examen`;
 

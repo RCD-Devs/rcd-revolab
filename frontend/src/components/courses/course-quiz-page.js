@@ -31,11 +31,9 @@ export default function CourseQuizPage({ quizData }) {
   const [answers, setAnswers] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const lessonUrl = `/cursos/${course.id}/leccion/${lesson.id}`;
+  const lessonUrl = `/cursos/${course.id}/${lesson.path}`;
   const courseUrl = `/cursos/${course.id}`;
-  const continueUrl = nextLesson
-    ? `/cursos/${course.id}/leccion/${nextLesson.id}`
-    : courseUrl;
+  const continueUrl = nextLesson ? `/cursos/${course.id}/${nextLesson.path}` : courseUrl;
 
   const handleStart = () => {
     setQuestionIndex(0);

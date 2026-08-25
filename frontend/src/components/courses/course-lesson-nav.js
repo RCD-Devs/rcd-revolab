@@ -6,7 +6,7 @@ export default function CourseLessonNav({ courseId, previousLesson, nextLesson }
     <nav className={styles.nav} aria-label="Navegación entre lecciones">
       {previousLesson ? (
         <Link
-          href={`/cursos/${courseId}/leccion/${previousLesson.id}`}
+          href={`/cursos/${courseId}/${previousLesson.path}`}
           className={styles.navButton}
         >
           <span className={`${styles.icon} ${styles.iconPrev}`} aria-hidden="true" />
@@ -21,7 +21,7 @@ export default function CourseLessonNav({ courseId, previousLesson, nextLesson }
 
       {nextLesson ? (
         <Link
-          href={`/cursos/${courseId}/leccion/${nextLesson.id}`}
+          href={`/cursos/${courseId}/${nextLesson.path}`}
           className={`${styles.navButton} ${styles.navButtonNext}`}
         >
           <span>Siguiente lección</span>

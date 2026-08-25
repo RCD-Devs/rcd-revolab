@@ -13,7 +13,7 @@ export async function PATCH(request, { params }) {
   const lesson = await updateLesson(
     id,
     session.user.id,
-    { title: body.title, content: body.content },
+    { title: body.title, content: body.content, transcript: body.transcript },
     isAdmin,
   );
 

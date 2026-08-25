@@ -10,7 +10,7 @@ const courseDetailTabs = ["Descripción", "Contenido", "Transcripciones", "Comen
 
 export default function CourseDetailContent({ course }) {
   const [activeTab, setActiveTab] = useState(courseDetailTabs[0]);
-  const hasQuiz = Boolean(course.firstLessonId);
+  const hasQuiz = Boolean(course.firstLessonPath);
 
   return (
     <div className={styles.content}>
@@ -80,7 +80,7 @@ export default function CourseDetailContent({ course }) {
             iconWrapClassName={ctaStyles.iconWrapQuiz}
             title="Quiz de Lección"
             description="Responde el quiz de la primera lección para asegurar tu aprendizaje."
-            href={`/cursos/${course.id}/leccion/${course.firstLessonId}/quiz`}
+            href={`/cursos/${course.id}/${course.firstLessonPath}/quiz`}
             ctaLabel="Realizar quiz"
           />
         </div>

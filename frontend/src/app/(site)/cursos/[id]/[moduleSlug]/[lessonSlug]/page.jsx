@@ -9,11 +9,17 @@ import { getLessonPageData as getLessonPageDataUncached } from "@revolab/backend
 const getLessonPageData = cache(getLessonPageDataUncached);
 
 export async function generateMetadata({ params }) {
-  const { id, lessonId } = await params;
+  const { id, moduleSlug, lessonSlug } = await params;
   const session = await auth();
   if (!session?.user?.id) return { title: "Lección" };
 
-  const lessonData = await getLessonPageData(id, lessonId, session.user.id, session.user.role);
+  const lessonData = await getLessonPageData(
+    id,
+    moduleSlug,
+    lessonSlug,
+    session.user.id,
+    session.user.role,
+  );
 
   if (!lessonData || lessonData.accessDenied) {
     return { title: "Lección no encontrada" };
@@ -25,11 +31,17 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function CourseLessonRoute({ params }) {
-  const { id, lessonId } = await params;
+  const { id, moduleSlug, lessonSlug } = await params;
   const session = await auth();
   if (!session?.user?.id) notFound();
 
-  const lessonData = await getLessonPageData(id, lessonId, session.user.id, session.user.role);
+  const lessonData = await getLessonPageData(
+    id,
+    moduleSlug,
+    lessonSlug,
+    session.user.id,
+    session.user.role,
+  );
 
   if (!lessonData) {
     notFound();

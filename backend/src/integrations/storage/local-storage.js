@@ -57,6 +57,12 @@ export async function readFileByKey(key) {
   return readFile(resolveKeyPath(key));
 }
 
+// Ver comentario equivalente en r2-storage.js.
+export function keyFromUrl(url) {
+  const prefix = '/api/media/';
+  return url?.startsWith(prefix) ? url.slice(prefix.length) : null;
+}
+
 export async function remove(key) {
   await unlink(resolveKeyPath(key)).catch((error) => {
     if (error.code !== 'ENOENT') throw error;

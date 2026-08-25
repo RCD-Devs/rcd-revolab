@@ -35,6 +35,16 @@ export async function ensureCourseAccess({ userId, role, course }) {
   return { allowed: true };
 }
 
+// "Cancelar inscripción": el usuario decide dejar de tomar el curso. No
+// borra el Enrollment ni el LessonProgress ya generado - solo cambia el
+// estado a DROPPED. Si vuelve a entrar a una leccion del curso mas
+// adelante, ensureEnrollment lo reactiva a IN_PROGRESS conservando ese
+// historial (ver comentario ahi).
+export async function dropEnrollment(userId, courseSlug) {
+  const result = await lessonRepository.dropEnrollmentByCourseSlug(userId, courseSlug);
+  return { dropped: result.count > 0 };
+}
+
 // Recalcula el progreso de un usuario en un curso a partir de sus
 // LessonProgress reales, y actualiza (o crea) el Enrollment. Si el curso
 // tiene examen final, completar todas las lecciones no basta para pasar

@@ -22,9 +22,10 @@ export default async function Home() {
         courseId: course.id,
         title: course.title,
         description: course.description,
-        instructorName: "Ariel Jeria",
-        instructorRole: "Gerente General Rompecabeza",
-        instructorImage: "/images/home/instructor-ariel.webp",
+        backgroundImage: course.image,
+        instructorName: course.instructor?.name ?? "Equipo RevoLab",
+        instructorRole: course.instructor?.role ?? "Instructor",
+        instructorImage: course.instructor?.avatarUrl || "/images/home/instructor-ariel.webp",
       }))} />
 
       <div className={styles.sections}>

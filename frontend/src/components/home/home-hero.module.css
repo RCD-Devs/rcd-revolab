@@ -16,6 +16,16 @@
 .backgroundImage {
   object-fit: cover;
   opacity: 0.28;
+  animation: backgroundFadeIn 0.6s ease both;
+}
+
+@keyframes backgroundFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.28;
+  }
 }
 
 .backgroundOverlay {

@@ -224,6 +224,37 @@
   gap: 4px;
 }
 
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 24px;
+  margin-top: 4px;
+  border-top: 1px solid #243447;
+}
+
+.formSectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formSectionHeader .rulesHeading,
+.formSectionHeader .rulesHint {
+  margin: 0;
+}
+
+.fieldRow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fieldRow > .field {
+  flex: 1;
+  min-width: 0;
+}
+
 .label {
   font-size: 14px;
   font-weight: 500;
@@ -310,7 +341,7 @@
   border: 2px dashed #243447;
   border-radius: 16px;
   cursor: pointer;
-  transition: border-color 0.2s ease, min-height 0.2s ease, padding 0.2s ease;
+  transition: border-color 0.2s ease;
 }
 
 .uploadZone:hover {
@@ -514,6 +545,11 @@
   flex-wrap: wrap;
   gap: 8px;
   padding-top: 8px;
+}
+
+.lessonActions .input {
+  flex: 1 1 160px;
+  width: auto;
 }
 
 .lessonAction {
@@ -745,6 +781,7 @@
   padding: 12px;
   gap: 8px;
   font-size: 18px;
+  flex-shrink: 0;
 }
 
 .emojiGrid {
@@ -904,6 +941,11 @@
   }
 
   .radioGroup {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .fieldRow {
     flex-direction: row;
     gap: 16px;
   }

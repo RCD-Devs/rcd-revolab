@@ -254,50 +254,6 @@ function StepBasic({
       </div>
 
       <div className={styles.field}>
-        <label className={styles.label} htmlFor="course-area">
-          Área
-        </label>
-        <div className={styles.selectWrap}>
-          <select
-            id="course-area"
-            value={draft.departmentId ?? ""}
-            onChange={(event) => onChange({ departmentId: event.target.value })}
-            className={styles.select}
-          >
-            <option value="">Selecciona un área</option>
-            {departments.map((department) => (
-              <option key={department.id} value={department.id}>
-                {department.label}
-              </option>
-            ))}
-          </select>
-          <Image src="/icons/chevron-down.svg" alt="" width={10} height={10} className={styles.selectIcon} />
-        </div>
-      </div>
-
-      <div className={styles.field}>
-        <label className={styles.label} htmlFor="course-category">
-          Categoría
-        </label>
-        <div className={styles.selectWrap}>
-          <select
-            id="course-category"
-            value={draft.categoryId ?? ""}
-            onChange={(event) => onChange({ categoryId: event.target.value })}
-            className={styles.select}
-          >
-            <option value="">Selecciona una categoría</option>
-            {categories.map((category) => (
-              <option key={category.categoryId} value={category.categoryId}>
-                {category.label}
-              </option>
-            ))}
-          </select>
-          <Image src="/icons/chevron-down.svg" alt="" width={10} height={10} className={styles.selectIcon} />
-        </div>
-      </div>
-
-      <div className={styles.field}>
         <span className={styles.label}>Portada del Curso</span>
         {draft.coverImageUrl && (
           <Image
@@ -338,24 +294,87 @@ function StepBasic({
         {coverError && <p className={styles.stepError}>{coverError}</p>}
       </div>
 
-      <ListField
-        label="Acerca de este curso"
-        hint="Cada elemento que agregues es un párrafo de la sección 'Acerca de este curso'."
-        items={draft.about}
-        onChange={(about) => onChange({ about })}
-        placeholder="Escribe un párrafo y presiona Agregar"
-        emptyHint="Aún no agregas párrafos."
-      />
+      <div className={styles.formSection}>
+        <div className={styles.formSectionHeader}>
+          <h3 className={styles.rulesHeading}>Clasificación</h3>
+          <p className={styles.rulesHint}>Así aparece el curso en el catálogo y en los filtros de búsqueda.</p>
+        </div>
 
-      <ListField
-        label="Lo que aprenderás"
-        items={draft.learningOutcomes}
-        onChange={(learningOutcomes) => onChange({ learningOutcomes })}
-        placeholder="Ej: Diseñar un embudo de conversión completo"
-        emptyHint="Aún no agregas resultados de aprendizaje."
-      />
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="course-area">
+              Área
+            </label>
+            <div className={styles.selectWrap}>
+              <select
+                id="course-area"
+                value={draft.departmentId ?? ""}
+                onChange={(event) => onChange({ departmentId: event.target.value })}
+                className={styles.select}
+              >
+                <option value="">Selecciona un área</option>
+                {departments.map((department) => (
+                  <option key={department.id} value={department.id}>
+                    {department.label}
+                  </option>
+                ))}
+              </select>
+              <Image src="/icons/chevron-down.svg" alt="" width={10} height={10} className={styles.selectIcon} />
+            </div>
+          </div>
 
-      <ToolsField items={draft.tools} onChange={(tools) => onChange({ tools })} />
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="course-category">
+              Categoría
+            </label>
+            <div className={styles.selectWrap}>
+              <select
+                id="course-category"
+                value={draft.categoryId ?? ""}
+                onChange={(event) => onChange({ categoryId: event.target.value })}
+                className={styles.select}
+              >
+                <option value="">Selecciona una categoría</option>
+                {categories.map((category) => (
+                  <option key={category.categoryId} value={category.categoryId}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+              <Image src="/icons/chevron-down.svg" alt="" width={10} height={10} className={styles.selectIcon} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.formSection}>
+        <div className={styles.formSectionHeader}>
+          <h3 className={styles.rulesHeading}>Contenido de la página del curso</h3>
+          <p className={styles.rulesHint}>
+            Esto es lo que ven los estudiantes en la página del curso, antes de inscribirse.
+          </p>
+        </div>
+
+        <ListField
+          label="Acerca de este curso"
+          hint="Cada elemento que agregues es un párrafo de la sección 'Acerca de este curso'."
+          items={draft.about}
+          onChange={(about) => onChange({ about })}
+          placeholder="Escribe un párrafo y presiona Agregar"
+          emptyHint="Aún no agregas párrafos."
+        />
+
+        <ListField
+          label="Lo que aprenderás"
+          hint="Cada elemento es un punto de la lista de resultados de aprendizaje."
+          items={draft.learningOutcomes}
+          onChange={(learningOutcomes) => onChange({ learningOutcomes })}
+          placeholder="Ej: Diseñar un embudo de conversión completo"
+          emptyHint="Aún no agregas resultados de aprendizaje."
+        />
+
+        <ToolsField items={draft.tools} onChange={(tools) => onChange({ tools })} />
+      </div>
 
       {continueError && <p className={styles.stepError}>{continueError}</p>}
       <button type="button" className={styles.continueButton} onClick={onContinue}>

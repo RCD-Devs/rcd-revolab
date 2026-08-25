@@ -70,6 +70,7 @@ export default function HomeHero({ slides }) {
   };
 
   const activeDot = anim ? anim.to : activeIndex;
+  const backgroundImage = slides[activeDot]?.backgroundImage || "/images/home/hero-bg.png";
 
   const renderSlide = (index, animClass, key, onEnd) => {
     const slide = slides[index];
@@ -117,7 +118,8 @@ export default function HomeHero({ slides }) {
     <section className={styles.hero}>
       <div className={styles.background}>
         <Image
-          src="/images/home/hero-bg.png"
+          key={backgroundImage}
+          src={backgroundImage}
           alt=""
           fill
           priority

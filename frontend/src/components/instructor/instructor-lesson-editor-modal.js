@@ -164,10 +164,7 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
 
         <div className={styles.field}>
           <span className={styles.label}>Video de la lección</span>
-          {videoUrl && (
-            /* eslint-disable-next-line jsx-a11y/media-has-caption */
-            <video src={videoUrl} controls className={styles.videoPreview} />
-          )}
+          {videoUrl && <video src={videoUrl} controls className={styles.videoPreview} />}
           <label className={styles.uploadZone}>
             <input
               type="file"

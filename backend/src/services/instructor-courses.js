@@ -50,6 +50,8 @@ export async function getCourseForEdit(slug, actorId, isAdmin = false) {
     autoCertificate: course.autoCertificate,
     departmentId: course.departmentId,
     department: course.department?.label ?? null,
+    categoryId: course.categoryId,
+    category: course.category?.label ?? null,
     about: course.about ?? [],
     learningOutcomes: course.learningOutcomes ?? [],
     tools: course.tools ?? [],

@@ -20,7 +20,7 @@ const COPY = {
 };
 
 export default function CourseExamPage({ examData }) {
-  const { course, exam, lastLessonId } = examData;
+  const { course, exam, lastLessonPath } = examData;
   const [phase, setPhase] = useState("intro");
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -137,7 +137,7 @@ export default function CourseExamPage({ examData }) {
       {showNav && (
         <CourseExamNav
           courseId={course.id}
-          previousLessonId={lastLessonId}
+          previousLessonPath={lastLessonPath}
           showExamActive={phase === "intro"}
         />
       )}

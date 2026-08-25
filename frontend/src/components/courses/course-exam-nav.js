@@ -2,10 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./course-exam-nav.module.css";
 
-export default function CourseExamNav({ courseId, previousLessonId, showExamActive = true }) {
-  const previousHref = previousLessonId
-    ? `/cursos/${courseId}/leccion/${previousLessonId}`
-    : null;
+export default function CourseExamNav({ courseId, previousLessonPath, showExamActive = true }) {
+  const previousHref = previousLessonPath ? `/cursos/${courseId}/${previousLessonPath}` : null;
 
   return (
     <nav className={styles.nav} aria-label="Navegación del examen">

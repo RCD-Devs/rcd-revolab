@@ -138,9 +138,15 @@ model Module {
   courseId String
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   title    String
+  // Slug estable para la URL publica (/cursos/[slug]/[moduleSlug]/[lessonSlug]).
+  // Se asigna una sola vez al crear el modulo y no se recalcula si despues
+  // se reordena o se edita el titulo.
+  slug     String
   order    Int
 
   lessons Lesson[]
+
+  @@unique([courseId, slug])
 }
 
 model Lesson {
@@ -148,6 +154,8 @@ model Lesson {
   moduleId        String
   module          Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   title           String
+  // Ver comentario de Module.slug: mismo criterio, estable dentro del modulo.
+  slug            String
   type            LessonType @default(VIDEO)
   order           Int
   videoKey        String? // key/path en el storage (R2/local/Drive)
@@ -159,6 +167,8 @@ model Lesson {
   quiz      Quiz?            @relation("LessonQuiz")
   progress  LessonProgress[]
   materials LessonMaterial[]
+
+  @@unique([moduleId, slug])
 }
 
 model LessonMaterial {

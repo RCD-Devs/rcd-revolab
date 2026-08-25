@@ -31,7 +31,7 @@ export default async function ExamPage({ params }) {
       examData={{
         course: { id: course.id, title: course.title },
         exam,
-        lastLessonId: course.firstLessonId,
+        lastLessonPath: course.firstLessonPath,
       }}
     />
   );

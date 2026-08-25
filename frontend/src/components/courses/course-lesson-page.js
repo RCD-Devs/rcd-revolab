@@ -74,7 +74,7 @@ export default function CourseLessonPage({ lessonData }) {
                 iconWrapClassName={ctaStyles.iconWrapQuiz}
                 title={quiz.title}
                 description={quiz.description}
-                href={`/cursos/${course.id}/leccion/${lesson.id}/quiz`}
+                href={`/cursos/${course.id}/${lesson.path}/quiz`}
                 ctaLabel="Comenzar Quiz"
                 inline
               />

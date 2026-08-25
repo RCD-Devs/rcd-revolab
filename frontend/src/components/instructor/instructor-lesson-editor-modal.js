@@ -30,6 +30,26 @@ function putWithProgress(url, file, onProgress) {
   });
 }
 
+// Lee la duracion del archivo local (metadatos del contenedor de video, no
+// hace falta subirlo primero) para sumarla despues a la duracion total del
+// curso. Si el navegador no puede leerla, resuelve null y el video igual
+// se sube: la duracion es un dato accesorio, no un requisito.
+function readVideoDuration(file) {
+  return new Promise((resolve) => {
+    const video = document.createElement("video");
+    video.preload = "metadata";
+    video.onloadedmetadata = () => {
+      URL.revokeObjectURL(video.src);
+      resolve(Number.isFinite(video.duration) ? video.duration : null);
+    };
+    video.onerror = () => {
+      URL.revokeObjectURL(video.src);
+      resolve(null);
+    };
+    video.src = URL.createObjectURL(file);
+  });
+}
+
 export default function InstructorLessonEditorModal({ lesson, onClose, onLessonUpdated }) {
   const [title, setTitle] = useState(lesson.title);
   const [content, setContent] = useState(lesson.content ?? "");
@@ -113,12 +133,15 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
         return;
       }
 
-      await putWithProgress(urlData.uploadUrl, file, setVideoUploadProgress);
+      const [, durationSeconds] = await Promise.all([
+        putWithProgress(urlData.uploadUrl, file, setVideoUploadProgress),
+        readVideoDuration(file),
+      ]);
 
       const confirmResponse = await fetch(`/api/instructor/lessons/${lesson.id}/video/confirm`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: urlData.key }),
+        body: JSON.stringify({ key: urlData.key, durationSeconds }),
       });
 
       let confirmData = null;

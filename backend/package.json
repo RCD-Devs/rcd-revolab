@@ -9,6 +9,7 @@
     "./constants/*": "./src/constants/*.js",
     "./services/*": "./src/services/*.js",
     "./repositories/*": "./src/repositories/*.js",
+    "./utils/*": "./src/utils/*.js",
     "./validations/*": "./src/validations/*.js",
     "./auth/*": "./src/auth/*.js",
     "./integrations/*": "./src/integrations/*.js"

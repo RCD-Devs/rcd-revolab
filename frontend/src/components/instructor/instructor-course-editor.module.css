@@ -548,6 +548,70 @@
   color: #c27aff;
 }
 
+.listItems {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #243447;
+  border-radius: 12px;
+  background: var(--color-secondary);
+}
+
+.listItemText {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1504px;
+  overflow-wrap: break-word;
+}
+
+.listItemDelete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.listItemDelete:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.toolEmojiInput {
+  width: 64px;
+  min-height: 50px;
+  padding: 12px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 16px;
+  background: #1a2b3c;
+  color: var(--color-white);
+  font: inherit;
+  font-size: 16px;
+  text-align: center;
+}
+
+.toolEmojiInput:focus {
+  outline: none;
+  border-color: rgba(0, 229, 200, 0.45);
+}
+
 .rulesPanel {
   border: 1px solid var(--color-input-border);
   border-radius: 16px;

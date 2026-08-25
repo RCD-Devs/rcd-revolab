@@ -50,6 +50,9 @@ export async function getCourseForEdit(slug, actorId, isAdmin = false) {
     autoCertificate: course.autoCertificate,
     departmentId: course.departmentId,
     department: course.department?.label ?? null,
+    about: course.about ?? [],
+    learningOutcomes: course.learningOutcomes ?? [],
+    tools: course.tools ?? [],
     modules: await Promise.all(
       course.modules.map(async (moduleItem) => ({
         id: moduleItem.id,
@@ -249,7 +252,13 @@ export async function createLessonVideoUploadUrl(lessonId, actorId, contentType,
 // para recién ahí guardar la key en la lección. Verifica que el objeto
 // exista de verdad antes de guardarlo, para no dejar una key "fantasma" si
 // el PUT directo falló pero el frontend igual llegó a confirmar.
-export async function confirmLessonVideoUpload(lessonId, actorId, key, isAdmin = false) {
+export async function confirmLessonVideoUpload(
+  lessonId,
+  actorId,
+  key,
+  durationSeconds,
+  isAdmin = false,
+) {
   const lesson = await resolveLesson(lessonId, actorId, isAdmin);
   if (!lesson) return null;
 
@@ -262,7 +271,13 @@ export async function confirmLessonVideoUpload(lessonId, actorId, key, isAdmin =
     return { error: 'NOT_UPLOADED' };
   }
 
-  const updated = await instructorCourseRepository.updateLessonVideoKey(lessonId, key);
+  // El navegador mide la duracion leyendo los metadatos del archivo local
+  // (ver readVideoDuration en instructor-lesson-editor-modal.js); si por lo
+  // que sea no llega o no es un numero, se guarda como null en vez de
+  // asumir 0 (0 se sumaria como "sin duracion" en el total del curso).
+  const safeDuration = Number.isFinite(durationSeconds) ? Math.round(durationSeconds) : null;
+
+  const updated = await instructorCourseRepository.updateLessonVideoKey(lessonId, key, safeDuration);
   return { id: updated.id, videoUrl: await storage.getPublicUrl(key) };
 }
 

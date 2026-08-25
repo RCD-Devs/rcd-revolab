@@ -1,5 +1,12 @@
 import prisma from '../config/db.js';
 
+// modules/lessons solo trae durationSeconds: se usa para calcular la
+// duracion total de video del curso (ver utils/course-duration.js), no se
+// expone tal cual en la respuesta.
+const videoDurationSelect = {
+  modules: { select: { lessons: { select: { durationSeconds: true } } } },
+};
+
 const catalogCourseSelect = {
   id: true,
   slug: true,
@@ -7,11 +14,11 @@ const catalogCourseSelect = {
   description: true,
   coverImageUrl: true,
   level: true,
-  durationLabel: true,
   publishedAt: true,
   category: { select: { slug: true, label: true } },
   instructor: { select: { nombre: true, avatarUrl: true, department: { select: { label: true } } } },
   _count: { select: { enrollments: true } },
+  ...videoDurationSelect,
 };
 
 const PUBLISHED_PUBLIC = { status: 'PUBLISHED', visibility: 'PUBLIC' };
@@ -61,6 +68,7 @@ export function findCourseDetailBySlug(slug) {
       department: true,
       instructor: { select: { id: true, nombre: true, avatarUrl: true } },
       _count: { select: { enrollments: true } },
+      ...videoDurationSelect,
     },
   });
 }

@@ -1,4 +1,6 @@
 import * as instructorCourseRepository from '../repositories/instructor-course-repository.js';
+import * as lessonRepository from '../repositories/lesson-repository.js';
+import * as quizRepository from '../repositories/quiz-repository.js';
 import { getStorageProvider } from '../integrations/storage/storage-provider.js';
 import { slugify } from '../validations/slug.js';
 
@@ -62,6 +64,53 @@ export async function getCourseForEdit(slug, actorId, isAdmin = false) {
         lessons: await Promise.all(moduleItem.lessons.map((lesson) => mapLessonForEdit(lesson))),
       })),
     ),
+  };
+}
+
+// Quien esta inscrito en el curso y su avance real: progreso, estado, y el
+// resultado del examen final si el curso tiene uno (se toma el intento mas
+// reciente por usuario). Es lo que ve el instructor dueño o un admin al
+// entrar a /instructor/cursos/[id]/estudiantes.
+export async function getCourseStudents(slug, actorId, isAdmin = false) {
+  const course = await resolveCourse(slug, actorId, isAdmin);
+  if (!course) return null;
+
+  const [enrollments, finalExamId] = await Promise.all([
+    instructorCourseRepository.findEnrollmentsForCourse(course.id),
+    lessonRepository.findCourseFinalExamId(course.id),
+  ]);
+
+  const latestAttemptByUser = new Map();
+  if (finalExamId && enrollments.length > 0) {
+    const attempts = await quizRepository.findAttemptsForQuiz(
+      finalExamId,
+      enrollments.map((enrollment) => enrollment.userId),
+    );
+    // attempts viene ordenado por attemptedAt desc: el primero que se ve
+    // por userId es el mas reciente.
+    for (const attempt of attempts) {
+      if (!latestAttemptByUser.has(attempt.userId)) {
+        latestAttemptByUser.set(attempt.userId, attempt);
+      }
+    }
+  }
+
+  return {
+    course: { id: course.slug, title: course.title },
+    hasFinalExam: Boolean(finalExamId),
+    students: enrollments.map((enrollment) => {
+      const attempt = latestAttemptByUser.get(enrollment.userId);
+      return {
+        userId: enrollment.userId,
+        name: enrollment.user.nombre,
+        email: enrollment.user.email,
+        status: enrollment.status,
+        progressPercent: enrollment.progressPercent,
+        enrolledAt: enrollment.enrolledAt,
+        completedAt: enrollment.completedAt,
+        examResult: attempt ? { score: attempt.score, passed: attempt.passed } : null,
+      };
+    }),
   };
 }
 

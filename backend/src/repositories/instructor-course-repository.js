@@ -12,6 +12,14 @@ export function findCourseBySlugForInstructor(slug, instructorId) {
   return prisma.course.findFirst({ where: { slug, instructorId } });
 }
 
+export function findEnrollmentsForCourse(courseId) {
+  return prisma.enrollment.findMany({
+    where: { courseId },
+    orderBy: { enrolledAt: 'desc' },
+    include: { user: { select: { id: true, nombre: true, email: true } } },
+  });
+}
+
 // Sin filtro de propietario: solo para uso por un actor ADMIN.
 export function findCourseBySlugAny(slug) {
   return prisma.course.findFirst({ where: { slug } });

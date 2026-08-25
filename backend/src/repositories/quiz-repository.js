@@ -47,3 +47,13 @@ export async function hasPassedAttempt(userId, quizId) {
   });
   return Boolean(attempt);
 }
+
+// Todos los intentos de un grupo de usuarios en un quiz, mas recientes
+// primero. El caller se queda con el primero por userId (el mas reciente).
+export function findAttemptsForQuiz(quizId, userIds) {
+  return prisma.quizAttempt.findMany({
+    where: { quizId, userId: { in: userIds } },
+    orderBy: { attemptedAt: 'desc' },
+    select: { userId: true, score: true, passed: true, attemptedAt: true },
+  });
+}

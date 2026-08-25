@@ -25,6 +25,137 @@ const instructorVisibilityOptions = [
 
 const LESSON_TYPE_LABELS = { VIDEO: "Video", DOCUMENT: "Documento", QUIZ: "Quiz", TOOLS: "Herramientas" };
 
+function ListField({ label, hint, items, onChange, placeholder, emptyHint }) {
+  const [draftValue, setDraftValue] = useState("");
+
+  function addItem() {
+    const value = draftValue.trim();
+    if (!value) return;
+    onChange([...items, value]);
+    setDraftValue("");
+  }
+
+  return (
+    <div className={styles.field}>
+      <span className={styles.label}>{label}</span>
+      {hint && <span className={styles.uploadHint}>{hint}</span>}
+
+      {items.length > 0 ? (
+        <ul className={styles.listItems}>
+          {items.map((item, index) => (
+            <li key={index} className={styles.listItem}>
+              <span className={styles.listItemText}>{item}</span>
+              <button
+                type="button"
+                className={styles.listItemDelete}
+                onClick={() => onChange(items.filter((_, i) => i !== index))}
+                aria-label="Eliminar"
+              >
+                <Image src="/icons/instructor-trash.svg" alt="" width={14} height={14} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className={styles.moduleEmpty}>{emptyHint}</p>
+      )}
+
+      <div className={styles.lessonActions}>
+        <input
+          type="text"
+          value={draftValue}
+          onChange={(event) => setDraftValue(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              addItem();
+            }
+          }}
+          placeholder={placeholder}
+          className={styles.input}
+        />
+        <button
+          type="button"
+          className={`${styles.lessonAction} ${styles.lessonAction_teal}`}
+          onClick={addItem}
+        >
+          + Agregar
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ToolsField({ items, onChange }) {
+  const [emoji, setEmoji] = useState("");
+  const [name, setName] = useState("");
+
+  function addTool() {
+    if (!name.trim()) return;
+    onChange([...items, { emoji: emoji.trim() || "🛠️", name: name.trim() }]);
+    setEmoji("");
+    setName("");
+  }
+
+  return (
+    <div className={styles.field}>
+      <span className={styles.label}>Herramientas que dominarás</span>
+
+      {items.length > 0 ? (
+        <ul className={styles.listItems}>
+          {items.map((tool, index) => (
+            <li key={index} className={styles.listItem}>
+              <span className={styles.listItemText}>
+                {tool.emoji} {tool.name}
+              </span>
+              <button
+                type="button"
+                className={styles.listItemDelete}
+                onClick={() => onChange(items.filter((_, i) => i !== index))}
+                aria-label="Eliminar"
+              >
+                <Image src="/icons/instructor-trash.svg" alt="" width={14} height={14} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className={styles.moduleEmpty}>Aún no agregas herramientas.</p>
+      )}
+
+      <div className={styles.lessonActions}>
+        <input
+          type="text"
+          value={emoji}
+          onChange={(event) => setEmoji(event.target.value)}
+          placeholder="🛠️"
+          className={styles.toolEmojiInput}
+        />
+        <input
+          type="text"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              addTool();
+            }
+          }}
+          placeholder="Nombre de la herramienta"
+          className={styles.input}
+        />
+        <button
+          type="button"
+          className={`${styles.lessonAction} ${styles.lessonAction_teal}`}
+          onClick={addTool}
+        >
+          + Agregar
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function StepBasic({
   draft,
   onChange,
@@ -127,6 +258,25 @@ function StepBasic({
         </label>
         {coverError && <p className={styles.stepError}>{coverError}</p>}
       </div>
+
+      <ListField
+        label="Acerca de este curso"
+        hint="Cada elemento que agregues es un párrafo de la sección 'Acerca de este curso'."
+        items={draft.about}
+        onChange={(about) => onChange({ about })}
+        placeholder="Escribe un párrafo y presiona Agregar"
+        emptyHint="Aún no agregas párrafos."
+      />
+
+      <ListField
+        label="Lo que aprenderás"
+        items={draft.learningOutcomes}
+        onChange={(learningOutcomes) => onChange({ learningOutcomes })}
+        placeholder="Ej: Diseñar un embudo de conversión completo"
+        emptyHint="Aún no agregas resultados de aprendizaje."
+      />
+
+      <ToolsField items={draft.tools} onChange={(tools) => onChange({ tools })} />
 
       {continueError && <p className={styles.stepError}>{continueError}</p>}
       <button type="button" className={styles.continueButton} onClick={onContinue}>
@@ -321,6 +471,9 @@ const EMPTY_DRAFT = {
   description: "",
   departmentId: "",
   coverImageUrl: null,
+  about: [],
+  learningOutcomes: [],
+  tools: [],
   visibility: "PUBLIC",
   enrollmentRequirement: "NONE",
   autoCertificate: false,
@@ -391,6 +544,9 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
           title: draft.title,
           description: draft.description,
           departmentId: draft.departmentId || undefined,
+          about: draft.about,
+          learningOutcomes: draft.learningOutcomes,
+          tools: draft.tools,
           visibility: draft.visibility,
           enrollmentRequirement: draft.enrollmentRequirement,
           autoCertificate: draft.autoCertificate,

@@ -40,10 +40,12 @@ export default function CourseCard({
           <Image src="/icons/users.svg" alt="" width={16} height={16} />
           {students}
         </span>
-        <span className={styles.metaItem}>
-          <Image src="/icons/clock.svg" alt="" width={16} height={16} />
-          {duration}
-        </span>
+        {duration && (
+          <span className={styles.metaItem}>
+            <Image src="/icons/clock.svg" alt="" width={16} height={16} />
+            {duration}
+          </span>
+        )}
       </div>
 
       <span className={styles.button}>

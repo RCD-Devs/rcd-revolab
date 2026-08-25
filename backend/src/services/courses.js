@@ -1,4 +1,5 @@
 import * as courseRepository from '../repositories/course-repository.js';
+import { sumVideoSeconds, formatCourseDuration } from '../utils/course-duration.js';
 
 const FEATURED_LIMIT = 6;
 const RECOMMENDED_LIMIT = 4;
@@ -10,7 +11,7 @@ function mapCourseSummary(course) {
     description: course.description,
     image: course.coverImageUrl,
     level: course.level,
-    duration: course.durationLabel,
+    duration: formatCourseDuration(sumVideoSeconds(course)),
     category: course.category?.label ?? null,
     categoryId: course.category?.slug ?? null,
     students: course._count.enrollments,
@@ -58,18 +59,23 @@ export async function getCourseDetail(slug) {
   if (!course) return null;
 
   const firstLessonId = await courseRepository.findFirstLessonId(course.id);
+  const durationText = formatCourseDuration(sumVideoSeconds(course));
 
   return {
     id: course.slug,
     title: course.title,
     description: course.description,
-    about: course.about,
-    learningOutcomes: course.learningOutcomes,
-    tools: course.tools,
+    // Nunca confiar en que un curso publicado llenó "Acerca de este
+    // curso"/"Herramientas": about y learningOutcomes son String[] no
+    // nulos, pero tools es Json? y queda null si nadie lo llenó — sin este
+    // default, un .map() sobre null tumbaba toda la pagina (500).
+    about: course.about ?? [],
+    learningOutcomes: course.learningOutcomes ?? [],
+    tools: course.tools ?? [],
     image: course.coverImageUrl,
     level: course.level,
-    duration: course.durationLabel,
-    videoHoursLabel: course.videoHoursLabel,
+    duration: durationText,
+    videoHoursLabel: durationText,
     category: course.category?.label ?? null,
     categoryId: course.category?.slug ?? null,
     department: course.department?.label ?? null,

@@ -104,8 +104,8 @@ export function findLessonAny(lessonId) {
   return prisma.lesson.findUnique({ where: { id: lessonId } });
 }
 
-export function updateLessonVideoKey(lessonId, videoKey) {
-  return prisma.lesson.update({ where: { id: lessonId }, data: { videoKey } });
+export function updateLessonVideoKey(lessonId, videoKey, durationSeconds) {
+  return prisma.lesson.update({ where: { id: lessonId }, data: { videoKey, durationSeconds } });
 }
 
 export function updateLesson(lessonId, data) {

@@ -9,13 +9,14 @@ export async function POST(request, { params }) {
   const { id } = await params;
   const body = await request.json().catch(() => null);
   const key = body?.key;
+  const durationSeconds = body?.durationSeconds;
 
   if (!key) {
     return NextResponse.json({ error: "Falta 'key'" }, { status: 400 });
   }
 
   const isAdmin = session.user.role === "ADMIN";
-  const result = await confirmLessonVideoUpload(id, session.user.id, key, isAdmin);
+  const result = await confirmLessonVideoUpload(id, session.user.id, key, durationSeconds, isAdmin);
 
   if (!result) {
     return NextResponse.json({ error: "Lección no encontrada" }, { status: 404 });

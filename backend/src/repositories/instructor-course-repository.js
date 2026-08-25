@@ -25,7 +25,12 @@ const courseDetailInclude = {
   department: { select: { label: true } },
   modules: {
     orderBy: { order: 'asc' },
-    include: { lessons: { orderBy: { order: 'asc' } } },
+    include: {
+      lessons: {
+        orderBy: { order: 'asc' },
+        include: { materials: { orderBy: { createdAt: 'asc' } } },
+      },
+    },
   },
 };
 
@@ -74,6 +79,12 @@ export function findModuleForCourse(moduleId, courseId) {
   return prisma.module.findFirst({ where: { id: moduleId, courseId } });
 }
 
+// Scoped por courseId: las lecciones del modulo se borran en cascada
+// (Lesson.moduleId tiene onDelete: Cascade).
+export function deleteModule(moduleId, courseId) {
+  return prisma.module.deleteMany({ where: { id: moduleId, courseId } });
+}
+
 export function countLessons(moduleId) {
   return prisma.lesson.count({ where: { moduleId } });
 }
@@ -95,4 +106,18 @@ export function findLessonAny(lessonId) {
 
 export function updateLessonVideoKey(lessonId, videoKey) {
   return prisma.lesson.update({ where: { id: lessonId }, data: { videoKey } });
+}
+
+export function updateLesson(lessonId, data) {
+  return prisma.lesson.update({ where: { id: lessonId }, data });
+}
+
+export function createLessonMaterial(lessonId, { fileName, fileUrl, fileType }) {
+  return prisma.lessonMaterial.create({ data: { lessonId, fileName, fileUrl, fileType } });
+}
+
+// Filtra tambien por lessonId para no poder borrar el material de una
+// leccion ajena aunque se adivine el materialId.
+export function deleteLessonMaterial(materialId, lessonId) {
+  return prisma.lessonMaterial.deleteMany({ where: { id: materialId, lessonId } });
 }

@@ -17,6 +17,7 @@ const MAX_WIDTH_RULES = [
   { pattern: /home\/instructor-/i, width: 400 },
   { pattern: /home\/course-/i, width: 800 },
   { pattern: /home\/hero-bg/i, width: 1920 },
+  { pattern: /team\//i, width: 640 },
 ];
 
 const WEBP_OPTIONS = { quality: 82, effort: 6, smartSubsample: true };

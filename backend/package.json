@@ -6,6 +6,7 @@
   "type": "module",
   "exports": {
     "./config/*": "./src/config/*.js",
+    "./constants/*": "./src/constants/*.js",
     "./services/*": "./src/services/*.js",
     "./repositories/*": "./src/repositories/*.js",
     "./validations/*": "./src/validations/*.js",

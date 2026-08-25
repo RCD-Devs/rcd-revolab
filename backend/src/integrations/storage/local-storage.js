@@ -1,7 +1,7 @@
 // Storage local (filesystem) para desarrollo. Guarda archivos fuera del
 // repo trackeado (backend/.storage/) y se sirven vía el Route Handler
 // frontend/src/app/api/media/[...path]/route.js.
-import { mkdir, writeFile, readFile, unlink } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, unlink, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -34,6 +34,23 @@ export async function getSignedUrl(key) {
 // Local no distingue público/privado: mismo Route Handler para ambos.
 export async function getPublicUrl(key) {
   return getSignedUrl(key);
+}
+
+// Equivalente local al PUT prefirmado de R2: en dev no hay bucket real, así
+// que la "subida directa" apunta a un Route Handler propio que escribe en
+// filesystem (frontend/src/app/api/media-upload/[...path]/route.js).
+export async function getUploadUrl(key) {
+  return `/api/media-upload/${key.replace(/^\/+/, '')}`;
+}
+
+export async function exists(key) {
+  try {
+    await stat(resolveKeyPath(key));
+    return true;
+  } catch (error) {
+    if (error.code === 'ENOENT') return false;
+    throw error;
+  }
 }
 
 export async function readFileByKey(key) {

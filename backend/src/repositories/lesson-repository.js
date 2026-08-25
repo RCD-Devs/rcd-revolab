@@ -53,6 +53,15 @@ export async function findCourseFinalExamId(courseId) {
   return course?.finalExam?.id ?? null;
 }
 
+// Filtra por el slug publico del curso (no el id interno) porque asi es
+// como el frontend identifica cursos en cualquier URL.
+export function dropEnrollmentByCourseSlug(userId, courseSlug) {
+  return prisma.enrollment.updateMany({
+    where: { userId, course: { slug: courseSlug }, status: { not: 'COMPLETED' } },
+    data: { status: 'DROPPED' },
+  });
+}
+
 export function upsertEnrollment(userId, courseId, data) {
   return prisma.enrollment.upsert({
     where: { userId_courseId: { userId, courseId } },
@@ -62,7 +71,9 @@ export function upsertEnrollment(userId, courseId, data) {
 }
 
 // Crea el Enrollment en el primer acceso al contenido del curso; si ya
-// existe no lo toca (no pisar progressPercent/status ya calculados). No usa
+// existe no lo toca salvo que este DROPPED (el usuario lo habia cancelado
+// y volvio) - ahi lo reactiva a IN_PROGRESS sin tocar progressPercent ni
+// el historial de LessonProgress, que no se borran al cancelar. No usa
 // upsert con update vacio porque Prisma igual tira P2002 en ese caso.
 export async function ensureEnrollment(userId, courseId) {
   try {
@@ -71,7 +82,16 @@ export async function ensureEnrollment(userId, courseId) {
     });
   } catch (error) {
     if (error.code === 'P2002') {
-      return prisma.enrollment.findUnique({ where: { userId_courseId: { userId, courseId } } });
+      const existing = await prisma.enrollment.findUnique({
+        where: { userId_courseId: { userId, courseId } },
+      });
+      if (existing?.status === 'DROPPED') {
+        return prisma.enrollment.update({
+          where: { userId_courseId: { userId, courseId } },
+          data: { status: 'IN_PROGRESS' },
+        });
+      }
+      return existing;
     }
     throw error;
   }

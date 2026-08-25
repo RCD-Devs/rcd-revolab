@@ -18,6 +18,8 @@ const instructorEnrollmentOptions = [
   { id: "RANK_SPECIALIST", label: "Exclusivo: Rango Especialista o superior" },
 ];
 
+const instructorLevelOptions = ["Fundamentos", "Nivel Intermedio", "Nivel Avanzado"];
+
 const instructorVisibilityOptions = [
   { id: "PUBLIC", label: "Público (Catálogo General)" },
   { id: "HIDDEN", label: "Oculto (Solo con enlace)" },
@@ -344,6 +346,28 @@ function StepBasic({
               <Image src="/icons/chevron-down.svg" alt="" width={10} height={10} className={styles.selectIcon} />
             </div>
           </div>
+
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="course-level">
+              Nivel
+            </label>
+            <div className={styles.selectWrap}>
+              <select
+                id="course-level"
+                value={draft.level ?? ""}
+                onChange={(event) => onChange({ level: event.target.value })}
+                className={styles.select}
+              >
+                <option value="">Selecciona un nivel</option>
+                {instructorLevelOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <Image src="/icons/chevron-down.svg" alt="" width={10} height={10} className={styles.selectIcon} />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -384,27 +408,90 @@ function StepBasic({
   );
 }
 
-function LessonRow({ lesson, onClick }) {
-  const hasContent = Boolean(lesson.content?.trim() || lesson.videoUrl);
-
+function ReorderButtons({ onMoveUp, onMoveDown, isFirst, isLast, itemLabel }) {
   return (
-    <button type="button" className={styles.lessonRow} onClick={onClick}>
-      <Image src="/icons/instructor-drag.svg" alt="" width={16} height={16} />
-      <span className={styles.lessonTitle}>{lesson.title}</span>
-      {!hasContent && <span className={styles.lessonMissing}>Falta texto o video</span>}
-      <span className={styles.lessonType}>{LESSON_TYPE_LABELS[lesson.type] ?? lesson.type}</span>
-      <Image src="/icons/instructor-edit.svg" alt="" width={14} height={14} />
-    </button>
+    <div className={styles.reorderGroup}>
+      <button
+        type="button"
+        className={styles.reorderButton}
+        onClick={onMoveUp}
+        disabled={isFirst}
+        aria-label={`Subir ${itemLabel}`}
+      >
+        <Image
+          src="/icons/chevron-down.svg"
+          alt=""
+          width={10}
+          height={10}
+          className={styles.reorderIconUp}
+        />
+      </button>
+      <button
+        type="button"
+        className={styles.reorderButton}
+        onClick={onMoveDown}
+        disabled={isLast}
+        aria-label={`Bajar ${itemLabel}`}
+      >
+        <Image src="/icons/chevron-down.svg" alt="" width={10} height={10} />
+      </button>
+    </div>
   );
 }
 
-function ModuleCard({ module, onAddLesson, onDeleteModule, onLessonClick }) {
+function LessonRow({ lesson, onClick, onDelete, onMoveUp, onMoveDown, isFirst, isLast }) {
+  const hasContent = Boolean(lesson.content?.trim() || lesson.videoUrl);
+
+  return (
+    <div className={styles.lessonRow}>
+      <ReorderButtons
+        onMoveUp={onMoveUp}
+        onMoveDown={onMoveDown}
+        isFirst={isFirst}
+        isLast={isLast}
+        itemLabel={`lección "${lesson.title}"`}
+      />
+      <button type="button" className={styles.lessonRowMain} onClick={onClick}>
+        <span className={styles.lessonTitle}>{lesson.title}</span>
+        {!hasContent && <span className={styles.lessonMissing}>Falta texto o video</span>}
+        <span className={styles.lessonType}>{LESSON_TYPE_LABELS[lesson.type] ?? lesson.type}</span>
+        <Image src="/icons/instructor-edit.svg" alt="" width={14} height={14} />
+      </button>
+      <button
+        type="button"
+        className={styles.lessonDelete}
+        onClick={onDelete}
+        aria-label={`Eliminar ${lesson.title}`}
+      >
+        <Image src="/icons/instructor-trash.svg" alt="" width={14} height={14} />
+      </button>
+    </div>
+  );
+}
+
+function ModuleCard({
+  module,
+  onAddLesson,
+  onDeleteModule,
+  onLessonClick,
+  onDeleteLesson,
+  onMoveModule,
+  onMoveLesson,
+  isFirst,
+  isLast,
+}) {
   const [newLessonTitle, setNewLessonTitle] = useState("");
 
   return (
     <article className={styles.moduleCard}>
       <header className={styles.moduleHeader}>
-        <Image src="/icons/instructor-drag.svg" alt="" width={20} height={20} />
+        <ReorderButtons
+          onMoveUp={() => onMoveModule("up")}
+          onMoveDown={() => onMoveModule("down")}
+          isFirst={isFirst}
+          isLast={isLast}
+          itemLabel={`módulo "${module.title}"`}
+        />
         <span className={styles.moduleTitleInput}>{module.title}</span>
         <button
           type="button"
@@ -418,11 +505,16 @@ function ModuleCard({ module, onAddLesson, onDeleteModule, onLessonClick }) {
 
       <div className={styles.moduleBody}>
         {module.lessons.length > 0 ? (
-          module.lessons.map((lesson) => (
+          module.lessons.map((lesson, lessonIndex) => (
             <LessonRow
               key={lesson.id}
               lesson={lesson}
               onClick={() => onLessonClick(module.id, lesson)}
+              onDelete={() => onDeleteLesson(module.id, lesson.id)}
+              onMoveUp={() => onMoveLesson(module.id, lesson.id, "up")}
+              onMoveDown={() => onMoveLesson(module.id, lesson.id, "down")}
+              isFirst={lessonIndex === 0}
+              isLast={lessonIndex === module.lessons.length - 1}
             />
           ))
         ) : (
@@ -461,6 +553,9 @@ function StepContent({
   onAddLesson,
   onDeleteModule,
   onLessonClick,
+  onDeleteLesson,
+  onMoveModule,
+  onMoveLesson,
   onNext,
   nextErrors,
 }) {
@@ -483,13 +578,18 @@ function StepContent({
       )}
 
       <div className={styles.moduleList}>
-        {modules.map((module) => (
+        {modules.map((module, moduleIndex) => (
           <ModuleCard
             key={module.id}
             module={module}
             onAddLesson={onAddLesson}
             onDeleteModule={onDeleteModule}
             onLessonClick={onLessonClick}
+            onDeleteLesson={onDeleteLesson}
+            onMoveModule={(direction) => onMoveModule(module.id, direction)}
+            onMoveLesson={onMoveLesson}
+            isFirst={moduleIndex === 0}
+            isLast={moduleIndex === modules.length - 1}
           />
         ))}
         {modules.length === 0 && (
@@ -569,6 +669,7 @@ const EMPTY_DRAFT = {
   description: "",
   departmentId: "",
   categoryId: "",
+  level: "",
   coverImageUrl: null,
   about: [],
   learningOutcomes: [],
@@ -650,6 +751,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
           description: draft.description,
           departmentId: draft.departmentId || undefined,
           categoryId: draft.categoryId || undefined,
+          level: draft.level || undefined,
           about: draft.about,
           learningOutcomes: draft.learningOutcomes,
           tools: draft.tools,
@@ -752,6 +854,57 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
     setDraft((current) => ({
       ...current,
       modules: current.modules.filter((moduleItem) => moduleItem.id !== moduleId),
+    }));
+  }
+
+  async function handleDeleteLesson(moduleId, lessonId) {
+    await fetch(`/api/instructor/lessons/${lessonId}`, { method: "DELETE" });
+    setDraft((current) => ({
+      ...current,
+      modules: current.modules.map((moduleItem) =>
+        moduleItem.id === moduleId
+          ? { ...moduleItem, lessons: moduleItem.lessons.filter((lesson) => lesson.id !== lessonId) }
+          : moduleItem,
+      ),
+    }));
+  }
+
+  function swapByIndex(list, id, direction) {
+    const index = list.findIndex((item) => item.id === id);
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (index === -1 || targetIndex < 0 || targetIndex >= list.length) return list;
+    const next = [...list];
+    [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
+    return next;
+  }
+
+  async function handleMoveModule(moduleId, direction) {
+    const currentId = await ensureCourseExists();
+    const response = await fetch(`/api/instructor/courses/${currentId}/modules/${moduleId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ direction }),
+    });
+    const data = await response.json();
+    if (!data.moved) return;
+    setDraft((current) => ({ ...current, modules: swapByIndex(current.modules, moduleId, direction) }));
+  }
+
+  async function handleMoveLesson(moduleId, lessonId, direction) {
+    const response = await fetch(`/api/instructor/lessons/${lessonId}/reorder`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ direction }),
+    });
+    const data = await response.json();
+    if (!data.moved) return;
+    setDraft((current) => ({
+      ...current,
+      modules: current.modules.map((moduleItem) =>
+        moduleItem.id === moduleId
+          ? { ...moduleItem, lessons: swapByIndex(moduleItem.lessons, lessonId, direction) }
+          : moduleItem,
+      ),
     }));
   }
 
@@ -872,6 +1025,9 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
               onAddLesson={handleAddLesson}
               onDeleteModule={handleDeleteModule}
               onLessonClick={(moduleId, lesson) => setEditingLesson({ moduleId, lesson })}
+              onDeleteLesson={handleDeleteLesson}
+              onMoveModule={handleMoveModule}
+              onMoveLesson={handleMoveLesson}
               onNext={handleNextToRules}
               nextErrors={contentErrors}
             />

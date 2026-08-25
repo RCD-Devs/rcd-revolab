@@ -52,6 +52,7 @@ export async function getCourseForEdit(slug, actorId, isAdmin = false) {
     department: course.department?.label ?? null,
     categoryId: course.categoryId,
     category: course.category?.label ?? null,
+    level: course.level,
     about: course.about ?? [],
     learningOutcomes: course.learningOutcomes ?? [],
     tools: course.tools ?? [],
@@ -233,12 +234,69 @@ export async function addModule(slug, actorId, { title }, isAdmin = false) {
   return { id: module_.id, title: module_.title, order: module_.order };
 }
 
+// Best-effort: si storage.remove() falla (red, permisos), no bloquea el
+// borrado del registro en BD - el archivo queda huerfano en el bucket en
+// vez de dejar la lección/módulo atascados sin poder borrarse.
+async function safeRemoveByUrl(storage, url) {
+  const key = storage.keyFromUrl(url);
+  if (!key) return;
+  try {
+    await storage.remove(key);
+  } catch {
+    // silencioso a propósito, ver comentario arriba.
+  }
+}
+
 export async function removeModule(slug, moduleId, actorId, isAdmin = false) {
   const course = await resolveCourse(slug, actorId, isAdmin);
   if (!course) return null;
 
+  const moduleWithAssets = await instructorCourseRepository.findModuleWithAssets(
+    moduleId,
+    course.id,
+  );
+  if (moduleWithAssets) {
+    const storage = getStorageProvider();
+    for (const lesson of moduleWithAssets.lessons) {
+      if (lesson.videoKey) await safeRemoveByUrl(storage, await storage.getPublicUrl(lesson.videoKey));
+      for (const material of lesson.materials) {
+        await safeRemoveByUrl(storage, material.fileUrl);
+      }
+    }
+  }
+
   const result = await instructorCourseRepository.deleteModule(moduleId, course.id);
   return { deleted: result.count > 0 };
+}
+
+const REORDER_DIRECTIONS = new Set(['up', 'down']);
+
+// Intercambia el "order" del modulo/leccion con el de su vecino inmediato.
+// No hay drag-and-drop: son solo botones subir/bajar, asi que alcanza con
+// mover contra el vecino en vez de reescribir todos los "order" de la lista.
+function swapTarget(items, id, direction) {
+  const index = items.findIndex((item) => item.id === id);
+  if (index === -1) return null;
+  const targetIndex = direction === 'up' ? index - 1 : index + 1;
+  if (targetIndex < 0 || targetIndex >= items.length) return null;
+  return [items[index], items[targetIndex]];
+}
+
+export async function reorderModule(slug, moduleId, actorId, direction, isAdmin = false) {
+  if (!REORDER_DIRECTIONS.has(direction)) return null;
+  const course = await resolveCourse(slug, actorId, isAdmin);
+  if (!course) return null;
+
+  const modules = await instructorCourseRepository.findModulesForReorder(course.id);
+  const pair = swapTarget(modules, moduleId, direction);
+  if (!pair) return { moved: false };
+
+  const [current, target] = pair;
+  await Promise.all([
+    instructorCourseRepository.updateModuleOrder(current.id, target.order),
+    instructorCourseRepository.updateModuleOrder(target.id, current.order),
+  ]);
+  return { moved: true };
 }
 
 export async function addLesson(slug, moduleId, actorId, { title, type }, isAdmin = false) {
@@ -261,6 +319,23 @@ export async function addLesson(slug, moduleId, actorId, { title, type }, isAdmi
   });
 
   return { id: lesson.id, title: lesson.title, type: lesson.type, order: lesson.order };
+}
+
+export async function reorderLesson(lessonId, actorId, direction, isAdmin = false) {
+  if (!REORDER_DIRECTIONS.has(direction)) return null;
+  const lesson = await resolveLesson(lessonId, actorId, isAdmin);
+  if (!lesson) return null;
+
+  const lessons = await instructorCourseRepository.findLessonsForReorder(lesson.moduleId);
+  const pair = swapTarget(lessons, lessonId, direction);
+  if (!pair) return { moved: false };
+
+  const [current, target] = pair;
+  await Promise.all([
+    instructorCourseRepository.updateLessonOrder(current.id, target.order),
+    instructorCourseRepository.updateLessonOrder(target.id, current.order),
+  ]);
+  return { moved: true };
 }
 
 // El video no pasa por esta función serverless: el navegador lo sube
@@ -337,6 +412,26 @@ export async function updateLesson(
   };
 }
 
+export async function deleteLesson(lessonId, actorId, isAdmin = false) {
+  const lesson = await instructorCourseRepository.findLessonWithAssets(
+    lessonId,
+    actorId,
+    isAdmin,
+  );
+  if (!lesson) return null;
+
+  const storage = getStorageProvider();
+  if (lesson.videoKey) {
+    await safeRemoveByUrl(storage, await storage.getPublicUrl(lesson.videoKey));
+  }
+  for (const material of lesson.materials) {
+    await safeRemoveByUrl(storage, material.fileUrl);
+  }
+
+  const result = await instructorCourseRepository.deleteLesson(lessonId, lesson.moduleId);
+  return { deleted: result.count > 0 };
+}
+
 export async function uploadLessonMaterial(
   lessonId,
   actorId,
@@ -366,6 +461,11 @@ export async function uploadLessonMaterial(
 export async function deleteLessonMaterial(materialId, lessonId, actorId, isAdmin = false) {
   const lesson = await resolveLesson(lessonId, actorId, isAdmin);
   if (!lesson) return null;
+
+  const material = await instructorCourseRepository.findLessonMaterial(materialId, lessonId);
+  if (material) {
+    await safeRemoveByUrl(getStorageProvider(), material.fileUrl);
+  }
 
   const result = await instructorCourseRepository.deleteLessonMaterial(materialId, lessonId);
   return { deleted: result.count > 0 };

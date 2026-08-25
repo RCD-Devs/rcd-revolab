@@ -18,6 +18,13 @@ export default function ProfileContent({
 }) {
   const [activeMainTab, setActiveMainTab] = useState(mainTabs[0]);
   const [activeCourseTab, setActiveCourseTab] = useState("En Proceso");
+  const [inProgress, setInProgress] = useState(inProgressCourses);
+
+  async function handleDropEnrollment(courseId) {
+    const response = await fetch(`/api/courses/${courseId}/enrollment`, { method: "DELETE" });
+    if (!response.ok) return;
+    setInProgress((current) => current.filter((course) => course.id !== courseId));
+  }
 
   const showCourses = activeMainTab === "Mis Cursos";
   const showRank = activeMainTab === "Mi Rango (Career IQ)";
@@ -60,9 +67,12 @@ export default function ProfileContent({
 
           {activeCourseTab === "En Proceso" && (
             <div className={styles.courseList}>
-              {inProgressCourses.map((course) => (
-                <ProfileCourseCard key={course.id} course={course} />
+              {inProgress.map((course) => (
+                <ProfileCourseCard key={course.id} course={course} onDrop={handleDropEnrollment} />
               ))}
+              {inProgress.length === 0 && (
+                <p className={styles.emptyHint}>No tienes cursos en progreso.</p>
+              )}
             </div>
           )}
 

@@ -48,6 +48,7 @@ enum QuizKind {
 enum EnrollmentStatus {
   IN_PROGRESS
   COMPLETED
+  DROPPED
 }
 
 /// Departamento de la organización al que pertenece una persona (ej. "Experiencia Digital"),

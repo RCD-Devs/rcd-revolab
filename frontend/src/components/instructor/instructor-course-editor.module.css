@@ -488,17 +488,82 @@
   display: flex;
   align-items: center;
   width: 100%;
-  gap: 12px;
+  gap: 8px;
   min-height: 46px;
-  padding: 13px;
+  padding: 6px 8px 6px 13px;
   border: 1px solid #243447;
   border-radius: 12px;
   background: var(--color-secondary);
+  transition: border-color 0.2s ease;
+}
+
+.lessonRow:hover {
+  border-color: rgba(0, 229, 200, 0.35);
+}
+
+.lessonRowMain {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 12px;
+  border: 0;
+  background: transparent;
+  padding: 0;
   color: inherit;
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.2s ease;
+}
+
+.lessonDelete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.lessonDelete:hover {
+  background: rgba(255, 100, 103, 0.1);
+}
+
+.reorderGroup {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.reorderButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 16px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.reorderButton:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.reorderButton:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.reorderIconUp {
+  transform: rotate(180deg);
 }
 
 .lessonRow:hover {

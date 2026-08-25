@@ -227,13 +227,40 @@ export async function addLesson(slug, moduleId, actorId, { title, type }, isAdmi
   return { id: lesson.id, title: lesson.title, type: lesson.type, order: lesson.order };
 }
 
-export async function uploadLessonVideo(lessonId, actorId, buffer, contentType, isAdmin = false) {
+// El video no pasa por esta función serverless: el navegador lo sube
+// directo al storage con la URL que devuelve esto (ver getUploadUrl en el
+// contrato de storage-provider). Evita el límite de 4.5 MB que Vercel le
+// impone al body de una función.
+function lessonVideoKey(lessonId) {
+  return `lessons/${lessonId}/video-${Date.now()}`;
+}
+
+export async function createLessonVideoUploadUrl(lessonId, actorId, contentType, isAdmin = false) {
   const lesson = await resolveLesson(lessonId, actorId, isAdmin);
   if (!lesson) return null;
 
   const storage = getStorageProvider();
-  const key = `lessons/${lessonId}/video-${Date.now()}`;
-  await storage.upload(key, buffer, contentType);
+  const key = lessonVideoKey(lessonId);
+  const uploadUrl = await storage.getUploadUrl(key, contentType);
+  return { key, uploadUrl };
+}
+
+// Se llama después de que el navegador terminó el PUT directo al storage,
+// para recién ahí guardar la key en la lección. Verifica que el objeto
+// exista de verdad antes de guardarlo, para no dejar una key "fantasma" si
+// el PUT directo falló pero el frontend igual llegó a confirmar.
+export async function confirmLessonVideoUpload(lessonId, actorId, key, isAdmin = false) {
+  const lesson = await resolveLesson(lessonId, actorId, isAdmin);
+  if (!lesson) return null;
+
+  if (!key.startsWith(`lessons/${lessonId}/video-`)) {
+    return { error: 'INVALID_KEY' };
+  }
+
+  const storage = getStorageProvider();
+  if (!(await storage.exists(key))) {
+    return { error: 'NOT_UPLOADED' };
+  }
 
   const updated = await instructorCourseRepository.updateLessonVideoKey(lessonId, key);
   return { id: updated.id, videoUrl: await storage.getPublicUrl(key) };

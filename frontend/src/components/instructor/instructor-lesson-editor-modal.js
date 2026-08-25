@@ -3,10 +3,31 @@
 import { useState } from "react";
 import Image from "next/image";
 import styles from "./instructor-lesson-editor-modal.module.css";
+import { MAX_LESSON_VIDEO_BYTES } from "@revolab/backend/constants/lesson-video";
 
 function formatFileSize(bytes) {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+// Sube directo al storage (R2 en producción, el shim local en dev) con la
+// URL prefirmada que entrega el backend, reportando progreso real. fetch()
+// no expone progreso de subida de forma confiable; XHR sí.
+function putWithProgress(url, file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) onProgress(Math.round((event.loaded / event.total) * 100));
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve();
+      else reject(new Error(`Subida directa falló (status ${xhr.status})`));
+    };
+    xhr.onerror = () => reject(new Error("Subida directa falló por un error de red"));
+    xhr.send(file);
+  });
 }
 
 export default function InstructorLessonEditorModal({ lesson, onClose, onLessonUpdated }) {
@@ -16,6 +37,7 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
   const [materials, setMaterials] = useState(lesson.materials ?? []);
   const [isSavingText, setIsSavingText] = useState(false);
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const [videoUploadProgress, setVideoUploadProgress] = useState(0);
   const [isUploadingMaterial, setIsUploadingMaterial] = useState(false);
   const [savedHint, setSavedHint] = useState(false);
   const [error, setError] = useState("");
@@ -61,39 +83,63 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
   }
 
   async function handleVideoUpload(file) {
+    if (file.size > MAX_LESSON_VIDEO_BYTES) {
+      setError(
+        `El video pesa ${formatFileSize(file.size)}, y el máximo permitido es ${formatFileSize(MAX_LESSON_VIDEO_BYTES)}. Intenta con un archivo más liviano.`,
+      );
+      return;
+    }
+
     setIsUploadingVideo(true);
+    setVideoUploadProgress(0);
     setError("");
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const response = await fetch(`/api/instructor/lessons/${lesson.id}/video`, {
+      const urlResponse = await fetch(`/api/instructor/lessons/${lesson.id}/video/upload-url`, {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contentType: file.type, size: file.size }),
       });
 
-      let data = null;
+      let urlData = null;
       try {
-        data = await response.json();
+        urlData = await urlResponse.json();
       } catch {
-        // La respuesta no fue JSON (ej. un 413 de la plataforma antes de
-        // llegar a nuestro handler): sin este catch, response.json()
-        // tira y el error queda silencioso, como si "no pasara nada".
+        // Sin este catch, response.json() tira si la respuesta no fue JSON
+        // y el error queda silencioso, como si "no pasara nada".
       }
 
-      if (!response.ok || !data?.videoUrl) {
-        setError(
-          response.status === 413
-            ? `El video pesa demasiado para subirlo así (${formatFileSize(file.size)}). Probá con un archivo más liviano.`
-            : data?.error || `No se pudo subir el video (error ${response.status}).`,
-        );
+      if (!urlResponse.ok || !urlData?.uploadUrl) {
+        setError(urlData?.error || `No se pudo iniciar la subida (error ${urlResponse.status}).`);
         return;
       }
-      setVideoUrl(data.videoUrl);
-      onLessonUpdated(lesson.id, { videoUrl: data.videoUrl });
+
+      await putWithProgress(urlData.uploadUrl, file, setVideoUploadProgress);
+
+      const confirmResponse = await fetch(`/api/instructor/lessons/${lesson.id}/video/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: urlData.key }),
+      });
+
+      let confirmData = null;
+      try {
+        confirmData = await confirmResponse.json();
+      } catch {
+        // Ver comentario equivalente más arriba.
+      }
+
+      if (!confirmResponse.ok || !confirmData?.videoUrl) {
+        setError(confirmData?.error || `No se pudo confirmar el video (error ${confirmResponse.status}).`);
+        return;
+      }
+
+      setVideoUrl(confirmData.videoUrl);
+      onLessonUpdated(lesson.id, { videoUrl: confirmData.videoUrl });
     } catch {
       setError("No se pudo subir el video. Revisa tu conexión e intenta de nuevo.");
     } finally {
       setIsUploadingVideo(false);
+      setVideoUploadProgress(0);
     }
   }
 
@@ -239,9 +285,27 @@ export default function InstructorLessonEditorModal({ lesson, onClose, onLessonU
             />
             <Image src="/icons/instructor-upload.svg" alt="" width={28} height={28} />
             <span className={styles.uploadTitle}>
-              {isUploadingVideo ? "Subiendo..." : videoUrl ? "Reemplazar video" : "Sube el video de la lección"}
+              {isUploadingVideo
+                ? `Subiendo... ${videoUploadProgress}%`
+                : videoUrl
+                  ? "Reemplazar video"
+                  : "Sube el video de la lección"}
             </span>
           </label>
+          {isUploadingVideo && (
+            <div
+              className={styles.progressTrack}
+              role="progressbar"
+              aria-valuenow={videoUploadProgress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <div className={styles.progressFill} style={{ width: `${videoUploadProgress}%` }} />
+            </div>
+          )}
+          <span className={styles.uploadHint}>
+            Máximo {formatFileSize(MAX_LESSON_VIDEO_BYTES)} por video.
+          </span>
         </div>
 
         <div className={styles.field}>

@@ -1,5 +1,6 @@
 // Fábrica de storage: expone siempre el mismo contrato
-// { upload(key, buffer, contentType?), getSignedUrl(key, options?), remove(key) }
+// { upload(key, buffer, contentType?), getSignedUrl(key, options?),
+//   getUploadUrl(key, contentType?, options?), exists(key), remove(key) }
 // sin importar el proveedor activo. Cambiar STORAGE_PROVIDER en el .env
 // alterna entre local y R2 sin tocar los endpoints que lo consumen.
 import * as localStorage from './local-storage.js';

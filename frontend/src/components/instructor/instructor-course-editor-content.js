@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import InstructorLessonEditorModal from "./instructor-lesson-editor-modal";
 import styles from "./instructor-course-editor.module.css";
 
 const instructorCourseSteps = [
@@ -24,7 +25,15 @@ const instructorVisibilityOptions = [
 
 const LESSON_TYPE_LABELS = { VIDEO: "Video", DOCUMENT: "Documento", QUIZ: "Quiz", TOOLS: "Herramientas" };
 
-function StepBasic({ draft, onChange, departments, onCoverUpload, isUploadingCover }) {
+function StepBasic({
+  draft,
+  onChange,
+  departments,
+  onCoverUpload,
+  isUploadingCover,
+  onContinue,
+  continueError,
+}) {
   return (
     <div className={styles.stepForm}>
       <div className={styles.field}>
@@ -106,21 +115,30 @@ function StepBasic({ draft, onChange, departments, onCoverUpload, isUploadingCov
           <span className={styles.uploadHint}>1920x1080px (Recomendado)</span>
         </label>
       </div>
+
+      {continueError && <p className={styles.stepError}>{continueError}</p>}
+      <button type="button" className={styles.continueButton} onClick={onContinue}>
+        Continuar
+      </button>
     </div>
   );
 }
 
-function LessonRow({ lesson }) {
+function LessonRow({ lesson, onClick }) {
+  const hasContent = Boolean(lesson.content?.trim() || lesson.videoUrl);
+
   return (
-    <div className={styles.lessonRow}>
+    <button type="button" className={styles.lessonRow} onClick={onClick}>
       <Image src="/icons/instructor-drag.svg" alt="" width={16} height={16} />
       <span className={styles.lessonTitle}>{lesson.title}</span>
+      {!hasContent && <span className={styles.lessonMissing}>Falta texto o video</span>}
       <span className={styles.lessonType}>{LESSON_TYPE_LABELS[lesson.type] ?? lesson.type}</span>
-    </div>
+      <Image src="/icons/instructor-edit.svg" alt="" width={14} height={14} />
+    </button>
   );
 }
 
-function ModuleCard({ module, onAddLesson }) {
+function ModuleCard({ module, onAddLesson, onDeleteModule, onLessonClick }) {
   const [newLessonTitle, setNewLessonTitle] = useState("");
 
   return (
@@ -128,11 +146,25 @@ function ModuleCard({ module, onAddLesson }) {
       <header className={styles.moduleHeader}>
         <Image src="/icons/instructor-drag.svg" alt="" width={20} height={20} />
         <span className={styles.moduleTitleInput}>{module.title}</span>
+        <button
+          type="button"
+          className={styles.moduleDelete}
+          onClick={() => onDeleteModule(module.id)}
+          aria-label={`Eliminar ${module.title}`}
+        >
+          <Image src="/icons/instructor-trash.svg" alt="" width={16} height={16} />
+        </button>
       </header>
 
       <div className={styles.moduleBody}>
         {module.lessons.length > 0 ? (
-          module.lessons.map((lesson) => <LessonRow key={lesson.id} lesson={lesson} />)
+          module.lessons.map((lesson) => (
+            <LessonRow
+              key={lesson.id}
+              lesson={lesson}
+              onClick={() => onLessonClick(module.id, lesson)}
+            />
+          ))
         ) : (
           <div className={styles.moduleEmpty}>Módulo vacío. Agrega lecciones.</div>
         )}
@@ -162,7 +194,16 @@ function ModuleCard({ module, onAddLesson }) {
   );
 }
 
-function StepContent({ viewTitle, modules, onAddModule, onAddLesson }) {
+function StepContent({
+  viewTitle,
+  modules,
+  onAddModule,
+  onAddLesson,
+  onDeleteModule,
+  onLessonClick,
+  onNext,
+  nextErrors,
+}) {
   return (
     <div className={styles.stepContent}>
       <div className={styles.contentHeader}>
@@ -173,14 +214,32 @@ function StepContent({ viewTitle, modules, onAddModule, onAddLesson }) {
         </button>
       </div>
 
+      {nextErrors.length > 0 && (
+        <ul className={styles.stepErrorList}>
+          {nextErrors.map((message) => (
+            <li key={message}>{message}</li>
+          ))}
+        </ul>
+      )}
+
       <div className={styles.moduleList}>
         {modules.map((module) => (
-          <ModuleCard key={module.id} module={module} onAddLesson={onAddLesson} />
+          <ModuleCard
+            key={module.id}
+            module={module}
+            onAddLesson={onAddLesson}
+            onDeleteModule={onDeleteModule}
+            onLessonClick={onLessonClick}
+          />
         ))}
         {modules.length === 0 && (
           <p className={styles.moduleEmpty}>Aún no hay módulos. Agrega el primero.</p>
         )}
       </div>
+
+      <button type="button" className={styles.continueButton} onClick={onNext}>
+        Siguiente
+      </button>
     </div>
   );
 }
@@ -265,6 +324,9 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [basicError, setBasicError] = useState("");
+  const [contentErrors, setContentErrors] = useState([]);
+  const [editingLesson, setEditingLesson] = useState(null);
 
   useEffect(() => {
     fetch("/api/departments")
@@ -297,10 +359,14 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
     const data = await response.json();
     const newId = data.course.id;
     setId(newId);
-    router.replace(`/instructor/cursos/${newId}/editar`);
     return newId;
   }
 
+  // La URL solo se sincroniza aca (tras guardar), nunca dentro de
+  // ensureCourseExists: navegar a /editar/[id] desmonta este componente
+  // (son rutas distintas), y si eso ocurre a mitad de una subida (portada,
+  // video, etc.) la actualizacion de estado se pierde porque apunta a una
+  // instancia ya desmontada. Ver bug: la portada se subia pero no se veia.
   async function handleSave() {
     setIsSaving(true);
     try {
@@ -318,6 +384,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
         }),
       });
       setIsDirty(false);
+      if (isNew) router.replace(`/instructor/cursos/${currentId}/editar`);
     } finally {
       setIsSaving(false);
     }
@@ -372,14 +439,69 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
       },
     );
     const data = await response.json();
+    const newLesson = { content: null, videoUrl: null, materials: [], ...data.lesson };
     setDraft((current) => ({
       ...current,
       modules: current.modules.map((moduleItem) =>
         moduleItem.id === moduleId
-          ? { ...moduleItem, lessons: [...moduleItem.lessons, data.lesson] }
+          ? { ...moduleItem, lessons: [...moduleItem.lessons, newLesson] }
           : moduleItem,
       ),
     }));
+  }
+
+  async function handleDeleteModule(moduleId) {
+    const currentId = await ensureCourseExists();
+    await fetch(`/api/instructor/courses/${currentId}/modules/${moduleId}`, {
+      method: "DELETE",
+    });
+    setDraft((current) => ({
+      ...current,
+      modules: current.modules.filter((moduleItem) => moduleItem.id !== moduleId),
+    }));
+  }
+
+  function handleLessonUpdated(lessonId, changes) {
+    setDraft((current) => ({
+      ...current,
+      modules: current.modules.map((moduleItem) => ({
+        ...moduleItem,
+        lessons: moduleItem.lessons.map((lesson) =>
+          lesson.id === lessonId ? { ...lesson, ...changes } : lesson,
+        ),
+      })),
+    }));
+  }
+
+  async function handleContinueToContent() {
+    if (!draft.title.trim()) {
+      setBasicError("Ingresa un título para el curso antes de continuar.");
+      return;
+    }
+    setBasicError("");
+    await handleSave();
+    setActiveStep("content");
+  }
+
+  function handleNextToRules() {
+    const errors = [];
+    if (draft.modules.length === 0) {
+      errors.push("Agrega al menos un módulo.");
+    }
+    draft.modules.forEach((moduleItem, moduleIndex) => {
+      if (moduleItem.lessons.length === 0) {
+        errors.push(`El módulo ${moduleIndex + 1} ("${moduleItem.title}") no tiene lecciones.`);
+        return;
+      }
+      moduleItem.lessons.forEach((lesson) => {
+        if (!lesson.content?.trim() && !lesson.videoUrl) {
+          errors.push(`La lección "${lesson.title}" necesita texto o video.`);
+        }
+      });
+    });
+
+    setContentErrors(errors);
+    if (errors.length === 0) setActiveStep("rules");
   }
 
   const activeStepMeta = instructorCourseSteps.find((step) => step.id === activeStep);
@@ -440,6 +562,8 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
                 departments={departments}
                 onCoverUpload={handleCoverUpload}
                 isUploadingCover={isUploadingCover}
+                onContinue={handleContinueToContent}
+                continueError={basicError}
               />
             </>
           )}
@@ -450,6 +574,10 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
               modules={draft.modules}
               onAddModule={handleAddModule}
               onAddLesson={handleAddLesson}
+              onDeleteModule={handleDeleteModule}
+              onLessonClick={(moduleId, lesson) => setEditingLesson({ moduleId, lesson })}
+              onNext={handleNextToRules}
+              nextErrors={contentErrors}
             />
           )}
 
@@ -461,6 +589,14 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
           )}
         </main>
       </div>
+
+      {editingLesson && (
+        <InstructorLessonEditorModal
+          lesson={editingLesson.lesson}
+          onClose={() => setEditingLesson(null)}
+          onLessonUpdated={handleLessonUpdated}
+        />
+      )}
     </div>
   );
 }

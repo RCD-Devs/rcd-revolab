@@ -23,6 +23,7 @@ export function deleteCourse(courseId) {
 
 const courseDetailInclude = {
   department: { select: { label: true } },
+  category: { select: { label: true } },
   modules: {
     orderBy: { order: 'asc' },
     include: {

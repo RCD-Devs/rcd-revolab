@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -86,14 +86,76 @@ function ListField({ label, hint, items, onChange, placeholder, emptyHint }) {
   );
 }
 
+const TOOL_EMOJI_OPTIONS = [
+  "🛠️", "⚙️", "💻", "🖥️", "📱", "🎨",
+  "📊", "📈", "📉", "🚀", "🔧", "🧩",
+  "🌐", "💡", "🔗", "📐", "🔬", "🧠",
+  "📷", "🎬", "🎧", "📝", "🗂️", "🧮",
+];
+
+function ToolEmojiPicker({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClickOutside(event) {
+      if (wrapRef.current && !wrapRef.current.contains(event.target)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  return (
+    <div className={styles.dropdownWrap} ref={wrapRef}>
+      <button
+        type="button"
+        className={`${styles.dropdownTrigger} ${styles.emojiTrigger} ${open ? styles.dropdownTriggerOpen : ""}`}
+        onClick={() => setOpen((current) => !current)}
+        aria-haspopup="true"
+        aria-expanded={open}
+        aria-label="Elegir ícono de la herramienta"
+      >
+        <span>{value}</span>
+        <Image
+          src="/icons/chevron-down.svg"
+          alt=""
+          width={10}
+          height={10}
+          className={styles.dropdownChevron}
+        />
+      </button>
+      {open && (
+        <div className={styles.emojiGrid} role="listbox" aria-label="Íconos disponibles">
+          {TOOL_EMOJI_OPTIONS.map((option) => (
+            <button
+              key={option}
+              type="button"
+              role="option"
+              aria-selected={option === value}
+              className={`${styles.emojiOption} ${option === value ? styles.emojiOptionActive : ""}`}
+              onClick={() => {
+                onChange(option);
+                setOpen(false);
+              }}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ToolsField({ items, onChange }) {
-  const [emoji, setEmoji] = useState("");
+  const [emoji, setEmoji] = useState(TOOL_EMOJI_OPTIONS[0]);
   const [name, setName] = useState("");
 
   function addTool() {
     if (!name.trim()) return;
-    onChange([...items, { emoji: emoji.trim() || "🛠️", name: name.trim() }]);
-    setEmoji("");
+    onChange([...items, { emoji, name: name.trim() }]);
+    setEmoji(TOOL_EMOJI_OPTIONS[0]);
     setName("");
   }
 
@@ -124,13 +186,7 @@ function ToolsField({ items, onChange }) {
       )}
 
       <div className={styles.lessonActions}>
-        <input
-          type="text"
-          value={emoji}
-          onChange={(event) => setEmoji(event.target.value)}
-          placeholder="🛠️"
-          className={styles.toolEmojiInput}
-        />
+        <ToolEmojiPicker value={emoji} onChange={setEmoji} />
         <input
           type="text"
           value={name}
@@ -160,6 +216,7 @@ function StepBasic({
   draft,
   onChange,
   departments,
+  categories,
   onCoverUpload,
   isUploadingCover,
   coverError,
@@ -211,6 +268,28 @@ function StepBasic({
             {departments.map((department) => (
               <option key={department.id} value={department.id}>
                 {department.label}
+              </option>
+            ))}
+          </select>
+          <Image src="/icons/chevron-down.svg" alt="" width={10} height={10} className={styles.selectIcon} />
+        </div>
+      </div>
+
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="course-category">
+          Categoría
+        </label>
+        <div className={styles.selectWrap}>
+          <select
+            id="course-category"
+            value={draft.categoryId ?? ""}
+            onChange={(event) => onChange({ categoryId: event.target.value })}
+            className={styles.select}
+          >
+            <option value="">Selecciona una categoría</option>
+            {categories.map((category) => (
+              <option key={category.categoryId} value={category.categoryId}>
+                {category.label}
               </option>
             ))}
           </select>
@@ -470,6 +549,7 @@ const EMPTY_DRAFT = {
   title: "",
   description: "",
   departmentId: "",
+  categoryId: "",
   coverImageUrl: null,
   about: [],
   learningOutcomes: [],
@@ -486,6 +566,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
   const [draft, setDraft] = useState(EMPTY_DRAFT);
   const [id, setId] = useState(isNew ? null : courseId);
   const [departments, setDepartments] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
@@ -499,6 +580,11 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
       .then((res) => res.json())
       .then((data) => setDepartments(data.departments ?? []))
       .catch(() => setDepartments([]));
+
+    fetch("/api/categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(data.categories ?? []))
+      .catch(() => setCategories([]));
   }, []);
 
   useEffect(() => {
@@ -544,6 +630,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
           title: draft.title,
           description: draft.description,
           departmentId: draft.departmentId || undefined,
+          categoryId: draft.categoryId || undefined,
           about: draft.about,
           learningOutcomes: draft.learningOutcomes,
           tools: draft.tools,
@@ -748,6 +835,7 @@ export default function InstructorCourseEditorContent({ courseId, isNew = false 
                 draft={draft}
                 onChange={updateDraft}
                 departments={departments}
+                categories={categories}
                 onCoverUpload={handleCoverUpload}
                 isUploadingCover={isUploadingCover}
                 coverError={coverError}
